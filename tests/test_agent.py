@@ -93,6 +93,8 @@ def test_to_jsonable_node():
     ("why is the repo stalled", ["stale_open_prs", "last_merges", "reviewer_load"], None),
     ("what else is at risk if we merge 12", ["impact"], "12"),
     ("which PR fixed issue 55?", ["issue_fixed_by"], "55"),
+    ("What breaks if src/kicad/sexp.ts changes?", ["impact_file"], "src/kicad/sexp.ts"),
+    ("what else breaks if `a.py` changes", ["impact_file"], "a.py"),
     ("who are the key maintainers", ["key_maintainers"], None),
     ("what did we conclude about PR 243 before", ["recall_about"], "243"),
 ])
@@ -196,3 +198,28 @@ def test_mcp_handle_and_listing():
     res = asyncio.run(server.request_handlers[ListToolsRequest](ListToolsRequest(method="tools/list")))
     names = {t.name for t in res.root.tools}
     assert names == set(TOOL_SPECS)
+
+
+def test_impact_file_dispatch_qualifies_path():
+    g = FakeGraph()
+    call_tool(g, "impact_file", {"file": "src/a.py"}, REPO)
+    call_tool(g, "impact_file", {"file": "o/r:src/b.py"}, REPO)
+    assert [c[1]["file"] for c in g.calls] == ["o/r:src/a.py", "o/r:src/b.py"]
+    assert g.calls[0][1]["k"] == 10 and g.calls[0][1]["max_paths"] == 3
+
+
+def test_dup_similar_title_threshold_param():
+    g = FakeGraph()
+    call_tool(g, "dup_similar_title", {"pr": 5, "min_jaccard": 0.7}, REPO)
+    assert g.calls[0][1]["min_jaccard"] == 0.7
+    call_tool(g, "dup_similar_title", {"pr": 5}, REPO)
+    assert g.calls[1][1]["min_jaccard"] == DEFAULTS["min_jaccard"]
+
+
+def test_remember_with_empty_about_still_returns_question():
+    q = CYPHER["remember_finding"]
+    # UNWIND over an empty list would drop the row and lose the Question id
+    assert "UNWIND" not in q and "FOREACH" in q and "collect(n)" in q
+    g = FakeGraph({"q.id AS question": (["question", "linked"], [["qid1", 0]])})
+    rows = call_tool(g, "remember_finding", {"question": "q", "answer": "a", "about": []}, REPO, session="s")
+    assert g.calls[0][1]["about"] == [] and rows == [{"question": "qid1", "linked": 0}]

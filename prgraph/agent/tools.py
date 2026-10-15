@@ -15,10 +15,17 @@ _K = {"type": "integer", "description": "max rows (default 10)"}
 TOOL_SPECS: dict[str, tuple] = {
     "dup_shared_issue": ("Other PRs that fix/reference the same issue as this PR (duplicate check).", {"pr": _PR}),
     "dup_file_overlap": ("Other PRs touching mostly the same files as this PR (duplicate check).", {"pr": _PR, "k": _K}),
-    "dup_similar_title": ("PRs/issues with similar titles to this PR (duplicate check).", {"pr": _PR, "k": _K}),
+    "dup_similar_title": ("PRs/issues in the same repo whose titles are similar to this PR "
+                          "(Jaccard over title words; duplicate check).",
+                          {"pr": _PR, "k": _K, "min_jaccard": {"type": "number",
+                                                                "description": "Jaccard threshold 0..1 (default 0.4)"}}),
     "issue_fixed_by": ("PRs that fix or reference an issue.", {"issue": {**_PR, "description": "issue number or owner/repo#N"}}),
     "reviewers": ("Suggested reviewers for a PR: people who authored/reviewed PRs on the same files.", {"pr": _PR, "k": _K}),
     "impact": ("Blast radius: files historically co-changed with this PR's files but not in it.", {"pr": _PR, "k": _K}),
+    "impact_file": ("What breaks if a file changes: files historically co-changed with it, with the PRs "
+                    "that changed both as evidence.",
+                    {"file": {"type": "string", "description": "repo-relative path (src/a.py) or file id owner/repo:path"},
+                     "k": _K}),
     "stale_open_prs": ("Oldest open PRs in the repo and how many reviewers each has.", {"k": _K}),
     "last_merges": ("Most recent merged PRs in the repo.", {"k": _K}),
     "reviewer_load": ("Reviewers ranked by PRs reviewed, with open PRs they reviewed.", {"k": _K}),
@@ -34,7 +41,7 @@ TOOL_SPECS: dict[str, tuple] = {
                                        "description": "ids of nodes cited as evidence"}}),
 }
 REQUIRED = {"dup_shared_issue": ["pr"], "dup_file_overlap": ["pr"], "dup_similar_title": ["pr"],
-            "issue_fixed_by": ["issue"], "reviewers": ["pr"], "impact": ["pr"], "connection": ["a", "b"],
+            "issue_fixed_by": ["issue"], "reviewers": ["pr"], "impact": ["pr"], "impact_file": ["file"], "connection": ["a", "b"],
             "recall_about": ["ref"], "remember_finding": ["question", "answer", "about"]}
 
 
@@ -108,6 +115,8 @@ def call_tool(graph, name: str, params: dict, repo: str | None = None,
         p["session"] = session or p.get("session") or "default"
         p["qid"] = uuid.uuid4().hex
         p["at"] = _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds")
+    if "file" in p and repo and not str(p["file"]).startswith(repo + ":"):
+        p["file"] = f"{repo}:{str(p['file']).lstrip('/')}"
     if repo:
         p.setdefault("repo", repo)
     q = CYPHER[name]

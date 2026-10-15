@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from prgraph.ingest import to_rows
+from prgraph.parse import is_bot as _is_bot
 from prgraph.queries import DEFAULTS, QUERIES
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -29,18 +30,13 @@ KINDS = {
 }
 # chosen targets per repo (must exist in the snapshot); others picked automatically
 TARGETS = {
-    "copperheadhq/copperhead": {"reviewers": 243, "duplicate": 369, "impact": "src/kicad/sexp.ts"},
+    "copperheadhq/copperhead": {"reviewers": 243, "duplicate": 279, "impact": "src/kicad/sexp.ts"},
 }
 
 
-# GraphQL returns app logins without the [bot] suffix, so the reviewers query's
-# ENDS WITH '[bot]' filter misses these; the demo excludes them explicitly.
-BOTS = {"github-actions", "coderabbitai", "chatgpt-codex-connector", "cubic-dev-ai", "copilot-pull-request-reviewer",
-        "gemini-code-assist", "sourcery-ai", "codecov", "dependabot", "renovate", "pre-commit-ci"}
-
-
 def is_bot(login):
-    return not login or login in BOTS or login.endswith("[bot]")
+    """Same rule ingest uses for Person.is_bot (prgraph.parse.BOT_LOGINS + [bot] suffix)."""
+    return not login or _is_bot(login)
 
 
 def n(label, id_, name=None):
@@ -149,25 +145,32 @@ class Snapshot:
                                           for f in shared[:DEFAULTS["max_paths"]]]})
         return sorted(rows, key=lambda x: -x["shared"])[:DEFAULTS["k"]]
 
-    def q_dup_similar_title(self, pid):
+    def q_dup_similar_title(self, pid, t=DEFAULTS["min_jaccard"]):
         mine = set(self.prs[pid]["tokens"])
         rows = []
+        if not mine:
+            return rows
         for kind, coll in (("PR", self.prs), ("Issue", self.issues)):
             for o, x in coll.items():
-                if o == pid or not mine:
+                other = set(x["tokens"])
+                if o == pid or not (len(mine) * t <= len(other) and len(other) * t <= len(mine)):
                     continue
-                common = len([t for t in x["tokens"] if t in mine])
-                if common / len(mine) >= DEFAULTS["min_jaccard"]:
+                common = len(mine & other)
+                jac = common / len(mine | other) if common else 0.0
+                if common and jac >= t:
                     on = self.prn(o) if kind == "PR" else n("Issue", o, "#" + o.split("#")[1])
                     rows.append({"other": o, "kind": kind, "state": x["state"], "title": x["title"],
-                                 "common": common,
+                                 "common": common, "jaccard": round(jac, 3),
                                  "evidence": path(self.prn(pid), "IN_REPO", n("Repo", self.repo), "<IN_REPO", on)})
-        return sorted(rows, key=lambda x: -x["common"])[:DEFAULTS["k"]]
+        return sorted(rows, key=lambda x: (-x["jaccard"], -x["common"]))[:DEFAULTS["k"]]
 
     def q_impact_file(self, f):
-        rows = [{"file": g, "strength": w,
-                 "evidence": [path(self.filen(f), "CO_CHANGED", self.filen(g))]}
-                for g, w in self.cochange[f].items()]
+        rows = []
+        for g, w in self.cochange[f].items():
+            both = sorted(pr for pr in self.touchers[f] & self.touchers[g])
+            ev = [path(self.filen(f), "<TOUCHES", self.prn(pr), "TOUCHES", self.filen(g))
+                  for pr in both[:DEFAULTS["max_paths"]]]
+            rows.append({"file": g, "strength": w, "evidence": ev})
         return sorted(rows, key=lambda x: (-x["strength"], x["file"]))[:DEFAULTS["k"]]
 
     def q_stale_open_prs(self):
@@ -189,7 +192,8 @@ class Snapshot:
         by = defaultdict(set)
         for pr, ls in self.reviews.items():
             for l in ls:
-                by[l].add(pr)
+                if not is_bot(l):
+                    by[l].add(pr)
         rows = [{"reviewer": l, "reviewed": len(ps),
                  "open_reviewed": sum(1 for p in ps if self.prs.get(p, {}).get("state") == "OPEN"),
                  "evidence": [path(self.person(l), "REVIEWED", self.prn(p), "IN_REPO", n("Repo", self.repo))
@@ -253,27 +257,24 @@ def build(s: Snapshot):
             f"#{r['other'].split('#')[1]} ({r['shared']}/{r['mine']} files, {r['state'].lower()})" for r in b[:3]))
     if c:
         parts.append("its title is close to " + ", ".join(
-            f"{r['kind']} #{r['other'].split('#')[1]} ({r['common']} common words)" for r in c[:2]))
+            f"{r['kind']} #{r['other'].split('#')[1]} (Jaccard {r['jaccard']:.2f})" for r in c[:2]))
     verdict = "Likely overlaps existing work" if (a or len(parts) >= 2) else ("Possibly related work" if parts else "No duplicate found")
     ans = f"{verdict} for PR #{dup_pr} (\"{s.prs[pid]['title']}\")" + (": " + "; ".join(parts) + "." if parts else ".")
     out.append({"kind": "duplicate", "question": KINDS["duplicate"].format(pr=dup_pr), "answer": ans,
                 "tool_calls": [call("dup_shared_issue", {"pr": pid}, strip(a)),
-                               call("dup_file_overlap", {"pr": pid, "min_overlap": 0.5, "k": 10, "max_paths": 3}, strip(b)),
-                               call("dup_similar_title", {"pr": pid, "min_jaccard": 0.5, "k": 10}, strip(c))],
+                               call("dup_file_overlap", {"pr": pid, "min_overlap": DEFAULTS["min_overlap"], "k": 10, "max_paths": 3}, strip(b)),
+                               call("dup_similar_title", {"pr": pid, "min_jaccard": DEFAULTS["min_jaccard"], "k": 10}, strip(c))],
                 "evidence_paths": [r["evidence"] for r in a[:4]] + flat_paths(b, 2) + [r["evidence"] for r in c[:2]],
                 "focus": [pid] + [r["other"] for r in (a + b)[:3]]})
 
-    # impact (file-level variant of the impact query)
+    # impact (impact_file query)
     rows = s.q_impact_file(hot)
     ans = (f"`{hot}` has been changed together with {len(s.cochange[hot])} other files. The most coupled are "
            + ", ".join(f"`{r['file']}` ({r['strength']} PRs)" for r in rows[:4])
            + ". Review those when this file changes." if rows else f"`{hot}` has no co-change history in the snapshot.")
-    impact_cypher = ("MATCH path = (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\n"
-                     "RETURN g.path AS file, c.weight AS strength, path AS evidence\nORDER BY strength DESC LIMIT $k")
     out.append({"kind": "impact", "question": KINDS["impact"].format(file=hot), "answer": ans,
-                "tool_calls": [{"tool": "impact_file", "params": {"file": f"{s.repo}:{hot}", "k": 10},
-                                "cypher": impact_cypher, "rows": strip(rows)}],
-                "evidence_paths": flat_paths(rows, 10), "focus": [f"{s.repo}:{hot}"] + [f"{s.repo}:{r['file']}" for r in rows[:4]]})
+                "tool_calls": [call("impact_file", {"file": f"{s.repo}:{hot}", "k": 10, "max_paths": 3}, strip(rows))],
+                "evidence_paths": flat_paths(rows, 4), "focus": [f"{s.repo}:{hot}"] + [f"{s.repo}:{r['file']}" for r in rows[:4]]})
 
     # stalled
     st, lm, rl = s.q_stale_open_prs(), s.q_last_merges(), s.q_reviewer_load()

@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .parse import co_changes, extract_links, title_tokens
+from .parse import co_changes, extract_links, is_bot, title_tokens
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 
@@ -22,10 +22,10 @@ query($owner:String!, $name:String!, $n:Int!, $after:String) {
       pageInfo { hasNextPage endCursor }
       nodes {
         number title body state createdAt mergedAt closedAt url
-        author { login }
+        author { login __typename }
         labels(first:10) { nodes { name } }
         files(first:100) { nodes { path additions deletions } }
-        reviews(first:30) { nodes { author { login } state submittedAt } }
+        reviews(first:30) { nodes { author { login __typename } state submittedAt } }
         closingIssuesReferences(first:10) { nodes { number } }
       }
     }
@@ -39,7 +39,7 @@ query($owner:String!, $name:String!, $n:Int!, $after:String) {
       pageInfo { hasNextPage endCursor }
       nodes {
         number title body state createdAt closedAt url
-        author { login }
+        author { login __typename }
         labels(first:10) { nodes { name } }
       }
     }
@@ -92,8 +92,15 @@ def _login(node) -> str:
 def to_rows(raw: dict) -> dict:
     """Flatten raw GitHub JSON into row lists for UNWIND. Pure, testable."""
     repo = raw["repo"]
-    rows = {k: [] for k in ("prs", "issues", "authored", "reviews", "touches",
+    rows = {k: [] for k in ("people", "prs", "issues", "authored", "reviews", "touches",
                              "fixes", "refs", "labels", "cochange")}
+    people: dict[str, bool] = {}
+
+    def person(node) -> str:
+        login = _login(node)
+        people[login] = people.get(login, False) or is_bot(login, (node or {}).get("__typename"))
+        return login
+
     pulls = []
     for p in raw["pulls"]:
         pid = f"{repo}#{p['number']}"
@@ -104,9 +111,9 @@ def to_rows(raw: dict) -> dict:
             "created": p["createdAt"], "merged": p.get("mergedAt"), "closed": p.get("closedAt"),
             "url": p.get("url"), "tokens": title_tokens(p["title"]),
         })
-        rows["authored"].append({"login": _login(p.get("author")), "id": pid, "kind": "PR"})
+        rows["authored"].append({"login": person(p.get("author")), "id": pid, "kind": "PR"})
         for r in (p.get("reviews") or {}).get("nodes") or []:
-            rows["reviews"].append({"login": _login(r.get("author")), "id": pid,
+            rows["reviews"].append({"login": person(r.get("author")), "id": pid,
                                     "state": r["state"], "at": r.get("submittedAt")})
         for f in files:
             rows["touches"].append({"id": pid, "path": f["path"], "fid": f"{repo}:{f['path']}",
@@ -126,16 +133,20 @@ def to_rows(raw: dict) -> dict:
             "created": i["createdAt"], "closed": i.get("closedAt"), "url": i.get("url"),
             "tokens": title_tokens(i["title"]),
         })
-        rows["authored"].append({"login": _login(i.get("author")), "id": iid, "kind": "Issue"})
+        rows["authored"].append({"login": person(i.get("author")), "id": iid, "kind": "Issue"})
         rows["labels"] += [{"id": iid, "name": l["name"], "lid": f"{repo}:{l['name']}"}
                            for l in (i.get("labels") or {}).get("nodes") or []]
     rows["cochange"] = [{"a": f"{repo}:{c['a']}", "b": f"{repo}:{c['b']}", "w": c["w"]}
                         for c in co_changes(pulls)]
+    rows["people"] = [{"login": k, "is_bot": v} for k, v in sorted(people.items())]
     return rows
 
 
 # Every write is MERGE on the id property, so re-running ingest is idempotent.
 LOAD = [
+    ("people", """UNWIND $rows AS r
+MERGE (a:Person {login:r.login})
+SET a.is_bot = r.is_bot"""),
     ("prs", """UNWIND $rows AS r
 MERGE (p:PR {id:r.id})
 SET p.number=r.number, p.title=r.title, p.state=r.state, p.created=r.created,

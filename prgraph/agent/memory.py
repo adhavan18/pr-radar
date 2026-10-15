@@ -10,10 +10,10 @@ ON CREATE SET s.started = $at
 CREATE (q:Question {id:$qid, text:$question, answer:$answer, evidence:$evidence, at:$at})
 CREATE (q)-[:ASKED_IN]->(s)
 WITH q
-UNWIND $about AS ref
-MATCH (n) WHERE ((n:PR OR n:Issue OR n:File) AND n.id = ref) OR (n:Person AND n.login = ref)
-MERGE (q)-[:ABOUT]->(n)
-RETURN q.id AS question, count(n) AS linked""",
+OPTIONAL MATCH (n) WHERE ((n:PR OR n:Issue OR n:File) AND n.id IN $about) OR (n:Person AND n.login IN $about)
+WITH q, collect(n) AS targets
+FOREACH (t IN targets | MERGE (q)-[:ABOUT]->(t))
+RETURN q.id AS question, size(targets) AS linked""",
 
     "recall_about": """
 MATCH path = (s:Session)<-[:ASKED_IN]-(q:Question)-[:ABOUT]->(n)

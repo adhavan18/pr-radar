@@ -1,7 +1,7 @@
 const $ = (s) => document.querySelector(s);
 const EXAMPLES = [
   "Who should review copperhead PR #243?",
-  "Is PR #369 a duplicate?",
+  "Is PR #279 a duplicate?",
   "What breaks if src/kicad/sexp.ts changes?",
   "Why is this repo stalled?",
 ];

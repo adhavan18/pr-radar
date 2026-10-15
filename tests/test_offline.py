@@ -48,7 +48,7 @@ def test_query_wellformed(name):
     q = QUERIES[name]
     assert _balanced(q)
     assert re.search(r"\bRETURN\b", q) and "evidence" in q
-    known = set(DEFAULTS) | {"pr", "issue", "repo"}
+    known = set(DEFAULTS) | {"pr", "issue", "repo", "file"}
     assert param_names(q) <= known, param_names(q) - known
 
 
@@ -90,3 +90,88 @@ def test_real_caches_flatten(cache):
     assert rows["prs"] and rows["touches"]
     ids = {r["id"] for r in rows["prs"]}
     assert all(r["id"] in ids for r in rows["fixes"] + rows["touches"])
+
+
+# ---- bots ----
+@pytest.mark.parametrize("login,typename,want", [
+    ("coderabbitai", None, True), ("chatgpt-codex-connector", None, True), ("cubic-dev-ai", None, True),
+    ("copilot-pull-request-reviewer", None, True), ("github-actions", None, True), ("greptile-apps", None, True),
+    ("renovate[bot]", None, True), ("someapp", "Bot", True), ("alice", "User", False), ("ghost", None, False),
+])
+def test_is_bot(login, typename, want):
+    from prgraph.parse import is_bot
+    assert is_bot(login, typename) is want
+
+
+def test_to_rows_marks_bots():
+    raw = {"repo": "o/r", "issues": [], "pulls": [{
+        "number": 1, "title": "t", "body": "", "state": "OPEN", "createdAt": "x", "url": "u",
+        "author": {"login": "alice", "__typename": "User"},
+        "reviews": {"nodes": [{"author": {"login": "coderabbitai"}, "state": "COMMENTED"},
+                              {"author": {"login": "newapp", "__typename": "Bot"}, "state": "COMMENTED"},
+                              {"author": {"login": "bob"}, "state": "APPROVED"}]}}]}
+    people = {r["login"]: r["is_bot"] for r in to_rows(raw)["people"]}
+    assert people == {"alice": False, "bob": False, "coderabbitai": True, "newapp": True}
+    assert LOAD[0][0] == "people" and "is_bot" in LOAD[0][1]
+
+
+def test_queries_filter_bots():
+    from prgraph.algos import ALGOS
+    for q in (QUERIES["reviewers"], QUERIES["reviewer_load"], ALGOS["key_maintainers"]):
+        assert re.search(r"NOT coalesce\(\w+\.is_bot, false\)", q)
+
+
+def test_demo_uses_shared_bot_list():
+    from web import make_demo
+    assert make_demo.is_bot("coderabbitai") and make_demo.is_bot("x[bot]") and not make_demo.is_bot("alice")
+
+
+# ---- impact_file / similar titles ----
+def test_impact_file_query():
+    q = QUERIES["impact_file"]
+    assert "(f:File {id:$file})-[c:CO_CHANGED]-(g:File)" in q
+    assert "(f)<-[:TOUCHES]-(p:PR)-[:TOUCHES]->(g)" in q
+
+
+def test_dup_similar_title_is_jaccard():
+    q = QUERIES["dup_similar_title"]
+    assert "toFloat(common) / (n + m - common) AS jaccard" in q
+    assert "size(o.tokens) >= n * $min_jaccard" in q and "size(o.tokens) * $min_jaccard <= n" in q
+    assert "(p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)" in q  # same repo only
+
+
+def _snap():
+    from web.make_demo import Snapshot
+    raw = {"repo": "o/r", "pulls": [
+        {"number": n, "title": t, "body": "", "state": "OPEN", "createdAt": "2026-01-0%d" % n,
+         "author": {"login": "a"}, "files": {"nodes": [{"path": p, "additions": 1, "deletions": 0} for p in fs]}}
+        for n, t, fs in [(1, "parser crash utf8 input", ["a.py", "b.py"]),
+                         (2, "parser crash utf8", ["a.py", "b.py"]),
+                         (3, "parser speedup totally different words here", ["a.py", "c.py"])]],
+        "issues": []}
+    return Snapshot(raw)
+
+
+def test_demo_jaccard_matches_definition():
+    rows = _snap().q_dup_similar_title("o/r#1", t=0.5)
+    assert [(r["other"], r["jaccard"]) for r in rows] == [("o/r#2", 0.75)]  # #3: J=1/9
+
+
+def test_demo_impact_file_has_pr_evidence():
+    s = _snap()
+    s.cochange["a.py"]["b.py"] = 2
+    row = s.q_impact_file("a.py")[0]
+    assert row["file"] == "b.py" and len(row["evidence"]) == 2
+    assert [e["type"] for e in row["evidence"][0]["edges"]] == ["TOUCHES", "TOUCHES"]
+
+
+def test_demo_impact_uses_real_query():
+    d = json.loads((ROOT / "web" / "demo_responses.json").read_text(encoding="utf-8"))
+    for kinds in d["repos"].values():
+        call = next(k for k in kinds if k["kind"] == "impact")["tool_calls"][0]
+        assert call["tool"] == "impact_file" and call["cypher"] == QUERIES["impact_file"].strip()
+
+
+def test_docs_generated_up_to_date():
+    from prgraph.gendocs import render
+    assert (ROOT / "docs" / "QUERIES.md").read_text(encoding="utf-8") == render()

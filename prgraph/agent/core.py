@@ -28,6 +28,8 @@ def _n(m):
 
 
 ROUTES = [
+    (re.compile(r"\bwhat (?:else )?(?:breaks|is affected)\b.*?\bif\s+`?([\w./@-]+?)`?\s+(?:changes?|is changed)\b", re.I),
+     lambda m: [("impact_file", {"file": m.group(1)})]),
     (re.compile(rf"\b(?:duplicate|dup|already (?:fixed|done)|same as)\b.*?{_NUM}|{_NUM}.*?\b(?:duplicate|dup)\b", re.I),
      lambda m: [("dup_shared_issue", {"pr": _n(m)}), ("dup_file_overlap", {"pr": _n(m)}),
                 ("dup_similar_title", {"pr": _n(m)})]),

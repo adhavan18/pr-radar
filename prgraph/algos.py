@@ -11,7 +11,7 @@ ALGOS: dict[str, str] = {
     # Who are the hubs? PageRank over everything, then rank people.
     "key_maintainers": """
 CALL algo.pageRank(null, null) YIELD node, score
-WITH node, score WHERE node:Person AND NOT node.login ENDS WITH '[bot]'
+WITH node, score WHERE node:Person AND NOT coalesce(node.is_bot, false)
 MATCH path = (node)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})
 WITH node, score, count(DISTINCT p) AS prs, collect(path) AS paths
 RETURN node.login AS person, score, prs, paths[0..$max_paths] AS evidence

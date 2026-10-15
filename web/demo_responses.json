@@ -14,7 +14,7 @@
        "k": 10,
        "max_paths": 3
       },
-      "cypher": "MATCH (p:PR {id:$pr})\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)\nWHERE o <> p AND (me IS NULL OR cand <> me) AND NOT cand.login ENDS WITH '[bot]'\nWITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,\n     sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths\nRETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,\n       paths[0..$max_paths] AS evidence\nORDER BY score DESC LIMIT $k",
+      "cypher": "MATCH (p:PR {id:$pr})\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)\nWHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,\n     sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths\nRETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,\n       paths[0..$max_paths] AS evidence\nORDER BY score DESC LIMIT $k",
       "rows": [
        {
         "reviewer": "animesh-chouhan",
@@ -459,21 +459,28 @@
    },
    {
     "kind": "duplicate",
-    "question": "Is PR #369 a duplicate?",
-    "answer": "Possibly related work for PR #369 (\"fix: refuse the unborn-HEAD case before any scaffold write (#322)\"): it shares most of its files with #381 (1/2 files, open), #362 (1/2 files, open), #358 (1/2 files, open).",
+    "question": "Is PR #279 a duplicate?",
+    "answer": "Likely overlaps existing work for PR #279 (\"feat(kicad): add static circuit pattern library (voltage-regulator, u\u2026\"): it links the same issue as #281 (open, via #274); it shares most of its files with #281 (7/7 files, open), #280 (7/7 files, open); its title is close to Issue #274 (Jaccard 0.43).",
     "tool_calls": [
      {
       "tool": "dup_shared_issue",
       "params": {
-       "pr": "copperheadhq/copperhead#369"
+       "pr": "copperheadhq/copperhead#279"
       },
       "cypher": "MATCH path = (p:PR {id:$pr})-[:FIXES|REFERENCES]->(i:Issue)<-[:FIXES|REFERENCES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
-      "rows": []
+      "rows": [
+       {
+        "other": "copperheadhq/copperhead#281",
+        "state": "OPEN",
+        "title": "Feature/pattern bom expansion",
+        "via": "copperheadhq/copperhead#274"
+       }
+      ]
      },
      {
       "tool": "dup_file_overlap",
       "params": {
-       "pr": "copperheadhq/copperhead#369",
+       "pr": "copperheadhq/copperhead#279",
        "min_overlap": 0.5,
        "k": 10,
        "max_paths": 3
@@ -481,116 +488,100 @@
       "cypher": "MATCH (p:PR {id:$pr})-[:TOUCHES]->(pf:File)\nWITH p, count(pf) AS mine\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)\nWHERE o <> p\nWITH o, mine, count(DISTINCT f) AS shared, collect(path) AS paths\nWHERE toFloat(shared) / mine >= $min_overlap\nRETURN o.id AS other, o.state AS state, o.title AS title, shared, mine,\n       paths[0..$max_paths] AS evidence\nORDER BY shared DESC LIMIT $k",
       "rows": [
        {
-        "other": "copperheadhq/copperhead#381",
+        "other": "copperheadhq/copperhead#281",
         "state": "OPEN",
-        "title": "fix: handle CRLF line endings in edit_file and stage-4 schematic check",
-        "shared": 1,
-        "mine": 2
+        "title": "Feature/pattern bom expansion",
+        "shared": 7,
+        "mine": 7
        },
        {
-        "other": "copperheadhq/copperhead#362",
+        "other": "copperheadhq/copperhead#280",
         "state": "OPEN",
-        "title": "fix: explain why a schematic stage is incomplete",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#358",
-        "state": "OPEN",
-        "title": "fix: gate fabrication exports on release readiness",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#356",
-        "state": "OPEN",
-        "title": "fix(draft): ERC exclusions in the schematic intent (#355)",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#352",
-        "state": "CLOSED",
-        "title": "fix: resolve pipeline blockers and false-greens for bounty 66",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#344",
-        "state": "MERGED",
-        "title": "fix: close the post-0.11 review findings in draft, create and the agent loop",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#342",
-        "state": "MERGED",
-        "title": "fix(create): accept a numbered Draft quality heading, retry from the committed board (#327)",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#341",
-        "state": "MERGED",
-        "title": "fix(draft): refuse footprint pads no symbol pin covers, run the pad checks at stage completion (#325)",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#336",
-        "state": "MERGED",
-        "title": "fix(create): name the layout document path and gate finish on it (#310)",
-        "shared": 1,
-        "mine": 2
-       },
-       {
-        "other": "copperheadhq/copperhead#333",
-        "state": "OPEN",
-        "title": "Repair create gating and add a live smoke harness (WIP #66)",
-        "shared": 1,
-        "mine": 2
+        "title": "Feature/pattern expansion ir",
+        "shared": 7,
+        "mine": 7
        }
       ]
      },
      {
       "tool": "dup_similar_title",
       "params": {
-       "pr": "copperheadhq/copperhead#369",
-       "min_jaccard": 0.5,
+       "pr": "copperheadhq/copperhead#279",
+       "min_jaccard": 0.4,
        "k": 10
       },
-      "cypher": "MATCH path = (p:PR {id:$pr})-[:IN_REPO]->(:Repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND (o:PR OR o:Issue)\nWITH o, path, size([t IN o.tokens WHERE t IN p.tokens]) AS common, size(p.tokens) AS n\nWHERE n > 0 AND toFloat(common) / n >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, path AS evidence\nORDER BY common DESC LIMIT $k",
-      "rows": []
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND (o:PR OR o:Issue) AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
+      "rows": [
+       {
+        "other": "copperheadhq/copperhead#274",
+        "kind": "Issue",
+        "state": "OPEN",
+        "title": "Add a static pattern library for common circuit blocks (voltage regulator, USB-C input, crystal osc)",
+        "common": 6,
+        "jaccard": 0.429
+       }
+      ]
      }
     ],
     "evidence_paths": [
      {
       "nodes": [
        {
-        "id": "copperheadhq/copperhead#369",
+        "id": "copperheadhq/copperhead#279",
         "label": "PR",
-        "name": "#369 fix: refuse the unborn-HEAD case before "
+        "name": "#279 feat(kicad): add static circuit pattern "
        },
        {
-        "id": "copperheadhq/copperhead:src/commands/create.ts",
-        "label": "File",
-        "name": "src/commands/create.ts"
+        "id": "copperheadhq/copperhead#274",
+        "label": "Issue",
+        "name": "#274"
        },
        {
-        "id": "copperheadhq/copperhead#381",
+        "id": "copperheadhq/copperhead#281",
         "label": "PR",
-        "name": "#381 fix: handle CRLF line endings in edit_fi"
+        "name": "#281 Feature/pattern bom expansion"
        }
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead#369",
-        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead#274",
+        "type": "FIXES"
+       },
+       {
+        "source": "copperheadhq/copperhead#281",
+        "target": "copperheadhq/copperhead#274",
+        "type": "REFERENCES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead#279",
+        "label": "PR",
+        "name": "#279 feat(kicad): add static circuit pattern "
+       },
+       {
+        "id": "copperheadhq/copperhead:docs/patterns.md",
+        "label": "File",
+        "name": "docs/patterns.md"
+       },
+       {
+        "id": "copperheadhq/copperhead#281",
+        "label": "PR",
+        "name": "#281 Feature/pattern bom expansion"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead:docs/patterns.md",
         "type": "TOUCHES"
        },
        {
-        "source": "copperheadhq/copperhead#381",
-        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "source": "copperheadhq/copperhead#281",
+        "target": "copperheadhq/copperhead:docs/patterns.md",
         "type": "TOUCHES"
        }
       ]
@@ -598,40 +589,195 @@
      {
       "nodes": [
        {
-        "id": "copperheadhq/copperhead#369",
+        "id": "copperheadhq/copperhead#279",
         "label": "PR",
-        "name": "#369 fix: refuse the unborn-HEAD case before "
+        "name": "#279 feat(kicad): add static circuit pattern "
        },
        {
-        "id": "copperheadhq/copperhead:src/commands/create.ts",
+        "id": "copperheadhq/copperhead:package.json",
         "label": "File",
-        "name": "src/commands/create.ts"
+        "name": "package.json"
        },
        {
-        "id": "copperheadhq/copperhead#362",
+        "id": "copperheadhq/copperhead#281",
         "label": "PR",
-        "name": "#362 fix: explain why a schematic stage is in"
+        "name": "#281 Feature/pattern bom expansion"
        }
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead#369",
-        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead:package.json",
         "type": "TOUCHES"
        },
        {
-        "source": "copperheadhq/copperhead#362",
-        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "source": "copperheadhq/copperhead#281",
+        "target": "copperheadhq/copperhead:package.json",
         "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead#279",
+        "label": "PR",
+        "name": "#279 feat(kicad): add static circuit pattern "
+       },
+       {
+        "id": "copperheadhq/copperhead:scripts/validate-patterns.ts",
+        "label": "File",
+        "name": "scripts/validate-patterns.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#281",
+        "label": "PR",
+        "name": "#281 Feature/pattern bom expansion"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead:scripts/validate-patterns.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#281",
+        "target": "copperheadhq/copperhead:scripts/validate-patterns.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead#279",
+        "label": "PR",
+        "name": "#279 feat(kicad): add static circuit pattern "
+       },
+       {
+        "id": "copperheadhq/copperhead:docs/patterns.md",
+        "label": "File",
+        "name": "docs/patterns.md"
+       },
+       {
+        "id": "copperheadhq/copperhead#280",
+        "label": "PR",
+        "name": "#280 Feature/pattern expansion ir"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead:docs/patterns.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#280",
+        "target": "copperheadhq/copperhead:docs/patterns.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead#279",
+        "label": "PR",
+        "name": "#279 feat(kicad): add static circuit pattern "
+       },
+       {
+        "id": "copperheadhq/copperhead:package.json",
+        "label": "File",
+        "name": "package.json"
+       },
+       {
+        "id": "copperheadhq/copperhead#280",
+        "label": "PR",
+        "name": "#280 Feature/pattern expansion ir"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead:package.json",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#280",
+        "target": "copperheadhq/copperhead:package.json",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead#279",
+        "label": "PR",
+        "name": "#279 feat(kicad): add static circuit pattern "
+       },
+       {
+        "id": "copperheadhq/copperhead:scripts/validate-patterns.ts",
+        "label": "File",
+        "name": "scripts/validate-patterns.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#280",
+        "label": "PR",
+        "name": "#280 Feature/pattern expansion ir"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead:scripts/validate-patterns.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#280",
+        "target": "copperheadhq/copperhead:scripts/validate-patterns.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead#279",
+        "label": "PR",
+        "name": "#279 feat(kicad): add static circuit pattern "
+       },
+       {
+        "id": "copperheadhq/copperhead",
+        "label": "Repo",
+        "name": "copperheadhq/copperhead"
+       },
+       {
+        "id": "copperheadhq/copperhead#274",
+        "label": "Issue",
+        "name": "#274"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#279",
+        "target": "copperheadhq/copperhead",
+        "type": "IN_REPO"
+       },
+       {
+        "source": "copperheadhq/copperhead#274",
+        "target": "copperheadhq/copperhead",
+        "type": "IN_REPO"
        }
       ]
      }
     ],
     "focus": [
-     "copperheadhq/copperhead#369",
-     "copperheadhq/copperhead#381",
-     "copperheadhq/copperhead#362",
-     "copperheadhq/copperhead#358"
+     "copperheadhq/copperhead#279",
+     "copperheadhq/copperhead#281",
+     "copperheadhq/copperhead#281",
+     "copperheadhq/copperhead#280"
     ]
    },
    {
@@ -643,9 +789,10 @@
       "tool": "impact_file",
       "params": {
        "file": "copperheadhq/copperhead:src/kicad/sexp.ts",
-       "k": 10
+       "k": 10,
+       "max_paths": 3
       },
-      "cypher": "MATCH path = (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\nRETURN g.path AS file, c.weight AS strength, path AS evidence\nORDER BY strength DESC LIMIT $k",
+      "cypher": "MATCH (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\nOPTIONAL MATCH path = (f)<-[:TOUCHES]-(p:PR)-[:TOUCHES]->(g)\nWITH g, c.weight AS strength, collect(path) AS paths\nRETURN g.path AS file, strength, paths[0..$max_paths] AS evidence\nORDER BY strength DESC, file ASC LIMIT $k",
       "rows": [
        {
         "file": "src/cli.ts",
@@ -699,6 +846,11 @@
         "name": "src/kicad/sexp.ts"
        },
        {
+        "id": "copperheadhq/copperhead#160",
+        "label": "PR",
+        "name": "#160 Propose deterministic-schematic-drafting"
+       },
+       {
         "id": "copperheadhq/copperhead:src/cli.ts",
         "label": "File",
         "name": "src/cli.ts"
@@ -706,9 +858,14 @@
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "source": "copperheadhq/copperhead#160",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#160",
         "target": "copperheadhq/copperhead:src/cli.ts",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -718,6 +875,73 @@
         "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
         "label": "File",
         "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#198",
+        "label": "PR",
+        "name": "#198 fix(kicad): rank symbol candidates usefu"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/cli.ts",
+        "label": "File",
+        "name": "src/cli.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#198",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#198",
+        "target": "copperheadhq/copperhead:src/cli.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "label": "File",
+        "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#264",
+        "label": "PR",
+        "name": "#264 Draft compaction, IC-first layout, boxes"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/cli.ts",
+        "label": "File",
+        "name": "src/cli.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#264",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#264",
+        "target": "copperheadhq/copperhead:src/cli.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "label": "File",
+        "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#264",
+        "label": "PR",
+        "name": "#264 Draft compaction, IC-first layout, boxes"
        },
        {
         "id": "copperheadhq/copperhead:openspec/specs/SPEC.md",
@@ -727,9 +951,14 @@
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "source": "copperheadhq/copperhead#264",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#264",
         "target": "copperheadhq/copperhead:openspec/specs/SPEC.md",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -739,6 +968,73 @@
         "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
         "label": "File",
         "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#268",
+        "label": "PR",
+        "name": "#268 feat(draft): put every part on its pin \u2014"
+       },
+       {
+        "id": "copperheadhq/copperhead:openspec/specs/SPEC.md",
+        "label": "File",
+        "name": "openspec/specs/SPEC.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#268",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#268",
+        "target": "copperheadhq/copperhead:openspec/specs/SPEC.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "label": "File",
+        "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#305",
+        "label": "PR",
+        "name": "#305 feat: add electrical schematic diff (#30"
+       },
+       {
+        "id": "copperheadhq/copperhead:openspec/specs/SPEC.md",
+        "label": "File",
+        "name": "openspec/specs/SPEC.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#305",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#305",
+        "target": "copperheadhq/copperhead:openspec/specs/SPEC.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "label": "File",
+        "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#160",
+        "label": "PR",
+        "name": "#160 Propose deterministic-schematic-drafting"
        },
        {
         "id": "copperheadhq/copperhead:src/agent/loop.ts",
@@ -748,9 +1044,14 @@
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "source": "copperheadhq/copperhead#160",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#160",
         "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -760,6 +1061,73 @@
         "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
         "label": "File",
         "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#198",
+        "label": "PR",
+        "name": "#198 fix(kicad): rank symbol candidates usefu"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/agent/loop.ts",
+        "label": "File",
+        "name": "src/agent/loop.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#198",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#198",
+        "target": "copperheadhq/copperhead:src/agent/loop.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "label": "File",
+        "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#305",
+        "label": "PR",
+        "name": "#305 feat: add electrical schematic diff (#30"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/agent/loop.ts",
+        "label": "File",
+        "name": "src/agent/loop.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#305",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#305",
+        "target": "copperheadhq/copperhead:src/agent/loop.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "label": "File",
+        "name": "src/kicad/sexp.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#160",
+        "label": "PR",
+        "name": "#160 Propose deterministic-schematic-drafting"
        },
        {
         "id": "copperheadhq/copperhead:src/agent/tools.ts",
@@ -769,9 +1137,14 @@
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "source": "copperheadhq/copperhead#160",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#160",
         "target": "copperheadhq/copperhead:src/agent/tools.ts",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -783,16 +1156,26 @@
         "name": "src/kicad/sexp.ts"
        },
        {
-        "id": "copperheadhq/copperhead:src/commands/check.ts",
+        "id": "copperheadhq/copperhead#198",
+        "label": "PR",
+        "name": "#198 fix(kicad): rank symbol candidates usefu"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/agent/tools.ts",
         "label": "File",
-        "name": "src/commands/check.ts"
+        "name": "src/agent/tools.ts"
        }
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "target": "copperheadhq/copperhead:src/commands/check.ts",
-        "type": "CO_CHANGED"
+        "source": "copperheadhq/copperhead#198",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#198",
+        "target": "copperheadhq/copperhead:src/agent/tools.ts",
+        "type": "TOUCHES"
        }
       ]
      },
@@ -804,100 +1187,26 @@
         "name": "src/kicad/sexp.ts"
        },
        {
-        "id": "copperheadhq/copperhead:test/sexp.test.ts",
-        "label": "File",
-        "name": "test/sexp.test.ts"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "target": "copperheadhq/copperhead:test/sexp.test.ts",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "label": "File",
-        "name": "src/kicad/sexp.ts"
+        "id": "copperheadhq/copperhead#216",
+        "label": "PR",
+        "name": "#216 test(draft): run the engine against real"
        },
        {
-        "id": "copperheadhq/copperhead:README.md",
+        "id": "copperheadhq/copperhead:src/agent/tools.ts",
         "label": "File",
-        "name": "README.md"
+        "name": "src/agent/tools.ts"
        }
       ],
       "edges": [
        {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "target": "copperheadhq/copperhead:README.md",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "label": "File",
-        "name": "src/kicad/sexp.ts"
+        "source": "copperheadhq/copperhead#216",
+        "target": "copperheadhq/copperhead:src/kicad/sexp.ts",
+        "type": "TOUCHES"
        },
        {
-        "id": "copperheadhq/copperhead:docs/src/content/docs/reference/cli.md",
-        "label": "File",
-        "name": "docs/src/content/docs/reference/cli.md"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "target": "copperheadhq/copperhead:docs/src/content/docs/reference/cli.md",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "label": "File",
-        "name": "src/kicad/sexp.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead:src/kicad/legibility.ts",
-        "label": "File",
-        "name": "src/kicad/legibility.ts"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "target": "copperheadhq/copperhead:src/kicad/legibility.ts",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "label": "File",
-        "name": "src/kicad/sexp.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead:src/kicad/report.ts",
-        "label": "File",
-        "name": "src/kicad/report.ts"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead:src/kicad/sexp.ts",
-        "target": "copperheadhq/copperhead:src/kicad/report.ts",
-        "type": "CO_CHANGED"
+        "source": "copperheadhq/copperhead#216",
+        "target": "copperheadhq/copperhead:src/agent/tools.ts",
+        "type": "TOUCHES"
        }
       ]
      }
@@ -913,7 +1222,7 @@
    {
     "kind": "stalled",
     "question": "Why is this repo stalled?",
-    "answer": "Signals from the graph: 106 PRs are open and 91 of them have no human review; the oldest, #52 by M-A-SAIADITHYAA, has waited 84 days; the last merge was #345 on 2026-09-27 (17 days before the newest PR); review load is concentrated: adhavan18 did 12 of 25 human reviews in the top 6.",
+    "answer": "Signals from the graph: 106 PRs are open and 91 of them have no human review; the oldest, #52 by M-A-SAIADITHYAA, has waited 84 days; the last merge was #345 on 2026-09-27 (17 days before the newest PR); review load is concentrated: adhavan18 did 12 of 27 human reviews in the top 8.",
     "tool_calls": [
      {
       "tool": "stale_open_prs",
@@ -1062,23 +1371,8 @@
        "k": 10,
        "max_paths": 3
       },
-      "cypher": "MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWITH rv, count(DISTINCT p) AS reviewed,\n     count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,\n     collect(path) AS paths\nRETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS evidence\nORDER BY reviewed DESC LIMIT $k",
+      "cypher": "MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE NOT coalesce(rv.is_bot, false)\nWITH rv, count(DISTINCT p) AS reviewed,\n     count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,\n     collect(path) AS paths\nRETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS evidence\nORDER BY reviewed DESC LIMIT $k",
       "rows": [
-       {
-        "reviewer": "coderabbitai",
-        "reviewed": 79,
-        "open_reviewed": 42
-       },
-       {
-        "reviewer": "github-actions",
-        "reviewed": 34,
-        "open_reviewed": 22
-       },
-       {
-        "reviewer": "chatgpt-codex-connector",
-        "reviewed": 26,
-        "open_reviewed": 10
-       },
        {
         "reviewer": "adhavan18",
         "reviewed": 12,
@@ -1100,17 +1394,22 @@
         "open_reviewed": 0
        },
        {
-        "reviewer": "copilot-pull-request-reviewer",
-        "reviewed": 1,
-        "open_reviewed": 1
-       },
-       {
         "reviewer": "sunnyrai489",
         "reviewed": 1,
         "open_reviewed": 1
        },
        {
         "reviewer": "DevSars24",
+        "reviewed": 1,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "AyushVUpadhye",
+        "reviewed": 1,
+        "open_reviewed": 1
+       },
+       {
+        "reviewer": "github-advanced-security",
         "reviewed": 1,
         "open_reviewed": 0
        }
@@ -1420,7 +1719,7 @@
        "k": 10,
        "max_paths": 3
       },
-      "cypher": "MATCH (p:PR {id:$pr})\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)\nWHERE o <> p AND (me IS NULL OR cand <> me) AND NOT cand.login ENDS WITH '[bot]'\nWITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,\n     sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths\nRETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,\n       paths[0..$max_paths] AS evidence\nORDER BY score DESC LIMIT $k",
+      "cypher": "MATCH (p:PR {id:$pr})\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)\nWHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,\n     sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths\nRETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,\n       paths[0..$max_paths] AS evidence\nORDER BY score DESC LIMIT $k",
       "rows": [
        {
         "reviewer": "WittierDinosaur",
@@ -1938,10 +2237,10 @@
       "tool": "dup_similar_title",
       "params": {
        "pr": "sqlfluff/sqlfluff#8731",
-       "min_jaccard": 0.5,
+       "min_jaccard": 0.4,
        "k": 10
       },
-      "cypher": "MATCH path = (p:PR {id:$pr})-[:IN_REPO]->(:Repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND (o:PR OR o:Issue)\nWITH o, path, size([t IN o.tokens WHERE t IN p.tokens]) AS common, size(p.tokens) AS n\nWHERE n > 0 AND toFloat(common) / n >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, path AS evidence\nORDER BY common DESC LIMIT $k",
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND (o:PR OR o:Issue) AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
       "rows": []
      }
     ],
@@ -2025,9 +2324,10 @@
       "tool": "impact_file",
       "params": {
        "file": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-       "k": 10
+       "k": 10,
+       "max_paths": 3
       },
-      "cypher": "MATCH path = (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\nRETURN g.path AS file, c.weight AS strength, path AS evidence\nORDER BY strength DESC LIMIT $k",
+      "cypher": "MATCH (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\nOPTIONAL MATCH path = (f)<-[:TOUCHES]-(p:PR)-[:TOUCHES]->(g)\nWITH g, c.weight AS strength, collect(path) AS paths\nRETURN g.path AS file, strength, paths[0..$max_paths] AS evidence\nORDER BY strength DESC, file ASC LIMIT $k",
       "rows": [
        {
         "file": "test/dialects/databricks_test.py",
@@ -2081,6 +2381,11 @@
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
        },
        {
+        "id": "sqlfluff/sqlfluff#8509",
+        "label": "PR",
+        "name": "#8509 Databricks: support PRIVATE streaming ta"
+       },
+       {
         "id": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
         "label": "File",
         "name": "test/dialects/databricks_test.py"
@@ -2088,9 +2393,14 @@
       ],
       "edges": [
        {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "source": "sqlfluff/sqlfluff#8509",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8509",
         "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -2100,6 +2410,73 @@
         "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
         "label": "File",
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8513",
+        "label": "PR",
+        "name": "#8513 Databricks: restore LIVE and STREAMING L"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "label": "File",
+        "name": "test/dialects/databricks_test.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8513",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8513",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8545",
+        "label": "PR",
+        "name": "#8545 Databricks: keep notebook magic-cell bou"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "label": "File",
+        "name": "test/dialects/databricks_test.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8545",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8545",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8509",
+        "label": "PR",
+        "name": "#8509 Databricks: support PRIVATE streaming ta"
        },
        {
         "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
@@ -2109,9 +2486,14 @@
       ],
       "edges": [
        {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "source": "sqlfluff/sqlfluff#8509",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8509",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -2121,6 +2503,73 @@
         "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
         "label": "File",
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8546",
+        "label": "PR",
+        "name": "#8546 SparkSQL/Databricks: identifier and keyw"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks_keywords.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8546",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8546",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8547",
+        "label": "PR",
+        "name": "#8547 Databricks: support the ALTER statement "
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks_keywords.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8547",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8547",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8546",
+        "label": "PR",
+        "name": "#8546 SparkSQL/Databricks: identifier and keyw"
        },
        {
         "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_sparksql.py",
@@ -2130,9 +2579,14 @@
       ],
       "edges": [
        {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "source": "sqlfluff/sqlfluff#8546",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8546",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_sparksql.py",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -2142,6 +2596,73 @@
         "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
         "label": "File",
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8590",
+        "label": "PR",
+        "name": "#8590 Bound data type argument arity (reject D"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_sparksql.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_sparksql.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8590",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8590",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_sparksql.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8671",
+        "label": "PR",
+        "name": "#8671 SparkSQL: Parse ${var} variable substitu"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_sparksql.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_sparksql.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8671",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8671",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_sparksql.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8547",
+        "label": "PR",
+        "name": "#8547 Databricks: support the ALTER statement "
        },
        {
         "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.sql",
@@ -2151,9 +2672,14 @@
       ],
       "edges": [
        {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "source": "sqlfluff/sqlfluff#8547",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8547",
         "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.sql",
-        "type": "CO_CHANGED"
+        "type": "TOUCHES"
        }
       ]
      },
@@ -2165,16 +2691,26 @@
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
        },
        {
-        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.yml",
+        "id": "sqlfluff/sqlfluff#8625",
+        "label": "PR",
+        "name": "#8625 Add Databricks GEOMETRY datatype support"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.sql",
         "label": "File",
-        "name": "test/fixtures/dialects/databricks/alter_table.yml"
+        "name": "test/fixtures/dialects/databricks/alter_table.sql"
        }
       ],
       "edges": [
        {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.yml",
-        "type": "CO_CHANGED"
+        "source": "sqlfluff/sqlfluff#8625",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8625",
+        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.sql",
+        "type": "TOUCHES"
        }
       ]
      },
@@ -2186,100 +2722,26 @@
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
        },
        {
-        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_table.sql",
-        "label": "File",
-        "name": "test/fixtures/dialects/databricks/create_table.sql"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_table.sql",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+        "id": "sqlfluff/sqlfluff#8670",
+        "label": "PR",
+        "name": "#8670 Databricks: Parse unnamed PRIMARY KEY an"
        },
        {
-        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_table.yml",
+        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.sql",
         "label": "File",
-        "name": "test/fixtures/dialects/databricks/create_table.yml"
+        "name": "test/fixtures/dialects/databricks/alter_table.sql"
        }
       ],
       "edges": [
        {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_table.yml",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+        "source": "sqlfluff/sqlfluff#8670",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
        },
        {
-        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_catalog.sql",
-        "label": "File",
-        "name": "test/fixtures/dialects/databricks/create_catalog.sql"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_catalog.sql",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_catalog.yml",
-        "label": "File",
-        "name": "test/fixtures/dialects/databricks/create_catalog.yml"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_catalog.yml",
-        "type": "CO_CHANGED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_flow_and_private_streaming_table.sql",
-        "label": "File",
-        "name": "test/fixtures/dialects/databricks/create_flow_and_private_streaming_table.sql"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/create_flow_and_private_streaming_table.sql",
-        "type": "CO_CHANGED"
+        "source": "sqlfluff/sqlfluff#8670",
+        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/databricks/alter_table.sql",
+        "type": "TOUCHES"
        }
       ]
      }
@@ -2295,7 +2757,7 @@
    {
     "kind": "stalled",
     "question": "Why is this repo stalled?",
-    "answer": "Signals from the graph: 71 PRs are open and 54 of them have no human review; the oldest, #8516 by taslater, has waited 26 days; the last merge was #8574 on 2026-10-14 (0 days before the newest PR); review load is concentrated: rubytobi did 35 of 115 human reviews in the top 8.",
+    "answer": "Signals from the graph: 71 PRs are open and 54 of them have no human review; the oldest, #8516 by taslater, has waited 26 days; the last merge was #8574 on 2026-10-14 (0 days before the newest PR); review load is concentrated: rubytobi did 35 of 121 human reviews in the top 10.",
     "tool_calls": [
      {
       "tool": "stale_open_prs",
@@ -2444,13 +2906,8 @@
        "k": 10,
        "max_paths": 3
       },
-      "cypher": "MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWITH rv, count(DISTINCT p) AS reviewed,\n     count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,\n     collect(path) AS paths\nRETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS evidence\nORDER BY reviewed DESC LIMIT $k",
+      "cypher": "MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE NOT coalesce(rv.is_bot, false)\nWITH rv, count(DISTINCT p) AS reviewed,\n     count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,\n     collect(path) AS paths\nRETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS evidence\nORDER BY reviewed DESC LIMIT $k",
       "rows": [
-       {
-        "reviewer": "cubic-dev-ai",
-        "reviewed": 133,
-        "open_reviewed": 46
-       },
        {
         "reviewer": "rubytobi",
         "reviewed": 35,
@@ -2460,11 +2917,6 @@
         "reviewer": "keraion",
         "reviewed": 33,
         "open_reviewed": 2
-       },
-       {
-        "reviewer": "copilot-pull-request-reviewer",
-        "reviewed": 15,
-        "open_reviewed": 3
        },
        {
         "reviewer": "peterbud",
@@ -2494,6 +2946,16 @@
        {
         "reviewer": "rfanth",
         "reviewed": 4,
+        "open_reviewed": 1
+       },
+       {
+        "reviewer": "AndrewKurg",
+        "reviewed": 4,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "dheeraj-juvvadi",
+        "reviewed": 2,
         "open_reviewed": 1
        }
       ]

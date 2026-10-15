@@ -23,14 +23,22 @@ RETURN o.id AS other, o.state AS state, o.title AS title, shared, mine,
        paths[0..$max_paths] AS evidence
 ORDER BY shared DESC LIMIT $k""",
 
+    # Jaccard over the title token sets stored at ingest. Size filter first:
+    # J >= t needs t*|p| <= |o| <= |p|/t, so most candidates are dropped
+    # before any list intersection is computed.
     "dup_similar_title": """
-MATCH path = (p:PR {id:$pr})-[:IN_REPO]->(:Repo)<-[:IN_REPO]-(o)
-WHERE o <> p AND (o:PR OR o:Issue)
-WITH o, path, size([t IN o.tokens WHERE t IN p.tokens]) AS common, size(p.tokens) AS n
-WHERE n > 0 AND toFloat(common) / n >= $min_jaccard
+MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)
+WITH p, repo, size(p.tokens) AS n WHERE n > 0
+MATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)
+WHERE o <> p AND (o:PR OR o:Issue) AND o.tokens IS NOT NULL
+  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n
+WITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common
+WHERE common > 0
+WITH o, path, common, toFloat(common) / (n + m - common) AS jaccard
+WHERE jaccard >= $min_jaccard
 RETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,
-       common, path AS evidence
-ORDER BY common DESC LIMIT $k""",
+       common, jaccard, path AS evidence
+ORDER BY jaccard DESC, common DESC LIMIT $k""",
 
     "issue_fixed_by": """
 MATCH path = (i:Issue {id:$issue})<-[rel:FIXES|REFERENCES]-(p:PR)
@@ -44,7 +52,7 @@ ORDER BY p.merged DESC""",
 MATCH (p:PR {id:$pr})
 OPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)
 MATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)
-WHERE o <> p AND (me IS NULL OR cand <> me) AND NOT cand.login ENDS WITH '[bot]'
+WHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)
 WITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,
      sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths
 RETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,
@@ -59,6 +67,13 @@ WHERE NOT (p)-[:TOUCHES]->(g)
 WITH g, sum(c.weight) AS strength, collect(path) AS paths
 RETURN g.path AS file, strength, paths[0..$max_paths] AS evidence
 ORDER BY strength DESC LIMIT $k""",
+
+    "impact_file": """
+MATCH (f:File {id:$file})-[c:CO_CHANGED]-(g:File)
+OPTIONAL MATCH path = (f)<-[:TOUCHES]-(p:PR)-[:TOUCHES]->(g)
+WITH g, c.weight AS strength, collect(path) AS paths
+RETURN g.path AS file, strength, paths[0..$max_paths] AS evidence
+ORDER BY strength DESC, file ASC LIMIT $k""",
 
     # ---- Q4: why is the repo stalled? ----------------------------------------
     "stale_open_prs": """
@@ -76,6 +91,7 @@ ORDER BY merged DESC LIMIT $k""",
 
     "reviewer_load": """
 MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})
+WHERE NOT coalesce(rv.is_bot, false)
 WITH rv, count(DISTINCT p) AS reviewed,
      count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,
      collect(path) AS paths
@@ -83,7 +99,24 @@ RETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS ev
 ORDER BY reviewed DESC LIMIT $k""",
 }
 
-DEFAULTS = {"k": 10, "max_paths": 3, "min_overlap": 0.5, "min_jaccard": 0.5}
+DEFAULTS = {"k": 10, "max_paths": 3, "min_overlap": 0.5, "min_jaccard": 0.4}
+
+# One-line descriptions used by `python -m prgraph.gendocs` for docs/QUERIES.md.
+DOCS: dict[str, str] = {
+    "dup_shared_issue": "Q1. Other PRs that fix/reference the same issue. Params: $pr.",
+    "dup_file_overlap": "Q1. PRs touching >= $min_overlap of this PR's files.",
+    "dup_similar_title": "Q1. PRs/issues in the same repo with title-token Jaccard >= $min_jaccard "
+                         "(size-filtered candidates).",
+    "issue_fixed_by": "Q1 (issue form). Is issue $issue already being fixed?",
+    "reviewers": "Q2. People who authored (1) or reviewed (2) PRs touching the same files; "
+                 "+3 per shared file. Bots (Person.is_bot) excluded.",
+    "impact": "Q3. Files historically co-changed with this PR's files but not in it.",
+    "impact_file": "Q3 (file form). What breaks if $file changes: co-changed files, with the PRs "
+                   "that changed both as evidence.",
+    "stale_open_prs": "Q4. Oldest open PRs and how many reviewers they got.",
+    "last_merges": "Q4. Most recent merges (empty/old = stalled).",
+    "reviewer_load": "Q4. Review concentration (bus factor), bots excluded.",
+}
 
 
 def param_names(cypher: str) -> set[str]:

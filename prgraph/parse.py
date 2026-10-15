@@ -49,3 +49,25 @@ def co_changes(prs: list[dict], max_files: int = 50, min_weight: int = 2) -> lis
 def title_tokens(title: str) -> list[str]:
     stop = {"the", "a", "an", "to", "of", "in", "for", "and", "on", "with", "is", "fix", "add", "when"}
     return sorted({w for w in re.findall(r"[a-z0-9_]{3,}", (title or "").lower()) if w not in stop})
+
+
+# GitHub GraphQL returns app/bot logins without the "[bot]" suffix
+# (e.g. reviews by coderabbitai), so a suffix check alone misses most of them.
+BOT_LOGINS = frozenset({
+    "github-actions", "coderabbitai", "chatgpt-codex-connector", "cubic-dev-ai",
+    "copilot-pull-request-reviewer", "copilot-swe-agent", "copilot", "greptile-apps",
+    "gemini-code-assist", "sourcery-ai", "codecov", "codecov-commenter", "dependabot",
+    "renovate", "pre-commit-ci", "sonarcloud", "sonarqubecloud", "netlify", "vercel",
+    "changeset-bot", "mergify", "allcontributors", "ellipsis-dev", "qodo-merge-pro",
+    "korbit-ai", "devin-ai-integration", "graphite-app", "socket-security",
+})
+
+
+def is_bot(login: str | None, typename: str | None = None) -> bool:
+    """True for GitHub apps/bots: GraphQL __typename Bot, '[bot]' suffix, or a known app login."""
+    if typename == "Bot":
+        return True
+    if not login:
+        return False
+    low = login.lower()
+    return low.endswith("[bot]") or low in BOT_LOGINS
