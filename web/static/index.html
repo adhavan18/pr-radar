@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR Radar</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.2/cytoscape.min.js"></script>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span>PR Radar <span class="sub">graph answers for maintainers</span></div>
+  <div class="hright">
+    <span id="mode" class="badge" hidden>demo</span>
+    <select id="repo" aria-label="Repository"></select>
+    <button id="theme" class="ghost" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+<main>
+  <section class="ask">
+    <form id="form">
+      <input id="q" autocomplete="off" placeholder="Ask about PRs, reviewers, impact…">
+      <button type="submit" id="go">Ask</button>
+    </form>
+    <div id="chips" class="chips"></div>
+  </section>
+  <section class="grid">
+    <div class="col">
+      <div class="card">
+        <h2>Answer</h2>
+        <div id="answer" class="answer muted">Pick an example or ask a question.</div>
+      </div>
+      <div class="card">
+        <h2>Tool calls <span id="tcount" class="count"></span></h2>
+        <div id="calls" class="muted small">None yet.</div>
+      </div>
+    </div>
+    <div class="card graphcard">
+      <h2>Evidence graph <span id="gcount" class="count"></span></h2>
+      <div id="legend" class="legend"></div>
+      <div id="cy"></div>
+      <div id="ginfo" class="ginfo"></div>
+    </div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
