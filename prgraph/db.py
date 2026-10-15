@@ -1,5 +1,29 @@
 """FalkorDB connection + schema setup."""
 import os
+from pathlib import Path
+
+
+def _load_dotenv() -> None:
+    """Read <repo>/.env into os.environ (existing env vars win). python-dotenv if present."""
+    path = Path(__file__).resolve().parent.parent / ".env"
+    if not path.exists():
+        return
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(path, override=False)
+        return
+    except ImportError:
+        pass
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        k = k.strip().removeprefix("export ").strip()
+        os.environ.setdefault(k, v.strip().strip('"').strip("'"))
+
+
+_load_dotenv()
 
 GRAPH_NAME = os.environ.get("PRGRAPH_GRAPH", "prgraph")
 

@@ -1,0 +1,22 @@
+# Render blueprint: New > Blueprint > point at this repo.
+# Set FALKORDB_* (FalkorDB Cloud) for live answers, or leave PRGRAPH_DEMO=1 for canned demo answers.
+services:
+  - type: web
+    name: pr-radar
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: PRGRAPH_DEMO
+        value: "1"
+      - key: FALKORDB_HOST
+        sync: false
+      - key: FALKORDB_PORT
+        sync: false
+      - key: FALKORDB_USERNAME
+        sync: false
+      - key: FALKORDB_PASSWORD
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
