@@ -1,12 +1,99 @@
 # PR Radar
 
-**Graph-backed answers for open-source maintainers, with the evidence path for every claim.**
+**A FalkorDB graph of who wrote, reviewed and touched what in a repo, and an agent that answers (and acts) with the graph path behind every claim.**
 
-Busy repos drown in pull requests. Three or four people fix the same issue in parallel, a newcomer opens a PR and nobody knows who should look at it, a change to one file quietly breaks the file it always changes with, and a repo stalls without anyone noticing why. These are all questions about *connections*: PR to issue, PR to file, file to file, person to PR. PR Radar loads a GitHub repo's PRs, issues, files, authors and reviews into FalkorDB, and an agent answers those questions with Cypher. Every answer comes back with the graph paths behind it (`alice -AUTHORED-> PR#12 -TOUCHES-> src/x.py <-TOUCHES- PR#40`), so a maintainer can check the reasoning instead of trusting a summary.
+Live demo: **https://pr-radar.onrender.com** · Demo video: [link coming](docs/DEMO_SCRIPT.md) · Backtest: [docs/EVAL.md](docs/EVAL.md)
 
-![PR Radar web UI: suggested reviewers with evidence paths](docs/img/web_reviewers.png)
+![PR Radar answering with a traced evidence path through the graph](docs/img/hero_answer.png)
 
-**Tracks entered:** Track 01, *Agents That Act on Connected Data* (primary). It also touches Track 02 (graph memory): the agent writes what it learned back into the same graph as `Question` nodes linked to the PRs, files and people they were about.
+## The moment
+
+Ask *"What if animesh-chouhan leaves copperhead?"* and PR Radar walks `Person -AUTHORED|REVIEWED-> PR -TOUCHES-> File <- other humans`:
+
+> **625 of 780 files** animesh-chouhan has touched would have **no other human** who authored or reviewed a PR on them (80%). He is on 67 of the 200 cached PRs.
+
+Each of those files comes with the path that proves it, so you can click through instead of trusting a summary.
+
+## What it does
+
+1. **Acts on new PRs.** A GitHub Action runs PR Radar triage on every new PR in [adhavan18/pr-radar-demo](https://github.com/adhavan18/pr-radar-demo) and comments with what the graph found. See [PR Radar acts](#pr-radar-acts).
+2. **Answers with proof paths.** Duplicates, reviewers, impact, stalls, ownership: every answer returns the FalkorDB `Path`s it came from (`alice -AUTHORED-> PR#12 -TOUCHES-> src/x.py <-TOUCHES- PR#40`).
+3. **Runs graph algorithms in the database.** `algo.pageRank` for key maintainers, `algo.betweenness` over derived `COLLAB` edges for people who bridge groups, `algo.labelPropagation` for ownership clusters, `algo.SPpaths` for "how is X connected to Y".
+4. **Remembers.** Questions, sessions and triage results are written back into the same graph and linked to the PRs, files and people they were about.
+5. **Plugs into other agents.** An MCP server exposes the same tools to Claude Code and Claude Desktop.
+
+## PR Radar acts
+
+_Placeholder: results from the autonomous triage Action (`prgraph/triage.py`) on adhavan18/pr-radar-demo go here: an example comment, what it found, links to the PRs._
+
+## Tracks
+
+Entering all three tracks.
+
+**Track 01: Agents That Act on Connected Data.** The agent plans over Cypher tools, traverses multi-hop relationships (PR to files to other PRs to their reviewers), and takes action: the triage Action posts a comment on each new PR. Every output is explainable through the returned paths.
+
+**Track 02: Agent Memory and Coordination.** Memory is graph-native: `Question`, `Session` and triage nodes, linked by `ABOUT` edges to the entities they concern. One memory is shared by every surface (web agent, CLI, MCP server, GitHub Action), so a finding recorded by one is recalled by the others (`recall_about`).
+
+**Track 03: Company Brain.** For a codebase: who owns what (`bus_factor_files`), who knows what (`reviewers`, file expertise), what breaks if someone leaves (`bus_factor`, the moment above), ownership clusters (label propagation), bridges between groups (betweenness), and tracing decisions from a PR to the issue it fixes (`FIXES` / `REFERENCES`, `issue_fixed_by`).
+
+## How do we know it's right?
+
+`python -m prgraph.eval` replays 200 PRs per repo in creation order into a scratch graph and asks the real queries about each PR using only what existed before it (its own reviews are never visible). Full method and every variant tried: [docs/EVAL.md](docs/EVAL.md); raw numbers: [docs/eval_results.json](docs/eval_results.json).
+
+Reviewer recommendation, before and after the eval-driven rewrite of `reviewers`:
+
+| repo (PRs scored) | method | hit@1 | hit@3 | MRR |
+|---|---|---|---|---|
+| copperhead (19) | old query | 0.158 | 0.316 | 0.254 |
+| | **current query** | **0.368** | 0.421 | 0.423 |
+| | most-active baseline | 0.368 | 0.579 | 0.456 |
+| | random | 0.158 | 0.316 | 0.272 |
+| sqlfluff (96) | old query | 0.125 | 0.198 | 0.164 |
+| | **current query** | **0.260** | 0.583 | 0.432 |
+| | most-active baseline | 0.260 | 0.635 | 0.438 |
+| | random | 0.073 | 0.177 | 0.177 |
+
+Where it still trails: the current query ties the most-active baseline on hit@1 but is behind on hit@3 on both repos (on copperhead that is 3 PRs out of 19) and slightly behind on MRR. In a 200-PR window, review volume carries almost all the signal and file expertise adds little; per-PR inspection showed the remaining gap is mostly tie ordering among equally active reviewers.
+
+Other results, stated plainly:
+
+- **Duplicates:** `dup_shared_issue` (FIXES only, skips tracking issues) has precision 1.00 on both repos (12 and 15 predicted pairs), with low recall on copperhead because most "shared issue" pairs there are related work under tracking issues. Title similarity is the best issue-independent signal (precision 0.93 on copperhead, 0.38 on sqlfluff).
+- **Impact (co-changed files):** weak. recall@10 is 0.118 on copperhead and 0.022 on sqlfluff, because a co-change edge needs a file pair to appear in 2+ earlier PRs, which is rare in 200 PRs.
+
+![Eval panel in the web UI](docs/img/eval.png)
+
+## Why a graph
+
+Every question is a multi-hop traversal and the hop path is the explanation. Remove FalkorDB and nothing is left: there is no other store, every tool is a Cypher query, the algorithms run inside the database, memory is nodes in the same graph, and evidence paths are FalkorDB `Path` results. In tables, "reviewers" is a four-way self-join per request and "bus factor" is a self-join plus a per-file group-by, and neither gives you a path to show.
+
+Two signature queries (all of them, generated from source, are in [docs/QUERIES.md](docs/QUERIES.md)).
+
+What breaks if a person leaves (`bus_factor`):
+
+```cypher
+MATCH (me:Person {login:$person})-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})
+WHERE p.created >= $since
+MATCH (p)-[:TOUCHES]->(f:File)
+WITH DISTINCT me, f
+MATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f)
+WHERE q.created >= $since AND NOT coalesce(h.is_bot, false)
+WITH me, f, collect(DISTINCT h) AS humans, count(DISTINCT q) AS prs
+WHERE size(humans) = 1 AND humans[0] = me
+MATCH path = (me)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(f)
+WITH f, prs, collect(path) AS paths
+RETURN f.path AS file, prs, 0 AS remaining_humans, paths[0..$max_paths] AS evidence
+ORDER BY prs DESC, file LIMIT $k
+```
+
+Ownership clusters (`ownership_clusters`, abridged):
+
+```cypher
+CALL algo.labelPropagation({nodeLabels:['Person','PR','File'],
+                            relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId
+WITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')
+...
+RETURN communityId AS cluster, files, top_files, top_people
+```
 
 ## Architecture
 
@@ -19,31 +106,32 @@ flowchart LR
     L[Claude tool-calling loop] --> T
   end
   T -->|parameterised Cypher| FDB
-  T -->|remember_finding| FDB
-  WEB[web/app.py FastAPI + static UI] --> Agent
+  T -->|memory: Question / Session / triage| FDB
+  WEB[web/app.py FastAPI + UI] --> Agent
   CLI[python -m prgraph.agent] --> Agent
   MCP[prgraph.mcp_server stdio] --> T
+  ACT[GitHub Action: prgraph.triage] --> T
+  ACT -->|PR comment| GH
   CC[Claude Code / Claude Desktop] --> MCP
 ```
 
-## Graph data model
+## Graph model
 
 ```mermaid
 graph LR
   Person -->|AUTHORED| PR
   Person -->|AUTHORED| Issue
   Person -->|REVIEWED state,at| PR
-  PR -->|TOUCHES additions,deletions| File
+  Person ---|COLLAB weight| Person
+  PR -->|TOUCHES| File
   File ---|CO_CHANGED weight| File
-  PR -->|FIXES| Issue
-  PR -->|REFERENCES| Issue
+  PR -->|FIXES / REFERENCES| Issue
   PR -->|IN_REPO| Repo
-  Issue -->|IN_REPO| Repo
   PR -->|HAS_LABEL| Label
-  Issue -->|HAS_LABEL| Label
   Question -->|ASKED_IN| Session
   Question -->|ABOUT| PR
   Question -->|ABOUT| File
+  Question -->|ABOUT| Person
 ```
 
 | Node | Key | Main properties |
@@ -66,31 +154,7 @@ graph LR
 | IN_REPO, HAS_LABEL | PR/Issue -> Repo/Label | membership |
 | ASKED_IN, ABOUT | Question -> Session / entity | agent memory |
 
-Full detail: [docs/MODEL.md](docs/MODEL.md). Every Cypher statement (questions, algorithms, memory and ingestion) is in [docs/QUERIES.md](docs/QUERIES.md), generated from the source by `python -m prgraph.gendocs`.
-
-## Questions it answers
-
-| Question | Queries / algorithms (`prgraph/queries.py`, `prgraph/algos.py`, `prgraph/agent/memory.py`) |
-|----------|--------------------------------------|
-| Is this PR a duplicate / already fixed? | `dup_shared_issue`, `dup_file_overlap`, `dup_similar_title` |
-| Is this issue already being fixed? | `issue_fixed_by` |
-| Who should review this PR? | `reviewers` |
-| What else is at risk if this PR / file changes? | `impact`, `impact_file` |
-| Why is the repo stalled? | `stale_open_prs`, `last_merges`, `reviewer_load` |
-| Who are the key maintainers? | `key_maintainers` (FalkorDB `algo.pageRank`) |
-| How is X connected to Y? | `connection` (`shortestPath`) |
-| What did we already find about X? | `remember_finding`, `recall_about` (graph memory) |
-
-## Why a graph
-
-Each answer is a multi-hop traversal, and the hop path *is* the explanation:
-
-- reviewers = PR -> its files -> other PRs on those files -> their authors and reviewers, ranked. In tables that is a four-way self-join per request.
-- duplicates via a shared issue or overlapping files are 2-hop patterns; title similarity alone (what a text search gives you) misses them.
-- `impact` walks `CO_CHANGED` edges derived from history; `key_maintainers` runs PageRank over the whole Person-PR-File graph; `connection` is `shortestPath` across any node types.
-- agent memory lives in the same graph, so a recalled finding is linked to the actual PR or file node it was about.
-
-Remove FalkorDB and nothing works: there is no other store, every tool is a Cypher query, and evidence paths are FalkorDB `Path` results rendered as text.
+`COLLAB` (Person to Person, weight = PRs where one authored and the other reviewed) is derived at ingest and stored in both directions because `algo.betweenness` follows edge direction. Full detail: [docs/MODEL.md](docs/MODEL.md).
 
 ## Setup
 
@@ -183,12 +247,13 @@ Only public GitHub data from the GraphQL API. Cached snapshots for `copperheadhq
 ## Limitations
 
 - Ingests the most recent N PRs and issues (default 200) and the first 100 files per PR; older history is not in the graph.
+- Reviewer suggestions trail a simple most-active baseline on hit@3, and co-change impact is weak in a 200-PR window (see above).
 - GitHub PR and issue numbers share one sequence, so a `#N` mention of a PR becomes an Issue node.
 - Title similarity is token Jaccard, not embeddings.
 - `CO_CHANGED` skips PRs touching more than 50 files and keeps only weight >= 2.
-- PageRank runs over the whole graph and filters to people afterwards; with many repos in one graph, scores mix repos.
+- PageRank and betweenness run over the whole graph, so with several repos loaded, a person active in more than one scores across repos.
 - The rule router (`--no-llm`) only understands demo-style questions; free-form questions need the LLM agent.
 
-## AI assistance
+## AI disclosure
 
-Built with Claude Code (Anthropic) assistance: code, Cypher, tests and docs were drafted with AI help. I reviewed, ran and verified everything, including the queries against the real repo data.
+Built with Claude Code assistance: code, Cypher, tests and docs were drafted with AI help. I reviewed, ran and verified everything, including the queries and the backtest numbers against the real repo data.
