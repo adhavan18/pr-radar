@@ -1,0 +1,44 @@
+# PR Radar triage on every new / updated pull request.
+#
+# Copy to .github/workflows/pr-radar.yml in the repo you want triaged.
+# Setup (done by the repo owner, by hand): Settings -> Secrets and variables -> Actions ->
+# New repository secret, and add FALKORDB_HOST, FALKORDB_PORT, FALKORDB_USERNAME,
+# FALKORDB_PASSWORD for the FalkorDB instance that holds the PR graph.
+# This workflow never creates or prints secrets.
+#
+# Note: prgraph.triage only posts on repos listed in POST_ALLOWED (prgraph/triage.py);
+# add your repo there in your fork before enabling --post.
+name: pr-radar
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write   # labels
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: adhavan18/pr-radar
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: triage
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FALKORDB_HOST: ${{ secrets.FALKORDB_HOST }}
+          FALKORDB_PORT: ${{ secrets.FALKORDB_PORT }}
+          FALKORDB_USERNAME: ${{ secrets.FALKORDB_USERNAME }}
+          FALKORDB_PASSWORD: ${{ secrets.FALKORDB_PASSWORD }}
+        run: >
+          python -m prgraph.triage
+          --repo "${{ github.repository }}"
+          --pr "${{ github.event.pull_request.number }}"
+          --post
