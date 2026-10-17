@@ -1,0 +1,298 @@
+{
+ "k": 10,
+ "repos": [
+  {
+   "repo": "copperheadhq/copperhead",
+   "reviewers": {
+    "n": 19,
+    "coverage": 0.947,
+    "truth_reviewer_seen_before": 0.579,
+    "graph": {
+     "h1": 0.158,
+     "h3": 0.316,
+     "mrr": 0.254
+    },
+    "active": {
+     "h1": 0.368,
+     "h3": 0.579,
+     "mrr": 0.456
+    },
+    "random": {
+     "h1": 0.158,
+     "h3": 0.316,
+     "mrr": 0.272
+    }
+   },
+   "impact": {
+    "n": 56,
+    "coverage": 0.536,
+    "recall@5": 0.067,
+    "recall@10": 0.118,
+    "mean_files_to_find": 11.375
+   },
+   "dups": {
+    "truth_shared_issue_pairs": 382,
+    "truth_explicit_pairs": 1,
+    "explicit_pairs": [
+     [
+      "copperheadhq/copperhead#311",
+      "copperheadhq/copperhead#336"
+     ]
+    ],
+    "dup_shared_issue": {
+     "vs_shared_issue": {
+      "predicted": 382,
+      "truth": 382,
+      "tp": 382,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+     },
+     "vs_explicit": {
+      "predicted": 382,
+      "truth": 1,
+      "tp": 1,
+      "precision": 0.003,
+      "recall": 1.0,
+      "f1": 0.005
+     }
+    },
+    "dup_file_overlap": {
+     "vs_shared_issue": {
+      "predicted": 486,
+      "truth": 382,
+      "tp": 37,
+      "precision": 0.076,
+      "recall": 0.097,
+      "f1": 0.085
+     },
+     "vs_explicit": {
+      "predicted": 486,
+      "truth": 1,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "dup_similar_title": {
+     "vs_shared_issue": {
+      "predicted": 41,
+      "truth": 382,
+      "tp": 38,
+      "precision": 0.927,
+      "recall": 0.099,
+      "f1": 0.18
+     },
+     "vs_explicit": {
+      "predicted": 41,
+      "truth": 1,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "overlap_or_title": {
+     "vs_shared_issue": {
+      "predicted": 521,
+      "truth": 382,
+      "tp": 69,
+      "precision": 0.132,
+      "recall": 0.181,
+      "f1": 0.153
+     },
+     "vs_explicit": {
+      "predicted": 521,
+      "truth": 1,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "overlap_and_title": {
+     "vs_shared_issue": {
+      "predicted": 6,
+      "truth": 382,
+      "tp": 6,
+      "precision": 1.0,
+      "recall": 0.016,
+      "f1": 0.031
+     },
+     "vs_explicit": {
+      "predicted": 6,
+      "truth": 1,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "combined_any": {
+     "vs_shared_issue": {
+      "predicted": 834,
+      "truth": 382,
+      "tp": 382,
+      "precision": 0.458,
+      "recall": 1.0,
+      "f1": 0.628
+     },
+     "vs_explicit": {
+      "predicted": 834,
+      "truth": 1,
+      "tp": 1,
+      "precision": 0.001,
+      "recall": 1.0,
+      "f1": 0.002
+     }
+    }
+   },
+   "seconds": 487.5
+  },
+  {
+   "repo": "sqlfluff/sqlfluff",
+   "reviewers": {
+    "n": 96,
+    "coverage": 0.688,
+    "truth_reviewer_seen_before": 0.708,
+    "graph": {
+     "h1": 0.125,
+     "h3": 0.198,
+     "mrr": 0.164
+    },
+    "active": {
+     "h1": 0.26,
+     "h3": 0.635,
+     "mrr": 0.438
+    },
+    "random": {
+     "h1": 0.073,
+     "h3": 0.177,
+     "mrr": 0.177
+    }
+   },
+   "impact": {
+    "n": 72,
+    "coverage": 0.208,
+    "recall@5": 0.022,
+    "recall@10": 0.022,
+    "mean_files_to_find": 4.292
+   },
+   "dups": {
+    "truth_shared_issue_pairs": 35,
+    "truth_explicit_pairs": 0,
+    "explicit_pairs": [],
+    "dup_shared_issue": {
+     "vs_shared_issue": {
+      "predicted": 35,
+      "truth": 35,
+      "tp": 35,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+     },
+     "vs_explicit": {
+      "predicted": 35,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "dup_file_overlap": {
+     "vs_shared_issue": {
+      "predicted": 126,
+      "truth": 35,
+      "tp": 16,
+      "precision": 0.127,
+      "recall": 0.457,
+      "f1": 0.199
+     },
+     "vs_explicit": {
+      "predicted": 126,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "dup_similar_title": {
+     "vs_shared_issue": {
+      "predicted": 48,
+      "truth": 35,
+      "tp": 18,
+      "precision": 0.375,
+      "recall": 0.514,
+      "f1": 0.434
+     },
+     "vs_explicit": {
+      "predicted": 48,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "overlap_or_title": {
+     "vs_shared_issue": {
+      "predicted": 152,
+      "truth": 35,
+      "tp": 25,
+      "precision": 0.164,
+      "recall": 0.714,
+      "f1": 0.267
+     },
+     "vs_explicit": {
+      "predicted": 152,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "overlap_and_title": {
+     "vs_shared_issue": {
+      "predicted": 22,
+      "truth": 35,
+      "tp": 9,
+      "precision": 0.409,
+      "recall": 0.257,
+      "f1": 0.316
+     },
+     "vs_explicit": {
+      "predicted": 22,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "combined_any": {
+     "vs_shared_issue": {
+      "predicted": 162,
+      "truth": 35,
+      "tp": 35,
+      "precision": 0.216,
+      "recall": 1.0,
+      "f1": 0.355
+     },
+     "vs_explicit": {
+      "predicted": 162,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    }
+   },
+   "seconds": 474.9
+  }
+ ]
+}
