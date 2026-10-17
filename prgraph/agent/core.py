@@ -28,6 +28,15 @@ def _n(m):
 
 
 ROUTES = [
+    (re.compile(r"\bwhat (?:happens )?if\s+@?([\w.-]+)\s+(?:leaves|left|quits|goes|is gone|disappears)\b"
+                r"|\bbus factor (?:of|for)\s+(?!(?:one|two|1|2)\b)@?([\w.-]+)", re.I),
+     lambda m: [("bus_factor", {"person": _n(m)})]),
+    (re.compile(r"\bbus[- ]?factor\b|\bsingle[- ]owner|\bonly one (?:person|human|owner)\b", re.I),
+     lambda m: [("bus_factor_files", {})]),
+    (re.compile(r"\bbridges?\b|\bconnectors?\b|\bwho connects\b|\bbroker", re.I),
+     lambda m: [("bridges", {})]),
+    (re.compile(r"\b(?:ownership|owner)\s+(?:clusters?|communit\w*|groups?)\b|\bcommunit(?:y|ies)\b|\bclusters?\b", re.I),
+     lambda m: [("ownership_clusters", {})]),
     (re.compile(r"\bwhat (?:else )?(?:breaks|is affected)\b.*?\bif\s+`?([\w./@-]+?)`?\s+(?:changes?|is changed)\b", re.I),
      lambda m: [("impact_file", {"file": m.group(1)})]),
     (re.compile(rf"\b(?:duplicate|dup|already (?:fixed|done)|same as)\b.*?{_NUM}|{_NUM}.*?\b(?:duplicate|dup)\b", re.I),

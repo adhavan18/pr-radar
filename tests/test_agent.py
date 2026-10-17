@@ -223,3 +223,41 @@ def test_remember_with_empty_about_still_returns_question():
     g = FakeGraph({"q.id AS question": (["question", "linked"], [["qid1", 0]])})
     rows = call_tool(g, "remember_finding", {"question": "q", "answer": "a", "about": []}, REPO, session="s")
     assert g.calls[0][1]["about"] == [] and rows == [{"question": "qid1", "linked": 0}]
+
+
+# ---- graph-native algos: bus factor, ownership clusters, bridges ----
+@pytest.mark.parametrize("q,tool,params", [
+    ("what if animesh-chouhan leaves?", "bus_factor", {"person": "animesh-chouhan"}),
+    ("What happens if @keraion quits", "bus_factor", {"person": "keraion"}),
+    ("bus factor of taslater", "bus_factor", {"person": "taslater"}),
+    ("which files have a bus factor of one?", "bus_factor_files", {}),
+    ("who are the bridges?", "bridges", {}),
+    ("show ownership clusters", "ownership_clusters", {}),
+    ("what are the code communities", "ownership_clusters", {}),
+])
+def test_route_graph_algos(q, tool, params):
+    assert route(q) == [(tool, params)]
+
+
+def test_bus_factor_dispatch_defaults():
+    g = FakeGraph({"humans[0] = me": (["file", "prs", "remaining_humans", "evidence"], [["a.py", 3, 0, []]])})
+    rows = call_tool(g, "bus_factor", {"person": "@al"}, REPO)
+    q, params = g.calls[0]
+    assert params == {"person": "al", "repo": REPO, "since": "", "k": 10, "max_paths": 3}
+    assert rows[0]["file"] == "a.py" and rows[0]["remaining_humans"] == 0
+
+
+def test_cluster_and_bridge_queries_use_label_propagation():
+    for name in ("ownership_clusters", "bridges"):
+        assert "algo.labelPropagation" in CYPHER[name]
+        g = FakeGraph()
+        call_tool(g, name, {}, REPO)
+        assert g.calls[0][1]["repo"] == REPO
+    assert FakeGraph and call_tool(FakeGraph(), "ownership_clusters", {}, REPO) == []
+
+
+def test_bus_factor_requires_person():
+    spec = {t["name"]: t for t in anthropic_tools()}
+    assert spec["bus_factor"]["input_schema"]["required"] == ["person"]
+    with pytest.raises(ValueError):
+        call_tool(FakeGraph(), "bus_factor", {}, REPO)

@@ -3,7 +3,7 @@ import datetime as _dt
 import re
 import uuid
 
-from ..algos import ALGOS
+from ..algos import ALGO_DEFAULTS, ALGOS
 from ..queries import DEFAULTS, QUERIES, param_names
 from .memory import MEMORY
 
@@ -11,6 +11,7 @@ CYPHER = {**QUERIES, **ALGOS, **MEMORY}
 
 _PR = {"type": ["string", "integer"], "description": "PR number or full id owner/repo#N"}
 _K = {"type": "integer", "description": "max rows (default 10)"}
+_SINCE = {"type": "string", "description": "only PRs created on/after this ISO date (default: all history)"}
 
 TOOL_SPECS: dict[str, tuple] = {
     "dup_shared_issue": ("Other PRs that fix/reference the same issue as this PR (duplicate check).", {"pr": _PR}),
@@ -32,6 +33,17 @@ TOOL_SPECS: dict[str, tuple] = {
     "key_maintainers": ("Key people by PageRank over the Person-PR-File graph.", {"k": _K}),
     "connection": ("Shortest path between two entities (PR/issue id or number, file id, or person login).",
                    {"a": {"type": ["string", "integer"]}, "b": {"type": ["string", "integer"]}}),
+    "bus_factor": ("Counterfactual 'what if this person leaves?': files whose only recent non-bot authors/reviewers "
+                   "are that person (zero humans left), ranked by PR count, with evidence paths.",
+                   {"person": {"type": "string", "description": "GitHub login"},
+                    "since": _SINCE, "k": _K}),
+    "bus_factor_files": ("Repo-wide bus factor: files touched recently by exactly one non-bot human, ranked.",
+                         {"since": _SINCE, "k": _K}),
+    "ownership_clusters": ("Code-ownership communities (label propagation over the person-PR-file graph): "
+                           "each cluster's size, top files and top people.",
+                           {"k": _K, "min_files": {"type": "integer", "description": "smallest cluster to show (default 3)"}}),
+    "bridges": ("Connector people whose work spans the most ownership clusters (their departure would split "
+                "collaboration between areas).", {"k": _K}),
     "recall_about": ("Earlier conclusions stored in graph memory about a PR/issue/file/person.",
                      {"ref": {"type": ["string", "integer"], "description": "PR/issue number or id, file id, or login"}}),
     "remember_finding": ("Store a conclusion in graph memory so later sessions can recall it.",
@@ -42,6 +54,7 @@ TOOL_SPECS: dict[str, tuple] = {
 }
 REQUIRED = {"dup_shared_issue": ["pr"], "dup_file_overlap": ["pr"], "dup_similar_title": ["pr"],
             "issue_fixed_by": ["issue"], "reviewers": ["pr"], "impact": ["pr"], "impact_file": ["file"], "connection": ["a", "b"],
+            "bus_factor": ["person"],
             "recall_about": ["ref"], "remember_finding": ["question", "answer", "about"]}
 
 
@@ -106,6 +119,8 @@ def call_tool(graph, name: str, params: dict, repo: str | None = None,
     if name not in CYPHER:
         raise ValueError(f"unknown tool {name}")
     p = dict(params or {})
+    if "person" in p:
+        p["person"] = str(p["person"]).strip().lstrip("@")
     for key in ("pr", "issue", "a", "b", "ref"):
         if key in p:
             p[key] = qualify(p[key], repo)
@@ -121,7 +136,7 @@ def call_tool(graph, name: str, params: dict, repo: str | None = None,
         p.setdefault("repo", repo)
     q = CYPHER[name]
     needed = param_names(q)
-    p = {k: v for k, v in {**DEFAULTS, **p}.items() if k in needed}
+    p = {k: v for k, v in {**DEFAULTS, **ALGO_DEFAULTS, **p}.items() if k in needed}
     missing = needed - p.keys()
     if missing:
         raise ValueError(f"{name}: missing params {sorted(missing)}")
