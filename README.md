@@ -24,7 +24,22 @@ Each of those files comes with the path that proves it, so you can click through
 
 ## PR Radar acts
 
-_Placeholder: results from the autonomous triage Action (`prgraph/triage.py`) on adhavan18/pr-radar-demo go here: an example comment, what it found, links to the PRs._
+When a PR is opened, PR Radar adds it to the graph, runs the duplicate, reviewer, co-change and bus-factor checks, posts one comment with the graph path behind every claim, labels the PR, and stores what it decided as a `Triage` node so later runs remember it.
+
+Live on [adhavan18/pr-radar-demo](https://github.com/adhavan18/pr-radar-demo), a demo copy of copperheadhq/copperhead (Apache-2.0, credited) loaded with copperhead's real review history:
+
+| PR | What PR Radar did |
+|---|---|
+| [#2](https://github.com/adhavan18/pr-radar-demo/pull/2) | Flagged it as a possible duplicate: #3 fixes the same issue, and a real copperhead PR has a 0.88 title match on the same 4 files. Listed `src/agent/loop.ts`, which changed with these files 29 times but isn't in this PR. Labeled `possible-duplicate`. |
+| [#3](https://github.com/adhavan18/pr-radar-demo/pull/3) | Flagged the duplicate the other way, and recalled from graph memory that it had already flagged #2 for the same thing. |
+| [#4](https://github.com/adhavan18/pr-radar-demo/pull/4) | Touches `src/agent/loop.ts` alone. Pointed out that `SPEC.md` (24x) and `create.ts` (21x) normally change with it. Labeled `needs-review`. |
+
+```bash
+python -m prgraph.triage --repo adhavan18/pr-radar-demo --pr 2          # dry run, prints the comment
+python -m prgraph.triage --repo adhavan18/pr-radar-demo --pr 2 --post   # post it (demo repo only)
+```
+
+To run it on every new PR, copy [examples/github-action/pr-radar.yml](examples/github-action/pr-radar.yml) into `.github/workflows/` and add the four `FALKORDB_*` repository secrets. Posting is hard-limited to the demo repo, and comments never @-mention anyone.
 
 ## Tracks
 
