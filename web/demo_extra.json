@@ -531,7 +531,7 @@
    {
     "kind": "clusters",
     "question": "Show ownership clusters",
-    "answer": "Label propagation over people, PRs and files finds **166 communities** in the 394-node overview. The largest: **test** (13 files, Bhumika-1432006, thegoodengineer); **test** (10 files, Chirag6722, animesh-chouhan); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511). Colours on the graph are these clusters.",
+    "answer": "Label propagation over people, PRs and files finds **166 communities** in the 394-node overview. The largest: **test** (13 files, Bhumika-1432006, thegoodengineer); **test** (10 files, Chirag6722, AyushVUpadhye); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511). Colours on the graph are these clusters.",
     "tool_calls": [
      {
       "tool": "ownership_clusters",
@@ -557,8 +557,8 @@
         "files": 10,
         "people": [
          "Chirag6722",
-         "animesh-chouhan",
-         "AyushVUpadhye"
+         "AyushVUpadhye",
+         "animesh-chouhan"
         ]
        },
        {
@@ -584,8 +584,8 @@
         "area": "src/agent",
         "files": 7,
         "people": [
-         "animesh-chouhan",
          "Adityakk9031",
+         "animesh-chouhan",
          "Devesh36"
         ]
        },
@@ -728,14 +728,14 @@
      {
       "nodes": [
        {
-        "id": "animesh-chouhan",
+        "id": "Adityakk9031",
         "label": "Person",
-        "name": "animesh-chouhan"
+        "name": "Adityakk9031"
        },
        {
-        "id": "copperheadhq/copperhead#134",
+        "id": "copperheadhq/copperhead#370",
         "label": "PR",
-        "name": "#134 feat(observability): stream turns to the terminal, and "
+        "name": "#370 fix(create): require ownership marker before recursive "
        },
        {
         "id": "copperheadhq/copperhead:src/agent/providers/claude-code.ts",
@@ -745,12 +745,12 @@
       ],
       "edges": [
        {
-        "source": "animesh-chouhan",
-        "target": "copperheadhq/copperhead#134",
+        "source": "Adityakk9031",
+        "target": "copperheadhq/copperhead#370",
         "type": "AUTHORED"
        },
        {
-        "source": "copperheadhq/copperhead#134",
+        "source": "copperheadhq/copperhead#370",
         "target": "copperheadhq/copperhead:src/agent/providers/claude-code.ts",
         "type": "TOUCHES"
        }
@@ -1230,7 +1230,7 @@
    {
     "kind": "clusters",
     "question": "Show ownership clusters",
-    "answer": "Label propagation over people, PRs and files finds **183 communities** in the 398-node overview. The largest: **test/fixtures** (24 files, keraion, rfanth); **sqlfluffrs/sqlfluffrs_parser** (8 files, keraion, rubytobi); **docsv** (1 files, keraion, alanmcruickshank); **test/fixtures** (3 files, zhaoruizhe81, nietus). Colours on the graph are these clusters.",
+    "answer": "Label propagation over people, PRs and files finds **183 communities** in the 398-node overview. The largest: **test/fixtures** (24 files, rfanth, keraion); **sqlfluffrs/sqlfluffrs_parser** (8 files, rubytobi, keraion); **docsv** (1 files, rubytobi, keraion); **test/fixtures** (3 files, nietus, yousefissa). Colours on the graph are these clusters.",
     "tool_calls": [
      {
       "tool": "ownership_clusters",
@@ -1245,8 +1245,8 @@
         "area": "test/fixtures",
         "files": 24,
         "people": [
-         "keraion",
-         "rfanth"
+         "rfanth",
+         "keraion"
         ]
        },
        {
@@ -1254,8 +1254,8 @@
         "area": "sqlfluffrs/sqlfluffrs_parser",
         "files": 8,
         "people": [
-         "keraion",
          "rubytobi",
+         "keraion",
          "taslater"
         ]
        },
@@ -1264,9 +1264,9 @@
         "area": "docsv",
         "files": 1,
         "people": [
+         "rubytobi",
          "keraion",
-         "alanmcruickshank",
-         "rubytobi"
+         "alanmcruickshank"
         ]
        },
        {
@@ -1274,9 +1274,9 @@
         "area": "test/fixtures",
         "files": 3,
         "people": [
-         "zhaoruizhe81",
          "nietus",
-         "yousefissa"
+         "yousefissa",
+         "LuisFigueroaG"
         ]
        },
        {
@@ -1284,9 +1284,9 @@
         "area": "src/sqlfluff",
         "files": 2,
         "people": [
+         "dajiaohuang",
          "WAHIB-EL-KHADIRI",
-         "udsy19",
-         "dajiaohuang"
+         "udsy19"
         ]
        },
        {
@@ -1295,8 +1295,8 @@
         "files": 2,
         "people": [
          "devYRPauli",
-         "rubytobi",
-         "Tejas5405"
+         "Tejas5405",
+         "peterbud"
         ]
        }
       ]
@@ -1306,9 +1306,9 @@
      {
       "nodes": [
        {
-        "id": "keraion",
+        "id": "rfanth",
         "label": "Person",
-        "name": "keraion"
+        "name": "rfanth"
        },
        {
         "id": "sqlfluff/sqlfluff#8531",
@@ -1323,9 +1323,9 @@
       ],
       "edges": [
        {
-        "source": "keraion",
+        "source": "rfanth",
         "target": "sqlfluff/sqlfluff#8531",
-        "type": "REVIEWED"
+        "type": "AUTHORED"
        },
        {
         "source": "sqlfluff/sqlfluff#8531",
@@ -1337,9 +1337,9 @@
      {
       "nodes": [
        {
-        "id": "keraion",
+        "id": "rubytobi",
         "label": "Person",
-        "name": "keraion"
+        "name": "rubytobi"
        },
        {
         "id": "sqlfluff/sqlfluff#8650",
@@ -1354,9 +1354,9 @@
       ],
       "edges": [
        {
-        "source": "keraion",
+        "source": "rubytobi",
         "target": "sqlfluff/sqlfluff#8650",
-        "type": "AUTHORED"
+        "type": "REVIEWED"
        },
        {
         "source": "sqlfluff/sqlfluff#8650",
@@ -1368,14 +1368,14 @@
      {
       "nodes": [
        {
-        "id": "keraion",
+        "id": "rubytobi",
         "label": "Person",
-        "name": "keraion"
+        "name": "rubytobi"
        },
        {
-        "id": "sqlfluff/sqlfluff#8630",
+        "id": "sqlfluff/sqlfluff#8639",
         "label": "PR",
-        "name": "#8630 build(deps): bump axios from 1.16.1 to 1.20.0 in /docs"
+        "name": "#8639 build(deps): bump postcss from 8.5.14 to 8.5.28 in /do"
        },
        {
         "id": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
@@ -1385,12 +1385,12 @@
       ],
       "edges": [
        {
-        "source": "keraion",
-        "target": "sqlfluff/sqlfluff#8630",
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8639",
         "type": "REVIEWED"
        },
        {
-        "source": "sqlfluff/sqlfluff#8630",
+        "source": "sqlfluff/sqlfluff#8639",
         "target": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
         "type": "TOUCHES"
        }
@@ -1399,14 +1399,14 @@
      {
       "nodes": [
        {
-        "id": "zhaoruizhe81",
+        "id": "nietus",
         "label": "Person",
-        "name": "zhaoruizhe81"
+        "name": "nietus"
        },
        {
-        "id": "sqlfluff/sqlfluff#8732",
+        "id": "sqlfluff/sqlfluff#8741",
         "label": "PR",
-        "name": "#8732 Postgres: support ALTER COLUMN SET EXPRESSION AS (Post"
+        "name": "#8741 PostgreSQL: parse ALTER COLUMN SET EXPRESSION AS"
        },
        {
         "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
@@ -1416,12 +1416,12 @@
       ],
       "edges": [
        {
-        "source": "zhaoruizhe81",
-        "target": "sqlfluff/sqlfluff#8732",
+        "source": "nietus",
+        "target": "sqlfluff/sqlfluff#8741",
         "type": "AUTHORED"
        },
        {
-        "source": "sqlfluff/sqlfluff#8732",
+        "source": "sqlfluff/sqlfluff#8741",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
         "type": "TOUCHES"
        }
@@ -1430,14 +1430,14 @@
      {
       "nodes": [
        {
-        "id": "WAHIB-EL-KHADIRI",
+        "id": "dajiaohuang",
         "label": "Person",
-        "name": "WAHIB-EL-KHADIRI"
+        "name": "dajiaohuang"
        },
        {
-        "id": "sqlfluff/sqlfluff#8593",
+        "id": "sqlfluff/sqlfluff#8578",
         "label": "PR",
-        "name": "#8593 fix(ST01): keep comments inside a removed ELSE NULL cl"
+        "name": "#8578 fix(ST01): preserve comment when removing redundant EL"
        },
        {
         "id": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
@@ -1447,12 +1447,12 @@
       ],
       "edges": [
        {
-        "source": "WAHIB-EL-KHADIRI",
-        "target": "sqlfluff/sqlfluff#8593",
+        "source": "dajiaohuang",
+        "target": "sqlfluff/sqlfluff#8578",
         "type": "AUTHORED"
        },
        {
-        "source": "sqlfluff/sqlfluff#8593",
+        "source": "sqlfluff/sqlfluff#8578",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
         "type": "TOUCHES"
        }
