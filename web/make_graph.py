@@ -149,13 +149,22 @@ def load(path: Path) -> tuple[str, dict]:
     return raw["repo"], to_rows(raw)
 
 
+ALL = "all"  # pseudo-repo: cross-repo person bridges
+
+
 def main() -> None:
-    out = {}
+    from web.cross import Cross
+
+    out, rows_by = {}, {}
     for f in sorted(DATA.glob("*.json")):
         repo, rows = load(f)
+        rows_by[repo] = rows
         out[repo] = overview(rows)
         g = out[repo]
         print(f"{repo}: {len(g['nodes'])} nodes, {len(g['edges'])} edges (of {g['totals']})")
+    if len(rows_by) >= 2:
+        out[ALL] = Cross(rows_by).bridge_graph()
+        print(f"{ALL}: {out[ALL]['totals']}")
     OUT.write_text(json.dumps({"generated_from": "data/*.json", "repos": out}, separators=(",", ":")),
                    encoding="utf-8")
 

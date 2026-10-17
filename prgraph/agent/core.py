@@ -28,6 +28,13 @@ def _n(m):
 
 
 ROUTES = [
+    (re.compile(r"\b(?:other|another|different)\s+repos?\b.*?" + _NUM + r"|" + _NUM
+                + r".*?\b(?:other|another|different)\s+repos?\b|\bcross[- ]repo\b.*?" + _NUM, re.I),
+     lambda m: [("cross_repo_expert", {"pr": _n(m)})]),
+    (re.compile(r"\b(?:shared|common)\s+(?:contributors?|people|maintainers?|reviewers?)\b"
+                r"|\bcross[- ]repo\b|\b(?:multiple|several|both|all|across)\s+(?:the\s+)?repos\b"
+                r"|\b(?:2|two)\+?\s+repos\b", re.I),
+     lambda m: [("shared_contributors", {})]),
     (re.compile(r"\bwhat (?:happens )?if\s+@?([\w.-]+)\s+(?:leaves|left|quits|goes|is gone|disappears)\b"
                 r"|\bbus factor (?:of|for)\s+(?!(?:one|two|1|2)\b)@?([\w.-]+)", re.I),
      lambda m: [("bus_factor", {"person": _n(m)})]),

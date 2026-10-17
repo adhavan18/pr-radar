@@ -2,6 +2,7 @@
 const $ = (s) => document.querySelector(s);
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Fallbacks; /api/repos sends per-repo suggestions built from real data (web/make_demo_extra.py).
 const CHIPS = {
   "copperheadhq/copperhead": [
     "What if animesh-chouhan leaves copperhead?",
@@ -24,6 +25,7 @@ const DEFAULT_CHIPS = ["Who are the bridges?", "Show ownership clusters", "Why i
 const KIND_NAMES = {
   reviewers: "Reviewer match", duplicate: "Duplicate check", impact: "Change impact", stalled: "Stall diagnosis",
   bus_factor: "Bus factor", bridges: "Bridges", clusters: "Ownership clusters",
+  cross_repo: "Cross-repo people", cross_repo_expert: "Cross-repo expert",
 };
 
 const PALETTE = {
@@ -81,7 +83,7 @@ const md = (s) => esc(s).replace(/`([^`]+)`/g, (_, c) => {
   return p.length > 2 && c.length > 26 ? `<code title="${c}">…/${p.slice(-2).join("/")}</code>` : `<code>${c}</code>`;
 }).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
 const fmt = (n) => (n >= 10000 ? (n / 1000).toFixed(1) + "k" : n.toLocaleString());
-const short = (repo) => repo.split("/").pop();
+const short = (repo) => (repo === "all" ? "All repos" : repo.split("/").pop());
 function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 const shortName = (a) => {
   if (a.kind === "File") { const p = a.name.split("/"); return p.length > 2 ? "…/" + p.slice(-2).join("/") : a.name; }
@@ -181,7 +183,7 @@ function nodeReducer(node, data) {
   const r = { ...data };
   const isHover = S.hovered === node;
   if (!S.active) {
-    r.label = data.kind === "Person" ? data.name : null;
+    r.label = (data.kind === "Person" || data.kind === "Repo") ? data.name : null;
     if (data.star) r.forceLabel = true;
     if (S.hovered && !isHover && !graph.areNeighbors(node, S.hovered)) { r.color = th().dim; r.label = null; }
     if (S.hovered && graph.areNeighbors(node, S.hovered)) r.label = shortName(data);
@@ -192,7 +194,7 @@ function nodeReducer(node, data) {
     r.size = Math.max(data.size, 5.5) * (S.reached.has(node) ? 1.25 : 1);
     if (!S.reached.has(node)) r.color = th().rest;
   } else if (S.focus.has(node)) {
-    r.zIndex = 2; r.label = data.kind === "Person" ? data.name : null;
+    r.zIndex = 2; r.label = (data.kind === "Person" || data.kind === "Repo") ? data.name : null;
   } else {
     r.color = th().dim; r.label = null; r.zIndex = 0;
   }
@@ -235,7 +237,8 @@ function bindGraphEvents() {
   renderer.on("clickNode", ({ node }) => {
     const a = graph.getNodeAttributes(node);
     let q = null;
-    if (a.kind === "Person") q = `What if ${a.name} leaves ${short(repo)}?`;
+    if (repo === "all") q = a.kind === "Person" || a.kind === "Repo" ? "Who works across repos?" : null;
+    else if (a.kind === "Person") q = `What if ${a.name} leaves ${short(repo)}?`;
     else if (a.kind === "PR") q = `Who should review PR ${a.name.split(" ")[0]}?`;
     else if (a.kind === "File") q = `What breaks if ${a.name} changes?`;
     if (q) { $("#q").value = q; ask(); }
@@ -252,7 +255,7 @@ function renderStats() {
     [fmt(t.edges ?? overview.edges.length), "edges"],
     [fmt(t.people ?? 0), "people", "hide-sm"],
     [fmt(t.prs ?? 0), "PRs", "hide-sm"],
-    [String(document.querySelectorAll("#repos button").length || 1), "repos"],
+    [String(document.querySelectorAll('#repos button:not([data-repo="all"])').length || 1), "repos"],
     [`${ms < 10 ? ms.toFixed(1) : Math.round(ms)} ms`, lastAsk ? "last query" : "graph query", "live"],
   ];
   $("#stats").innerHTML = cells.map(([v, l, c]) => `<div class="stat ${c || ""}"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("");
@@ -268,7 +271,7 @@ function renderLegend() {
 /* ---------------------------------------------------------------- repos + chips */
 async function init() {
   let repos = ["copperheadhq/copperhead"], demo = false;
-  try { const r = await (await fetch("/api/repos")).json(); repos = r.repos.length ? r.repos : repos; demo = r.demo; } catch {}
+  try { const r = await (await fetch("/api/repos")).json(); repos = r.repos.length ? r.repos : repos; demo = r.demo; Object.assign(CHIPS, r.suggestions || {}); } catch {}
   $("#mode").hidden = !demo;
   const qs = new URLSearchParams(location.search);
   const start = repos.includes(qs.get("repo")) ? qs.get("repo") : repos[0];

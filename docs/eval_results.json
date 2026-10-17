@@ -293,6 +293,150 @@
     }
    },
    "seconds": 315.3
+  },
+  {
+   "repo": "astral-sh/ruff",
+   "reviewers": {
+    "n": 105,
+    "coverage": 0.981,
+    "truth_reviewer_seen_before": 0.895,
+    "graph": {
+     "h1": 0.267,
+     "h3": 0.495,
+     "mrr": 0.44
+    },
+    "active": {
+     "h1": 0.257,
+     "h3": 0.638,
+     "mrr": 0.464
+    },
+    "random": {
+     "h1": 0.076,
+     "h3": 0.21,
+     "mrr": 0.232
+    }
+   },
+   "impact": {
+    "n": 90,
+    "coverage": 0.344,
+    "recall@5": 0.152,
+    "recall@10": 0.174,
+    "mean_files_to_find": 4.478
+   },
+   "dups": {
+    "truth_shared_issue_pairs": 29,
+    "truth_explicit_pairs": 0,
+    "explicit_pairs": [],
+    "dup_shared_issue": {
+     "vs_shared_issue": {
+      "predicted": 14,
+      "truth": 29,
+      "tp": 14,
+      "precision": 1.0,
+      "recall": 0.483,
+      "f1": 0.651
+     },
+     "vs_explicit": {
+      "predicted": 14,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "dup_file_overlap": {
+     "vs_shared_issue": {
+      "predicted": 831,
+      "truth": 29,
+      "tp": 18,
+      "precision": 0.022,
+      "recall": 0.621,
+      "f1": 0.042
+     },
+     "vs_explicit": {
+      "predicted": 831,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "dup_similar_title": {
+     "vs_shared_issue": {
+      "predicted": 175,
+      "truth": 29,
+      "tp": 10,
+      "precision": 0.057,
+      "recall": 0.345,
+      "f1": 0.098
+     },
+     "vs_explicit": {
+      "predicted": 175,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "overlap_or_title": {
+     "vs_shared_issue": {
+      "predicted": 936,
+      "truth": 29,
+      "tp": 19,
+      "precision": 0.02,
+      "recall": 0.655,
+      "f1": 0.039
+     },
+     "vs_explicit": {
+      "predicted": 936,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "overlap_and_title": {
+     "vs_shared_issue": {
+      "predicted": 70,
+      "truth": 29,
+      "tp": 9,
+      "precision": 0.129,
+      "recall": 0.31,
+      "f1": 0.182
+     },
+     "vs_explicit": {
+      "predicted": 70,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    },
+    "combined_any": {
+     "vs_shared_issue": {
+      "predicted": 937,
+      "truth": 29,
+      "tp": 20,
+      "precision": 0.021,
+      "recall": 0.69,
+      "f1": 0.041
+     },
+     "vs_explicit": {
+      "predicted": 937,
+      "truth": 0,
+      "tp": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+     }
+    }
+   },
+   "seconds": 286.3
   }
  ]
 }

@@ -152,6 +152,59 @@ RETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS ev
 ORDER BY reviewed DESC LIMIT $k
 ```
 
+### shared_contributors
+
+Cross-repo. People (non-bot) who authored/reviewed PRs in 2+ ingested repos, with per-repo PR counts. Only possible because Person nodes are shared by login.
+
+```cypher
+MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)
+WHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'
+WITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample
+ORDER BY prs DESC
+WITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total
+WHERE size(repos) >= 2
+UNWIND samples AS s
+MATCH path = (a)-[:AUTHORED|REVIEWED]->(s)-[:IN_REPO]->(:Repo)
+WITH a, repos, total, s, collect(path)[0] AS one
+WITH a, repos, total, collect(one) AS paths
+RETURN a.login AS person, size(repos) AS n_repos, repos, total AS prs, paths[0..$max_paths] AS evidence
+ORDER BY n_repos DESC, prs DESC, person LIMIT $k
+```
+
+### cross_repo_expert
+
+Cross-repo. For PR $pr: people who reviewed PRs in OTHER repos whose title/file-path tokens share >= 2 words with this PR's (topic transfer); prs_here = their activity in this repo.
+
+```cypher
+MATCH (p:PR {id:$pr})-[:IN_REPO]->(home:Repo)
+OPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)
+OPTIONAL MATCH (p)-[:TOUCHES]->(f:File)
+WITH p, home, me, collect(f.path) AS fps
+WITH p, home, me, coalesce(p.tokens, []) + reduce(acc = [], fp IN fps | acc + split(replace(replace(replace(replace(toLower(fp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS raw
+UNWIND raw AS t
+WITH p, home, me, t WHERE size(t) >= 3 AND NOT t IN ['src','lib','tests','test','docs','doc','init','main','index','crates','github','workflows','snap','snapshots','resources','fixtures','txt','json','toml','yml','yaml','lock','cfg','ini','rst','html','css','png','svg','the','and','for','with','from','add','fix','update','use','when','into','support','allow','make','new','remove','handle','change','improve','agents','claude','contributing','readme','changelog','license','commit','pre','precommit','config','setup','pyproject','workflow','release','version','bump','deps','dependency','dependencies']
+WITH p, home, me, collect(DISTINCT t) AS topic
+MATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(other:Repo)
+WHERE other <> home AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)
+WITH DISTINCT home, topic, cand, q, other
+OPTIONAL MATCH (q)-[:TOUCHES]->(g:File)
+WITH home, topic, cand, q, other, collect(g.path) AS gps
+WITH home, topic, cand, q, other, coalesce(q.tokens, []) + reduce(acc = [], gp IN gps | acc + split(replace(replace(replace(replace(toLower(gp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS qraw
+WITH home, cand, q, other, [t IN topic WHERE t IN qraw] AS hits
+WHERE size(hits) >= 2
+WITH home, cand, q, other, hits ORDER BY size(hits) DESC
+WITH home, cand, collect(DISTINCT other.id) AS repos, count(DISTINCT q) AS prs, collect(q)[0] AS best,
+     collect(hits) AS allhits
+WITH home, cand, repos, prs, best, reduce(acc = [], h IN allhits | acc + [x IN h WHERE NOT x IN acc]) AS matched
+MATCH path = (cand)-[:REVIEWED]->(best)-[:IN_REPO]->(:Repo)
+WITH home, cand, repos, prs, matched, collect(path)[0] AS ev
+OPTIONAL MATCH (cand)-[:AUTHORED|REVIEWED]->(h:PR)-[:IN_REPO]->(home)
+WITH cand, repos, prs, matched, ev, count(DISTINCT h) AS here
+RETURN cand.login AS person, repos, prs AS matching_reviews, matched[0..8] AS topics, here AS prs_here,
+       size(matched) + log(1.0 + prs) AS score, [ev] AS evidence
+ORDER BY score DESC, person LIMIT $k
+```
+
 ## Graph algorithms
 
 ### key_maintainers

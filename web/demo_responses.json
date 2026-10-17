@@ -1,6 +1,1709 @@
 {
  "generated_from": "data/*.json",
  "repos": {
+  "astral-sh/ruff": [
+   {
+    "kind": "reviewers",
+    "question": "Who should review ruff PR #29410?",
+    "answer": "For PR #29410 (\"[ty] Keep recursive type expansion within its consuming operation\", by charliermarsh), the strongest reviewer candidates are **sharkdp** (score 21.07: reviewed 25 PRs, 25 of these files), **carljm** (score 19.23: reviewed 17 PRs, 25 of these files), **AlexWaygood** (score 14.60: reviewed 30 PRs, 10 of these files). Score = 3*log(1+PRs reviewed) plus reviewed files weighted by rarity (hub files like changelogs count little); the PR author and bots are excluded.",
+    "tool_calls": [
+     {
+      "tool": "reviewers",
+      "params": {
+       "pr": "astral-sh/ruff#29410",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nWITH p, repo, me\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(repo)\nWHERE q <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH p, cand, count(DISTINCT q) AS reviewed, collect(q)[0] AS sample\nOPTIONAL MATCH fp = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[:REVIEWED]-(cand)\nWHERE o <> p\nWITH p, cand, reviewed, sample, f, collect(fp) AS fpaths\nOPTIONAL MATCH (f)<-[:TOUCHES]-(x:PR)\nWITH cand, reviewed, sample, f, fpaths, count(DISTINCT x) AS df\nWITH cand, reviewed, sample,\n     sum(CASE WHEN f IS NULL THEN 0.0 ELSE 1.0 / log(1.0 + df) END) AS expertise,\n     count(f) AS files, collect(fpaths[0]) AS paths\nMATCH rp = (cand)-[:REVIEWED]->(sample)\nRETURN cand.login AS reviewer, files, reviewed, expertise,\n       3.0 * log(1.0 + reviewed) + expertise AS score,\n       (paths + [rp])[0..$max_paths] AS evidence\nORDER BY score DESC, reviewed DESC LIMIT $k",
+      "rows": [
+       {
+        "reviewer": "sharkdp",
+        "files": 25,
+        "reviewed": 25,
+        "expertise": 11.298,
+        "score": 21.073
+       },
+       {
+        "reviewer": "carljm",
+        "files": 25,
+        "reviewed": 17,
+        "expertise": 10.56,
+        "score": 19.231
+       },
+       {
+        "reviewer": "AlexWaygood",
+        "files": 10,
+        "reviewed": 30,
+        "expertise": 4.294,
+        "score": 14.596
+       },
+       {
+        "reviewer": "dcreager",
+        "files": 19,
+        "reviewed": 3,
+        "expertise": 7.289,
+        "score": 11.448
+       },
+       {
+        "reviewer": "dhruvmanila",
+        "files": 9,
+        "reviewed": 9,
+        "expertise": 3.171,
+        "score": 10.079
+       },
+       {
+        "reviewer": "ntBre",
+        "files": 0,
+        "reviewed": 23,
+        "expertise": 0.0,
+        "score": 9.534
+       },
+       {
+        "reviewer": "lerebear",
+        "files": 5,
+        "reviewed": 4,
+        "expertise": 3.024,
+        "score": 7.852
+       },
+       {
+        "reviewer": "zsol",
+        "files": 6,
+        "reviewed": 4,
+        "expertise": 2.643,
+        "score": 7.472
+       },
+       {
+        "reviewer": "ibraheemdev",
+        "files": 5,
+        "reviewed": 4,
+        "expertise": 1.748,
+        "score": 6.576
+       },
+       {
+        "reviewer": "zanieb",
+        "files": 0,
+        "reviewed": 4,
+        "expertise": 0.0,
+        "score": 4.828
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "label": "File",
+        "name": "crates/ruff_benchmark/benches/ty.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29304",
+        "label": "PR",
+        "name": "#29304 [ty] Reuse normalization when extending "
+       },
+       {
+        "id": "sharkdp",
+        "label": "Person",
+        "name": "sharkdp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29304",
+        "target": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29304",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty/docs/rules.md",
+        "label": "File",
+        "name": "crates/ty/docs/rules.md"
+       },
+       {
+        "id": "astral-sh/ruff#29252",
+        "label": "PR",
+        "name": "#29252 [ty] Accept regular attributes over nomi"
+       },
+       {
+        "id": "sharkdp",
+        "label": "Person",
+        "name": "sharkdp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ty/docs/rules.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29252",
+        "target": "astral-sh/ruff:crates/ty/docs/rules.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29252",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_ide/src/completion.rs",
+        "label": "File",
+        "name": "crates/ty_ide/src/completion.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29185",
+        "label": "PR",
+        "name": "#29185 [ty] Show documentation for annotation o"
+       },
+       {
+        "id": "sharkdp",
+        "label": "Person",
+        "name": "sharkdp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ty_ide/src/completion.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29185",
+        "target": "astral-sh/ruff:crates/ty_ide/src/completion.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29185",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "label": "File",
+        "name": "crates/ruff_benchmark/benches/ty.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29194",
+        "label": "PR",
+        "name": "#29194 [ty] Benchmark tuple class-pattern captu"
+       },
+       {
+        "id": "carljm",
+        "label": "Person",
+        "name": "carljm"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29194",
+        "target": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "carljm",
+        "target": "astral-sh/ruff#29194",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/call/constructor.md",
+        "label": "File",
+        "name": "crates/ty_python_semantic/resources/mdtest/call/constructor.md"
+       },
+       {
+        "id": "astral-sh/ruff#29325",
+        "label": "PR",
+        "name": "#29325 [ty] Add return type inference edge case"
+       },
+       {
+        "id": "carljm",
+        "label": "Person",
+        "name": "carljm"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/call/constructor.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29325",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/call/constructor.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "carljm",
+        "target": "astral-sh/ruff#29325",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/aliases.md",
+        "label": "File",
+        "name": "crates/ty_python_semantic/resources/mdtest/generics/legacy/aliases.md"
+       },
+       {
+        "id": "astral-sh/ruff#29342",
+        "label": "PR",
+        "name": "#29342 [ty] Preserve shared structure in ambigu"
+       },
+       {
+        "id": "carljm",
+        "label": "Person",
+        "name": "carljm"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/aliases.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29342",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/aliases.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "carljm",
+        "target": "astral-sh/ruff#29342",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "label": "File",
+        "name": "crates/ruff_benchmark/benches/ty.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29194",
+        "label": "PR",
+        "name": "#29194 [ty] Benchmark tuple class-pattern captu"
+       },
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29194",
+        "target": "astral-sh/ruff:crates/ruff_benchmark/benches/ty.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29194",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty/docs/rules.md",
+        "label": "File",
+        "name": "crates/ty/docs/rules.md"
+       },
+       {
+        "id": "astral-sh/ruff#29252",
+        "label": "PR",
+        "name": "#29252 [ty] Accept regular attributes over nomi"
+       },
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ty/docs/rules.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29252",
+        "target": "astral-sh/ruff:crates/ty/docs/rules.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29252",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29410",
+        "label": "PR",
+        "name": "#29410 [ty] Keep recursive type expansion withi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_ide/src/type_hierarchy.rs",
+        "label": "File",
+        "name": "crates/ty_ide/src/type_hierarchy.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29402",
+        "label": "PR",
+        "name": "#29402 [ty] Sync vendored typeshed stubs"
+       },
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29410",
+        "target": "astral-sh/ruff:crates/ty_ide/src/type_hierarchy.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29402",
+        "target": "astral-sh/ruff:crates/ty_ide/src/type_hierarchy.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29402",
+        "type": "REVIEWED"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "astral-sh/ruff#29410",
+     "sharkdp",
+     "carljm",
+     "AlexWaygood"
+    ]
+   },
+   {
+    "kind": "duplicate",
+    "question": "Is PR #29450 a duplicate?",
+    "answer": "Possibly related work for PR #29450 (\"[ty] Fix protocol methods whose receiver is annotated with the protocol\"): it shares most of its files with #29443 (3/3 files, open), #29428 (3/3 files, open), #29243 (3/3 files, closed).",
+    "tool_calls": [
+     {
+      "tool": "dup_shared_issue",
+      "params": {
+       "pr": "astral-sh/ruff#29450"
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:FIXES]->(i:Issue)<-[:FIXES]-(x:PR)\nWITH p, i, count(DISTINCT x) AS fixers WHERE fixers <= $max_issue_prs\nMATCH path = (p)-[:FIXES]->(i)<-[:FIXES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
+      "rows": []
+     },
+     {
+      "tool": "dup_file_overlap",
+      "params": {
+       "pr": "astral-sh/ruff#29450",
+       "min_overlap": 0.5,
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:TOUCHES]->(pf:File)\nWITH p, count(pf) AS mine\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)\nWHERE o <> p\nWITH o, mine, count(DISTINCT f) AS shared, collect(path) AS paths\nWHERE toFloat(shared) / mine >= $min_overlap\nRETURN o.id AS other, o.state AS state, o.title AS title, shared, mine,\n       paths[0..$max_paths] AS evidence\nORDER BY shared DESC LIMIT $k",
+      "rows": [
+       {
+        "other": "astral-sh/ruff#29443",
+        "state": "OPEN",
+        "title": "[ty] Compare protocol receiver restrictions before binding",
+        "shared": 3,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29428",
+        "state": "OPEN",
+        "title": "[ty] Reuse completed type operations",
+        "shared": 3,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29243",
+        "state": "CLOSED",
+        "title": "[ty] Use one member lookup engine for recursive proofs",
+        "shared": 3,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29155",
+        "state": "OPEN",
+        "title": "[ty] Make lazy type traversal explicit",
+        "shared": 3,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29114",
+        "state": "OPEN",
+        "title": "[ty] Bind explicit receivers of generic protocol methods to the protocol specialization",
+        "shared": 3,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29408",
+        "state": "OPEN",
+        "title": "[ty] Keep recursive reference substitution structural",
+        "shared": 2,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29405",
+        "state": "OPEN",
+        "title": "[ty] Reject runtime generic aliases where a class is required",
+        "shared": 2,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29403",
+        "state": "OPEN",
+        "title": "[ty] Separate specialized class objects from runtime generic aliases",
+        "shared": 2,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29398",
+        "state": "CLOSED",
+        "title": "[ty] Reject runtime generic aliases where class objects are required",
+        "shared": 2,
+        "mine": 3
+       },
+       {
+        "other": "astral-sh/ruff#29396",
+        "state": "OPEN",
+        "title": "[ty] Preserve bound receivers for strict signature checks",
+        "shared": 2,
+        "mine": 3
+       }
+      ]
+     },
+     {
+      "tool": "dup_similar_title",
+      "params": {
+       "pr": "astral-sh/ruff#29450",
+       "min_jaccard": 0.4,
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND o:PR AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
+      "rows": []
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29450",
+        "label": "PR",
+        "name": "#29450 [ty] Fix protocol methods whose receiver"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/protocols.md",
+        "label": "File",
+        "name": "crates/ty_python_semantic/resources/mdtest/protocols.md"
+       },
+       {
+        "id": "astral-sh/ruff#29443",
+        "label": "PR",
+        "name": "#29443 [ty] Compare protocol receiver restricti"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29450",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/protocols.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29443",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/protocols.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29450",
+        "label": "PR",
+        "name": "#29450 [ty] Fix protocol methods whose receiver"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/protocol_class.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29443",
+        "label": "PR",
+        "name": "#29443 [ty] Compare protocol receiver restricti"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29450",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29443",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29450",
+        "label": "PR",
+        "name": "#29450 [ty] Fix protocol methods whose receiver"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/signatures.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29443",
+        "label": "PR",
+        "name": "#29443 [ty] Compare protocol receiver restricti"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29450",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29443",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29450",
+        "label": "PR",
+        "name": "#29450 [ty] Fix protocol methods whose receiver"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/protocols.md",
+        "label": "File",
+        "name": "crates/ty_python_semantic/resources/mdtest/protocols.md"
+       },
+       {
+        "id": "astral-sh/ruff#29428",
+        "label": "PR",
+        "name": "#29428 [ty] Reuse completed type operations"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29450",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/protocols.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29428",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/protocols.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29450",
+        "label": "PR",
+        "name": "#29450 [ty] Fix protocol methods whose receiver"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/protocol_class.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29428",
+        "label": "PR",
+        "name": "#29428 [ty] Reuse completed type operations"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29450",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29428",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff#29450",
+        "label": "PR",
+        "name": "#29450 [ty] Fix protocol methods whose receiver"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/signatures.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29428",
+        "label": "PR",
+        "name": "#29428 [ty] Reuse completed type operations"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29450",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29428",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "astral-sh/ruff#29450",
+     "astral-sh/ruff#29443",
+     "astral-sh/ruff#29428",
+     "astral-sh/ruff#29243"
+    ]
+   },
+   {
+    "kind": "impact",
+    "question": "What breaks if crates/ty_python_semantic/src/types.rs changes?",
+    "answer": "`crates/ty_python_semantic/src/types.rs` has been changed together with 129 other files. The most coupled are `crates/ty_python_semantic/src/types/infer/builder.rs` (20 PRs), `crates/ty_python_semantic/src/types/generics.rs` (14 PRs), `crates/ty_python_semantic/src/types/signatures.rs` (14 PRs), `crates/ty_python_semantic/src/types/protocol_class.rs` (12 PRs). Review those when this file changes.",
+    "tool_calls": [
+     {
+      "tool": "impact_file",
+      "params": {
+       "file": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\nOPTIONAL MATCH path = (f)<-[:TOUCHES]-(p:PR)-[:TOUCHES]->(g)\nWITH g, c.weight AS strength, collect(path) AS paths\nRETURN g.path AS file, strength, paths[0..$max_paths] AS evidence\nORDER BY strength DESC, file ASC LIMIT $k",
+      "rows": [
+       {
+        "file": "crates/ty_python_semantic/src/types/infer/builder.rs",
+        "strength": 20
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/generics.rs",
+        "strength": 14
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/signatures.rs",
+        "strength": 14
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/protocol_class.rs",
+        "strength": 12
+       },
+       {
+        "file": "crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md",
+        "strength": 11
+       },
+       {
+        "file": "crates/ty_python_semantic/resources/mdtest/generics/pep695/classes.md",
+        "strength": 10
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/call/bind.rs",
+        "strength": 10
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/callable.rs",
+        "strength": 10
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/infer/builder/function.rs",
+        "strength": 10
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/infer/builder/subscript.rs",
+        "strength": 10
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29060",
+        "label": "PR",
+        "name": "#29060 [ty] Preserve unresolved generic binding"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/infer/builder.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29060",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29060",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29078",
+        "label": "PR",
+        "name": "#29078 [ty] Share parameter-default inference b"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/infer/builder.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29078",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29078",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29127",
+        "label": "PR",
+        "name": "#29127 [ty] Enforce nonempty generic contexts"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/infer/builder.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29067",
+        "label": "PR",
+        "name": "#29067 [ty] Restrict gradual inferred types wit"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/generics.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/generics.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29067",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29067",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/generics.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29078",
+        "label": "PR",
+        "name": "#29078 [ty] Share parameter-default inference b"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/generics.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/generics.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29078",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29078",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/generics.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29127",
+        "label": "PR",
+        "name": "#29127 [ty] Enforce nonempty generic contexts"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/generics.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/generics.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/generics.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29078",
+        "label": "PR",
+        "name": "#29078 [ty] Share parameter-default inference b"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/signatures.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29078",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29078",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29127",
+        "label": "PR",
+        "name": "#29127 [ty] Enforce nonempty generic contexts"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/signatures.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29144",
+        "label": "PR",
+        "name": "#29144 [ty] Pass inferable typevars to satisfia"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/signatures.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29144",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29144",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29127",
+        "label": "PR",
+        "name": "#29127 [ty] Enforce nonempty generic contexts"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/protocol_class.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29127",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29144",
+        "label": "PR",
+        "name": "#29144 [ty] Pass inferable typevars to satisfia"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/protocol_class.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29144",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29144",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       },
+       {
+        "id": "astral-sh/ruff#29155",
+        "label": "PR",
+        "name": "#29155 [ty] Make lazy type traversal explicit"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/protocol_class.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "astral-sh/ruff#29155",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "astral-sh/ruff#29155",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/generics.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/signatures.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/protocol_class.rs"
+    ]
+   },
+   {
+    "kind": "stalled",
+    "question": "Why is this repo stalled?",
+    "answer": "Signals from the graph: 95 PRs are open and 84 of them have no human review; the oldest, #29061 by RasmusNygren, has waited 15 days; the last merge was #29414 on 2026-10-16 (0 days before the newest PR); review load is concentrated: AlexWaygood did 30 of 139 human reviews in the top 10.",
+    "tool_calls": [
+     {
+      "tool": "stale_open_prs",
+      "params": {
+       "repo": "astral-sh/ruff",
+       "k": 10
+      },
+      "cypher": "MATCH path = (a:Person)-[:AUTHORED]->(p:PR {state:'OPEN'})-[:IN_REPO]->(:Repo {id:$repo})\nOPTIONAL MATCH (rv:Person)-[:REVIEWED]->(p)\nRETURN p.id AS pr, p.title AS title, p.created AS created, a.login AS author,\n       count(DISTINCT rv) AS reviewers, path AS evidence\nORDER BY created ASC LIMIT $k",
+      "rows": [
+       {
+        "pr": "astral-sh/ruff#29061",
+        "title": "[ty] Support go-to-{def,dec} for overloaded fns",
+        "created": "2026-10-01T20:03:00Z",
+        "author": "RasmusNygren",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29064",
+        "title": "[ty] Preserve stdlib identity when search paths overlap",
+        "created": "2026-10-01T21:59:43Z",
+        "author": "charliermarsh",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29067",
+        "title": "[ty] Restrict gradual inferred types with validity constraints",
+        "created": "2026-10-01T23:52:27Z",
+        "author": "ibraheemdev",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29074",
+        "title": "[suspicious] Add `shared-clock-mock`",
+        "created": "2026-10-02T15:08:17Z",
+        "author": "charliermarsh",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29075",
+        "title": "[ty] Improve narrowing after match patterns",
+        "created": "2026-10-02T16:50:11Z",
+        "author": "AlexWaygood",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29077",
+        "title": "[ty] Grow the stack when inferring deep expressions",
+        "created": "2026-10-02T17:58:42Z",
+        "author": "charliermarsh",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29088",
+        "title": "[ty] Report conflicting attribute declarations across class body and methods",
+        "created": "2026-10-03T16:38:36Z",
+        "author": "felixscherz",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29102",
+        "title": "[ty] Add a test suite for non-exhaustive matches",
+        "created": "2026-10-04T19:24:18Z",
+        "author": "AlexWaygood",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29114",
+        "title": "[ty] Bind explicit receivers of generic protocol methods to the protocol specialization",
+        "created": "2026-10-05T16:23:50Z",
+        "author": "benedikt-bartscher",
+        "reviewers": 0
+       },
+       {
+        "pr": "astral-sh/ruff#29118",
+        "title": "[ty] Fix signature help for unmatched arguments",
+        "created": "2026-10-05T17:36:39Z",
+        "author": "zsol",
+        "reviewers": 0
+       }
+      ]
+     },
+     {
+      "tool": "last_merges",
+      "params": {
+       "repo": "astral-sh/ruff",
+       "k": 10
+      },
+      "cypher": "MATCH path = (a:Person)-[:AUTHORED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.merged IS NOT NULL\nRETURN p.id AS pr, p.merged AS merged, a.login AS author, path AS evidence\nORDER BY merged DESC LIMIT $k",
+      "rows": [
+       {
+        "pr": "astral-sh/ruff#29414",
+        "merged": "2026-10-16T22:07:25Z",
+        "author": "fixfon"
+       },
+       {
+        "pr": "astral-sh/ruff#29232",
+        "merged": "2026-10-16T18:11:35Z",
+        "author": "lerebear"
+       },
+       {
+        "pr": "astral-sh/ruff#29442",
+        "merged": "2026-10-16T16:58:54Z",
+        "author": "zanieb"
+       },
+       {
+        "pr": "astral-sh/ruff#29436",
+        "merged": "2026-10-16T16:09:13Z",
+        "author": "zsol"
+       },
+       {
+        "pr": "astral-sh/ruff#29344",
+        "merged": "2026-10-16T14:38:18Z",
+        "author": "ibraheemdev"
+       },
+       {
+        "pr": "astral-sh/ruff#29439",
+        "merged": "2026-10-16T12:41:31Z",
+        "author": "sharkdp"
+       },
+       {
+        "pr": "astral-sh/ruff#29435",
+        "merged": "2026-10-16T11:01:18Z",
+        "author": "sharkdp"
+       },
+       {
+        "pr": "astral-sh/ruff#29240",
+        "merged": "2026-10-16T01:24:22Z",
+        "author": "carljm"
+       },
+       {
+        "pr": "astral-sh/ruff#29427",
+        "merged": "2026-10-16T00:27:33Z",
+        "author": "carljm"
+       },
+       {
+        "pr": "astral-sh/ruff#29336",
+        "merged": "2026-10-15T19:15:23Z",
+        "author": "zanieb"
+       }
+      ]
+     },
+     {
+      "tool": "reviewer_load",
+      "params": {
+       "repo": "astral-sh/ruff",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE NOT coalesce(rv.is_bot, false)\nWITH rv, count(DISTINCT p) AS reviewed,\n     count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,\n     collect(path) AS paths\nRETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS evidence\nORDER BY reviewed DESC LIMIT $k",
+      "rows": [
+       {
+        "reviewer": "AlexWaygood",
+        "reviewed": 30,
+        "open_reviewed": 3
+       },
+       {
+        "reviewer": "sharkdp",
+        "reviewed": 25,
+        "open_reviewed": 4
+       },
+       {
+        "reviewer": "ntBre",
+        "reviewed": 23,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "charliermarsh",
+        "reviewed": 19,
+        "open_reviewed": 1
+       },
+       {
+        "reviewer": "carljm",
+        "reviewed": 17,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "dhruvmanila",
+        "reviewed": 9,
+        "open_reviewed": 3
+       },
+       {
+        "reviewer": "lerebear",
+        "reviewed": 4,
+        "open_reviewed": 1
+       },
+       {
+        "reviewer": "zanieb",
+        "reviewed": 4,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "zsol",
+        "reviewed": 4,
+        "open_reviewed": 2
+       },
+       {
+        "reviewer": "ibraheemdev",
+        "reviewed": 4,
+        "open_reviewed": 0
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "RasmusNygren",
+        "label": "Person",
+        "name": "RasmusNygren"
+       },
+       {
+        "id": "astral-sh/ruff#29061",
+        "label": "PR",
+        "name": "#29061 [ty] Support go-to-{def,dec} for overloa"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "RasmusNygren",
+        "target": "astral-sh/ruff#29061",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29061",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29064",
+        "label": "PR",
+        "name": "#29064 [ty] Preserve stdlib identity when searc"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29064",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29064",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "ibraheemdev",
+        "label": "Person",
+        "name": "ibraheemdev"
+       },
+       {
+        "id": "astral-sh/ruff#29067",
+        "label": "PR",
+        "name": "#29067 [ty] Restrict gradual inferred types wit"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "ibraheemdev",
+        "target": "astral-sh/ruff#29067",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29067",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29074",
+        "label": "PR",
+        "name": "#29074 [suspicious] Add `shared-clock-mock`"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29074",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29074",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fixfon",
+        "label": "Person",
+        "name": "fixfon"
+       },
+       {
+        "id": "astral-sh/ruff#29414",
+        "label": "PR",
+        "name": "#29414 [`pylint`] Mark fixes unsafe when deleti"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fixfon",
+        "target": "astral-sh/ruff#29414",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29414",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "lerebear",
+        "label": "Person",
+        "name": "lerebear"
+       },
+       {
+        "id": "astral-sh/ruff#29232",
+        "label": "PR",
+        "name": "#29232 [ty] Mitigate pauses from clearing cache"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "lerebear",
+        "target": "astral-sh/ruff#29232",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29232",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       },
+       {
+        "id": "astral-sh/ruff#29090",
+        "label": "PR",
+        "name": "#29090 [ty] Preserve tuple subclass identity du"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29090",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29090",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       },
+       {
+        "id": "astral-sh/ruff#29115",
+        "label": "PR",
+        "name": "#29115 [ty] Use the Black release for typeshed "
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29115",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29115",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       },
+       {
+        "id": "astral-sh/ruff#29120",
+        "label": "PR",
+        "name": "#29120 AGENTS.md: remove a load-bearing \"necess"
+       },
+       {
+        "id": "astral-sh/ruff",
+        "label": "Repo",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29120",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29120",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "astral-sh/ruff",
+     "astral-sh/ruff#29061",
+     "astral-sh/ruff#29064",
+     "astral-sh/ruff#29067",
+     "astral-sh/ruff#29074"
+    ]
+   }
+  ],
   "copperheadhq/copperhead": [
    {
     "kind": "reviewers",
@@ -1430,6 +3133,3044 @@
      "copperheadhq/copperhead#53",
      "copperheadhq/copperhead#59",
      "copperheadhq/copperhead#60"
+    ]
+   }
+  ],
+  "fastapi/fastapi": [
+   {
+    "kind": "reviewers",
+    "question": "Who should review fastapi PR #16407?",
+    "answer": "For PR #16407 (\"\ud83d\udcdd Fix docs issues reported in pinned discussion\", by YuriiMotov), the strongest reviewer candidates are **Shriprasad-P** (score 6.24: reviewed 7 PRs, 0 of these files), **tiangolo** (score 6.21: reviewed 5 PRs, 2 of these files), **icecold009** (score 3.30: reviewed 2 PRs, 0 of these files). Score = 3*log(1+PRs reviewed) plus reviewed files weighted by rarity (hub files like changelogs count little); the PR author and bots are excluded.",
+    "tool_calls": [
+     {
+      "tool": "reviewers",
+      "params": {
+       "pr": "fastapi/fastapi#16407",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nWITH p, repo, me\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(repo)\nWHERE q <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH p, cand, count(DISTINCT q) AS reviewed, collect(q)[0] AS sample\nOPTIONAL MATCH fp = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[:REVIEWED]-(cand)\nWHERE o <> p\nWITH p, cand, reviewed, sample, f, collect(fp) AS fpaths\nOPTIONAL MATCH (f)<-[:TOUCHES]-(x:PR)\nWITH cand, reviewed, sample, f, fpaths, count(DISTINCT x) AS df\nWITH cand, reviewed, sample,\n     sum(CASE WHEN f IS NULL THEN 0.0 ELSE 1.0 / log(1.0 + df) END) AS expertise,\n     count(f) AS files, collect(fpaths[0]) AS paths\nMATCH rp = (cand)-[:REVIEWED]->(sample)\nRETURN cand.login AS reviewer, files, reviewed, expertise,\n       3.0 * log(1.0 + reviewed) + expertise AS score,\n       (paths + [rp])[0..$max_paths] AS evidence\nORDER BY score DESC, reviewed DESC LIMIT $k",
+      "rows": [
+       {
+        "reviewer": "Shriprasad-P",
+        "files": 0,
+        "reviewed": 7,
+        "expertise": 0.0,
+        "score": 6.238
+       },
+       {
+        "reviewer": "tiangolo",
+        "files": 2,
+        "reviewed": 5,
+        "expertise": 0.834,
+        "score": 6.209
+       },
+       {
+        "reviewer": "icecold009",
+        "files": 0,
+        "reviewed": 2,
+        "expertise": 0.0,
+        "score": 3.296
+       },
+       {
+        "reviewer": "AF-bria",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       },
+       {
+        "reviewer": "Mukller",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       },
+       {
+        "reviewer": "RushikeshTelrandhe",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       },
+       {
+        "reviewer": "dolfinus",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       },
+       {
+        "reviewer": "ege-arhan",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       },
+       {
+        "reviewer": "github-advanced-security",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       },
+       {
+        "reviewer": "jasraj1111",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "Shriprasad-P",
+        "label": "Person",
+        "name": "Shriprasad-P"
+       },
+       {
+        "id": "fastapi/fastapi#16265",
+        "label": "PR",
+        "name": "#16265 \ud83d\udc1b Fix `format_sse_event` dropping the ev"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "fastapi/fastapi#16265",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi#16407",
+        "label": "PR",
+        "name": "#16407 \ud83d\udcdd Fix docs issues reported in pinned dis"
+       },
+       {
+        "id": "fastapi/fastapi:README.md",
+        "label": "File",
+        "name": "README.md"
+       },
+       {
+        "id": "fastapi/fastapi#16193",
+        "label": "PR",
+        "name": "#16193 \u267b\ufe0f Remove conf section and add event ban"
+       },
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16407",
+        "target": "fastapi/fastapi:README.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16193",
+        "target": "fastapi/fastapi:README.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16193",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi#16407",
+        "label": "PR",
+        "name": "#16407 \ud83d\udcdd Fix docs issues reported in pinned dis"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/docs/index.md",
+        "label": "File",
+        "name": "docs/en/docs/index.md"
+       },
+       {
+        "id": "fastapi/fastapi#16193",
+        "label": "PR",
+        "name": "#16193 \u267b\ufe0f Remove conf section and add event ban"
+       },
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16407",
+        "target": "fastapi/fastapi:docs/en/docs/index.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16193",
+        "target": "fastapi/fastapi:docs/en/docs/index.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16193",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16156",
+        "label": "PR",
+        "name": "#16156 \ud83d\udc77 Disable saving Zensical's `.cache` in "
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16156",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "icecold009",
+        "label": "Person",
+        "name": "icecold009"
+       },
+       {
+        "id": "fastapi/fastapi#16111",
+        "label": "PR",
+        "name": "#16111 \ud83d\udc1b Fix PEP 695 sequence aliases in form m"
+       }
+      ],
+      "edges": [
+       {
+        "source": "icecold009",
+        "target": "fastapi/fastapi#16111",
+        "type": "REVIEWED"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "fastapi/fastapi#16407",
+     "Shriprasad-P",
+     "tiangolo",
+     "icecold009"
+    ]
+   },
+   {
+    "kind": "duplicate",
+    "question": "Is PR #16511 a duplicate?",
+    "answer": "Possibly related work for PR #16511 (\"\ud83d\udcdd Fix broken installation guide link\"): it shares most of its files with #16407 (2/2 files, open), #16392 (2/2 files, closed), #16383 (2/2 files, closed).",
+    "tool_calls": [
+     {
+      "tool": "dup_shared_issue",
+      "params": {
+       "pr": "fastapi/fastapi#16511"
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:FIXES]->(i:Issue)<-[:FIXES]-(x:PR)\nWITH p, i, count(DISTINCT x) AS fixers WHERE fixers <= $max_issue_prs\nMATCH path = (p)-[:FIXES]->(i)<-[:FIXES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
+      "rows": []
+     },
+     {
+      "tool": "dup_file_overlap",
+      "params": {
+       "pr": "fastapi/fastapi#16511",
+       "min_overlap": 0.5,
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:TOUCHES]->(pf:File)\nWITH p, count(pf) AS mine\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)\nWHERE o <> p\nWITH o, mine, count(DISTINCT f) AS shared, collect(path) AS paths\nWHERE toFloat(shared) / mine >= $min_overlap\nRETURN o.id AS other, o.state AS state, o.title AS title, shared, mine,\n       paths[0..$max_paths] AS evidence\nORDER BY shared DESC LIMIT $k",
+      "rows": [
+       {
+        "other": "fastapi/fastapi#16407",
+        "state": "OPEN",
+        "title": "\ud83d\udcdd Fix docs issues reported in pinned discussion",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16392",
+        "state": "CLOSED",
+        "title": "fix: prevent stale endpoint context cache entries",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16383",
+        "state": "CLOSED",
+        "title": "docs: fix minor typo in index.md",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16358",
+        "state": "CLOSED",
+        "title": "Migrate `httpx` to `httpx2`",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16229",
+        "state": "CLOSED",
+        "title": "added people script",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16193",
+        "state": "MERGED",
+        "title": "\u267b\ufe0f Remove conf section and add event banner",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16479",
+        "state": "CLOSED",
+        "title": "Fix trailing asterisk in FastAPI README",
+        "shared": 1,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16457",
+        "state": "MERGED",
+        "title": "\ud83d\udd27 Update sponsors: remove Render",
+        "shared": 1,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16456",
+        "state": "CLOSED",
+        "title": "Fix awkward wording in FastAPI README",
+        "shared": 1,
+        "mine": 2
+       },
+       {
+        "other": "fastapi/fastapi#16406",
+        "state": "MERGED",
+        "title": "\ud83d\udd27 Update sponsors: remove Permit.io",
+        "shared": 1,
+        "mine": 2
+       }
+      ]
+     },
+     {
+      "tool": "dup_similar_title",
+      "params": {
+       "pr": "fastapi/fastapi#16511",
+       "min_jaccard": 0.4,
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND o:PR AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
+      "rows": []
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi#16511",
+        "label": "PR",
+        "name": "#16511 \ud83d\udcdd Fix broken installation guide link"
+       },
+       {
+        "id": "fastapi/fastapi:README.md",
+        "label": "File",
+        "name": "README.md"
+       },
+       {
+        "id": "fastapi/fastapi#16407",
+        "label": "PR",
+        "name": "#16407 \ud83d\udcdd Fix docs issues reported in pinned dis"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16511",
+        "target": "fastapi/fastapi:README.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16407",
+        "target": "fastapi/fastapi:README.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi#16511",
+        "label": "PR",
+        "name": "#16511 \ud83d\udcdd Fix broken installation guide link"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/docs/index.md",
+        "label": "File",
+        "name": "docs/en/docs/index.md"
+       },
+       {
+        "id": "fastapi/fastapi#16407",
+        "label": "PR",
+        "name": "#16407 \ud83d\udcdd Fix docs issues reported in pinned dis"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16511",
+        "target": "fastapi/fastapi:docs/en/docs/index.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16407",
+        "target": "fastapi/fastapi:docs/en/docs/index.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi#16511",
+        "label": "PR",
+        "name": "#16511 \ud83d\udcdd Fix broken installation guide link"
+       },
+       {
+        "id": "fastapi/fastapi:README.md",
+        "label": "File",
+        "name": "README.md"
+       },
+       {
+        "id": "fastapi/fastapi#16392",
+        "label": "PR",
+        "name": "#16392 fix: prevent stale endpoint context cach"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16511",
+        "target": "fastapi/fastapi:README.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16392",
+        "target": "fastapi/fastapi:README.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi#16511",
+        "label": "PR",
+        "name": "#16511 \ud83d\udcdd Fix broken installation guide link"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/docs/index.md",
+        "label": "File",
+        "name": "docs/en/docs/index.md"
+       },
+       {
+        "id": "fastapi/fastapi#16392",
+        "label": "PR",
+        "name": "#16392 fix: prevent stale endpoint context cach"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16511",
+        "target": "fastapi/fastapi:docs/en/docs/index.md",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16392",
+        "target": "fastapi/fastapi:docs/en/docs/index.md",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "fastapi/fastapi#16511",
+     "fastapi/fastapi#16407",
+     "fastapi/fastapi#16392",
+     "fastapi/fastapi#16383"
+    ]
+   },
+   {
+    "kind": "impact",
+    "question": "What breaks if .github/workflows/build-docs.yml changes?",
+    "answer": "`.github/workflows/build-docs.yml` has been changed together with 15 other files. The most coupled are `.github/workflows/pre-commit.yml` (5 PRs), `.github/workflows/test.yml` (5 PRs), `.github/workflows/bump-pre-commit-hooks.yml` (4 PRs), `.github/workflows/create-draft-release.yml` (4 PRs). Review those when this file changes.",
+    "tool_calls": [
+     {
+      "tool": "impact_file",
+      "params": {
+       "file": "fastapi/fastapi:.github/workflows/build-docs.yml",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\nOPTIONAL MATCH path = (f)<-[:TOUCHES]-(p:PR)-[:TOUCHES]->(g)\nWITH g, c.weight AS strength, collect(path) AS paths\nRETURN g.path AS file, strength, paths[0..$max_paths] AS evidence\nORDER BY strength DESC, file ASC LIMIT $k",
+      "rows": [
+       {
+        "file": ".github/workflows/pre-commit.yml",
+        "strength": 5
+       },
+       {
+        "file": ".github/workflows/test.yml",
+        "strength": 5
+       },
+       {
+        "file": ".github/workflows/bump-pre-commit-hooks.yml",
+        "strength": 4
+       },
+       {
+        "file": ".github/workflows/create-draft-release.yml",
+        "strength": 4
+       },
+       {
+        "file": ".github/workflows/deploy-docs.yml",
+        "strength": 4
+       },
+       {
+        "file": ".github/workflows/label-approved.yml",
+        "strength": 4
+       },
+       {
+        "file": ".github/workflows/notify-translations.yml",
+        "strength": 4
+       },
+       {
+        "file": ".github/workflows/prepare-release.yml",
+        "strength": 4
+       },
+       {
+        "file": ".github/workflows/publish.yml",
+        "strength": 4
+       },
+       {
+        "file": ".github/workflows/smokeshow.yml",
+        "strength": 4
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16120",
+        "label": "PR",
+        "name": "#16120 \u2b06 Bump the github-actions group with 6 u"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/pre-commit.yml",
+        "label": "File",
+        "name": ".github/workflows/pre-commit.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/pre-commit.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16152",
+        "label": "PR",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/pre-commit.yml",
+        "label": "File",
+        "name": ".github/workflows/pre-commit.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/pre-commit.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16249",
+        "label": "PR",
+        "name": "#16249 \u2b06\ufe0f Bump `setup-uv` action to `10.0.1`"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/pre-commit.yml",
+        "label": "File",
+        "name": ".github/workflows/pre-commit.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/pre-commit.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16120",
+        "label": "PR",
+        "name": "#16120 \u2b06 Bump the github-actions group with 6 u"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/test.yml",
+        "label": "File",
+        "name": ".github/workflows/test.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/test.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16152",
+        "label": "PR",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/test.yml",
+        "label": "File",
+        "name": ".github/workflows/test.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/test.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16249",
+        "label": "PR",
+        "name": "#16249 \u2b06\ufe0f Bump `setup-uv` action to `10.0.1`"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/test.yml",
+        "label": "File",
+        "name": ".github/workflows/test.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/test.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16120",
+        "label": "PR",
+        "name": "#16120 \u2b06 Bump the github-actions group with 6 u"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/bump-pre-commit-hooks.yml",
+        "label": "File",
+        "name": ".github/workflows/bump-pre-commit-hooks.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/bump-pre-commit-hooks.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16152",
+        "label": "PR",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/bump-pre-commit-hooks.yml",
+        "label": "File",
+        "name": ".github/workflows/bump-pre-commit-hooks.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/bump-pre-commit-hooks.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16249",
+        "label": "PR",
+        "name": "#16249 \u2b06\ufe0f Bump `setup-uv` action to `10.0.1`"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/bump-pre-commit-hooks.yml",
+        "label": "File",
+        "name": ".github/workflows/bump-pre-commit-hooks.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/bump-pre-commit-hooks.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16120",
+        "label": "PR",
+        "name": "#16120 \u2b06 Bump the github-actions group with 6 u"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/create-draft-release.yml",
+        "label": "File",
+        "name": ".github/workflows/create-draft-release.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16120",
+        "target": "fastapi/fastapi:.github/workflows/create-draft-release.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16152",
+        "label": "PR",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/create-draft-release.yml",
+        "label": "File",
+        "name": ".github/workflows/create-draft-release.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/create-draft-release.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/build-docs.yml"
+       },
+       {
+        "id": "fastapi/fastapi#16249",
+        "label": "PR",
+        "name": "#16249 \u2b06\ufe0f Bump `setup-uv` action to `10.0.1`"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/create-draft-release.yml",
+        "label": "File",
+        "name": ".github/workflows/create-draft-release.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/build-docs.yml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "fastapi/fastapi#16249",
+        "target": "fastapi/fastapi:.github/workflows/create-draft-release.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "fastapi/fastapi:.github/workflows/build-docs.yml",
+     "fastapi/fastapi:.github/workflows/pre-commit.yml",
+     "fastapi/fastapi:.github/workflows/test.yml",
+     "fastapi/fastapi:.github/workflows/bump-pre-commit-hooks.yml",
+     "fastapi/fastapi:.github/workflows/create-draft-release.yml"
+    ]
+   },
+   {
+    "kind": "stalled",
+    "question": "Why is this repo stalled?",
+    "answer": "Signals from the graph: 15 PRs are open and 6 of them have no human review; the oldest, #16152 by YuriiMotov, has waited 71 days; the last merge was #16510 on 2026-10-16 (1 days before the newest PR); review load is concentrated: YuriiMotov did 7 of 27 human reviews in the top 10.",
+    "tool_calls": [
+     {
+      "tool": "stale_open_prs",
+      "params": {
+       "repo": "fastapi/fastapi",
+       "k": 10
+      },
+      "cypher": "MATCH path = (a:Person)-[:AUTHORED]->(p:PR {state:'OPEN'})-[:IN_REPO]->(:Repo {id:$repo})\nOPTIONAL MATCH (rv:Person)-[:REVIEWED]->(p)\nRETURN p.id AS pr, p.title AS title, p.created AS created, a.login AS author,\n       count(DISTINCT rv) AS reviewers, path AS evidence\nORDER BY created ASC LIMIT $k",
+      "rows": [
+       {
+        "pr": "fastapi/fastapi#16152",
+        "title": "\ud83d\udc77 Optimize cache usage in workflows",
+        "created": "2026-08-07T05:43:41Z",
+        "author": "YuriiMotov",
+        "reviewers": 2
+       },
+       {
+        "pr": "fastapi/fastapi#16159",
+        "title": "\u26a1\ufe0f Skip included routers whose prefix cannot match the request path",
+        "created": "2026-08-08T08:37:59Z",
+        "author": "Kludex",
+        "reviewers": 2
+       },
+       {
+        "pr": "fastapi/fastapi#16236",
+        "title": "Inherit Starlette router dispatch",
+        "created": "2026-08-22T20:14:33Z",
+        "author": "Kludex",
+        "reviewers": 1
+       },
+       {
+        "pr": "fastapi/fastapi#16272",
+        "title": "docs: fix type annotation mismatch in sub-dependencies tutorial example",
+        "created": "2026-08-30T06:31:09Z",
+        "author": "vaibhavmashal",
+        "reviewers": 1
+       },
+       {
+        "pr": "fastapi/fastapi#16348",
+        "title": "\ud83d\udc1b Support Annotated in stream return annotations for JSONL and SSE",
+        "created": "2026-09-12T16:41:30Z",
+        "author": "Anurag-M1",
+        "reviewers": 1
+       },
+       {
+        "pr": "fastapi/fastapi#16350",
+        "title": "Fix jsonable_encoder raising an unclear UnicodeDecodeError for non-UTF-8 bytes",
+        "created": "2026-09-14T05:06:24Z",
+        "author": "usamabhatti1998",
+        "reviewers": 2
+       },
+       {
+        "pr": "fastapi/fastapi#16354",
+        "title": "\ud83d\udcdd Clarify comment about SSE event terminator",
+        "created": "2026-09-14T19:02:54Z",
+        "author": "YuriiMotov",
+        "reviewers": 1
+       },
+       {
+        "pr": "fastapi/fastapi#16368",
+        "title": "\u2705 Fix order-dependent tests in test_dependency_contextmanager.py",
+        "created": "2026-09-16T10:06:33Z",
+        "author": "meagoodboy",
+        "reviewers": 0
+       },
+       {
+        "pr": "fastapi/fastapi#16384",
+        "title": "\ud83d\udc1b Fix explicit response_model ignored on streaming generator endpoints",
+        "created": "2026-09-21T07:03:53Z",
+        "author": "MayankSharma-2812",
+        "reviewers": 0
+       },
+       {
+        "pr": "fastapi/fastapi#16387",
+        "title": "\ud83d\udc1b Fix endpoint context shared and mutated across requests",
+        "created": "2026-09-22T07:16:13Z",
+        "author": "prownd",
+        "reviewers": 1
+       }
+      ]
+     },
+     {
+      "tool": "last_merges",
+      "params": {
+       "repo": "fastapi/fastapi",
+       "k": 10
+      },
+      "cypher": "MATCH path = (a:Person)-[:AUTHORED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.merged IS NOT NULL\nRETURN p.id AS pr, p.merged AS merged, a.login AS author, path AS evidence\nORDER BY merged DESC LIMIT $k",
+      "rows": [
+       {
+        "pr": "fastapi/fastapi#16510",
+        "merged": "2026-10-16T14:12:17Z",
+        "author": "pr-submit"
+       },
+       {
+        "pr": "fastapi/fastapi#16509",
+        "merged": "2026-10-16T14:03:23Z",
+        "author": "tiangolo"
+       },
+       {
+        "pr": "fastapi/fastapi#16505",
+        "merged": "2026-10-15T14:24:53Z",
+        "author": "tiangolo"
+       },
+       {
+        "pr": "fastapi/fastapi#16504",
+        "merged": "2026-10-15T13:32:45Z",
+        "author": "pr-submit"
+       },
+       {
+        "pr": "fastapi/fastapi#16503",
+        "merged": "2026-10-15T13:22:30Z",
+        "author": "tiangolo"
+       },
+       {
+        "pr": "fastapi/fastapi#16500",
+        "merged": "2026-10-15T08:29:44Z",
+        "author": "pr-submit"
+       },
+       {
+        "pr": "fastapi/fastapi#16499",
+        "merged": "2026-10-15T08:29:14Z",
+        "author": "pr-submit"
+       },
+       {
+        "pr": "fastapi/fastapi#16501",
+        "merged": "2026-10-15T08:15:54Z",
+        "author": "pr-submit"
+       },
+       {
+        "pr": "fastapi/fastapi#16498",
+        "merged": "2026-10-15T08:14:55Z",
+        "author": "pr-submit"
+       },
+       {
+        "pr": "fastapi/fastapi#16497",
+        "merged": "2026-10-15T08:08:21Z",
+        "author": "pr-submit"
+       }
+      ]
+     },
+     {
+      "tool": "reviewer_load",
+      "params": {
+       "repo": "fastapi/fastapi",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE NOT coalesce(rv.is_bot, false)\nWITH rv, count(DISTINCT p) AS reviewed,\n     count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,\n     collect(path) AS paths\nRETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS evidence\nORDER BY reviewed DESC LIMIT $k",
+      "rows": [
+       {
+        "reviewer": "YuriiMotov",
+        "reviewed": 7,
+        "open_reviewed": 3
+       },
+       {
+        "reviewer": "Shriprasad-P",
+        "reviewed": 7,
+        "open_reviewed": 3
+       },
+       {
+        "reviewer": "tiangolo",
+        "reviewed": 5,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "icecold009",
+        "reviewed": 2,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "milad2303-glitch",
+        "reviewed": 1,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "ege-arhan",
+        "reviewed": 1,
+        "open_reviewed": 1
+       },
+       {
+        "reviewer": "RushikeshTelrandhe",
+        "reviewed": 1,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "sylvesterkaczmarek",
+        "reviewed": 1,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "jasraj1111",
+        "reviewed": 1,
+        "open_reviewed": 1
+       },
+       {
+        "reviewer": "Mukller",
+        "reviewed": 1,
+        "open_reviewed": 1
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "YuriiMotov",
+        "label": "Person",
+        "name": "YuriiMotov"
+       },
+       {
+        "id": "fastapi/fastapi#16152",
+        "label": "PR",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "YuriiMotov",
+        "target": "fastapi/fastapi#16152",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Kludex",
+        "label": "Person",
+        "name": "Kludex"
+       },
+       {
+        "id": "fastapi/fastapi#16159",
+        "label": "PR",
+        "name": "#16159 \u26a1\ufe0f Skip included routers whose prefix ca"
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Kludex",
+        "target": "fastapi/fastapi#16159",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16159",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Kludex",
+        "label": "Person",
+        "name": "Kludex"
+       },
+       {
+        "id": "fastapi/fastapi#16236",
+        "label": "PR",
+        "name": "#16236 Inherit Starlette router dispatch"
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Kludex",
+        "target": "fastapi/fastapi#16236",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16236",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "vaibhavmashal",
+        "label": "Person",
+        "name": "vaibhavmashal"
+       },
+       {
+        "id": "fastapi/fastapi#16272",
+        "label": "PR",
+        "name": "#16272 docs: fix type annotation mismatch in su"
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "vaibhavmashal",
+        "target": "fastapi/fastapi#16272",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16272",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pr-submit",
+        "label": "Person",
+        "name": "pr-submit"
+       },
+       {
+        "id": "fastapi/fastapi#16510",
+        "label": "PR",
+        "name": "#16510 \ud83d\udd16 Release version 0.143.3"
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pr-submit",
+        "target": "fastapi/fastapi#16510",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16510",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16509",
+        "label": "PR",
+        "name": "#16509 \ud83d\udc1b Fix non-finite float serialization in "
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16509",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16509",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "YuriiMotov",
+        "label": "Person",
+        "name": "YuriiMotov"
+       },
+       {
+        "id": "fastapi/fastapi#16121",
+        "label": "PR",
+        "name": "#16121 \u2b06 Bump the python-packages group with 12"
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "YuriiMotov",
+        "target": "fastapi/fastapi#16121",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "fastapi/fastapi#16121",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "YuriiMotov",
+        "label": "Person",
+        "name": "YuriiMotov"
+       },
+       {
+        "id": "fastapi/fastapi#16152",
+        "label": "PR",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "YuriiMotov",
+        "target": "fastapi/fastapi#16152",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "YuriiMotov",
+        "label": "Person",
+        "name": "YuriiMotov"
+       },
+       {
+        "id": "fastapi/fastapi#16285",
+        "label": "PR",
+        "name": "#16285 \u2b06 Bump the python-packages group across "
+       },
+       {
+        "id": "fastapi/fastapi",
+        "label": "Repo",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "YuriiMotov",
+        "target": "fastapi/fastapi#16285",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "fastapi/fastapi#16285",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "fastapi/fastapi",
+     "fastapi/fastapi#16152",
+     "fastapi/fastapi#16159",
+     "fastapi/fastapi#16236",
+     "fastapi/fastapi#16272"
+    ]
+   }
+  ],
+  "pydantic/pydantic": [
+   {
+    "kind": "reviewers",
+    "question": "Who should review pydantic PR #14003?",
+    "answer": "For PR #14003 (\"Bump PyO3 to 0.30.1, use `PyFrozenDict`\", by Viicos), the strongest reviewer candidates are **macroscopeapp** (score 12.87: reviewed 26 PRs, 6 of these files), **davidhewitt** (score 11.94: reviewed 13 PRs, 8 of these files), **veria-ai** (score 9.46: reviewed 16 PRs, 2 of these files). Score = 3*log(1+PRs reviewed) plus reviewed files weighted by rarity (hub files like changelogs count little); the PR author and bots are excluded.",
+    "tool_calls": [
+     {
+      "tool": "reviewers",
+      "params": {
+       "pr": "pydantic/pydantic#14003",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nWITH p, repo, me\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(repo)\nWHERE q <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH p, cand, count(DISTINCT q) AS reviewed, collect(q)[0] AS sample\nOPTIONAL MATCH fp = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[:REVIEWED]-(cand)\nWHERE o <> p\nWITH p, cand, reviewed, sample, f, collect(fp) AS fpaths\nOPTIONAL MATCH (f)<-[:TOUCHES]-(x:PR)\nWITH cand, reviewed, sample, f, fpaths, count(DISTINCT x) AS df\nWITH cand, reviewed, sample,\n     sum(CASE WHEN f IS NULL THEN 0.0 ELSE 1.0 / log(1.0 + df) END) AS expertise,\n     count(f) AS files, collect(fpaths[0]) AS paths\nMATCH rp = (cand)-[:REVIEWED]->(sample)\nRETURN cand.login AS reviewer, files, reviewed, expertise,\n       3.0 * log(1.0 + reviewed) + expertise AS score,\n       (paths + [rp])[0..$max_paths] AS evidence\nORDER BY score DESC, reviewed DESC LIMIT $k",
+      "rows": [
+       {
+        "reviewer": "macroscopeapp",
+        "files": 6,
+        "reviewed": 26,
+        "expertise": 2.981,
+        "score": 12.868
+       },
+       {
+        "reviewer": "davidhewitt",
+        "files": 8,
+        "reviewed": 13,
+        "expertise": 4.019,
+        "score": 11.936
+       },
+       {
+        "reviewer": "veria-ai",
+        "files": 2,
+        "reviewed": 16,
+        "expertise": 0.961,
+        "score": 9.46
+       },
+       {
+        "reviewer": "Shriprasad-P",
+        "files": 6,
+        "reviewed": 6,
+        "expertise": 2.84,
+        "score": 8.677
+       },
+       {
+        "reviewer": "Mukller",
+        "files": 3,
+        "reviewed": 2,
+        "expertise": 1.614,
+        "score": 4.91
+       },
+       {
+        "reviewer": "koriyoshi2041",
+        "files": 4,
+        "reviewed": 1,
+        "expertise": 2.02,
+        "score": 4.1
+       },
+       {
+        "reviewer": "chrikrah",
+        "files": 0,
+        "reviewed": 2,
+        "expertise": 0.0,
+        "score": 3.296
+       },
+       {
+        "reviewer": "icecold009",
+        "files": 0,
+        "reviewed": 2,
+        "expertise": 0.0,
+        "score": 3.296
+       },
+       {
+        "reviewer": "strawgate",
+        "files": 0,
+        "reviewed": 2,
+        "expertise": 0.0,
+        "score": 3.296
+       },
+       {
+        "reviewer": "Rodrigo-Palma",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "label": "File",
+        "name": "pydantic-core/Cargo.toml"
+       },
+       {
+        "id": "pydantic/pydantic#13884",
+        "label": "PR",
+        "name": "#13884 Validate json models straight off the ji"
+       },
+       {
+        "id": "macroscopeapp",
+        "label": "Person",
+        "name": "macroscopeapp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13884",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "macroscopeapp",
+        "target": "pydantic/pydantic#13884",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "label": "File",
+        "name": "pydantic-core/src/input/input_python.rs"
+       },
+       {
+        "id": "pydantic/pydantic#13757",
+        "label": "PR",
+        "name": "#13757 Add a `deque` core schema"
+       },
+       {
+        "id": "macroscopeapp",
+        "label": "Person",
+        "name": "macroscopeapp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13757",
+        "target": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "macroscopeapp",
+        "target": "pydantic/pydantic#13757",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "label": "File",
+        "name": "pydantic-core/src/lookup_key.rs"
+       },
+       {
+        "id": "pydantic/pydantic#13884",
+        "label": "PR",
+        "name": "#13884 Validate json models straight off the ji"
+       },
+       {
+        "id": "macroscopeapp",
+        "label": "Person",
+        "name": "macroscopeapp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13884",
+        "target": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "macroscopeapp",
+        "target": "pydantic/pydantic#13884",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/Cargo.lock",
+        "label": "File",
+        "name": "pydantic-core/Cargo.lock"
+       },
+       {
+        "id": "pydantic/pydantic#14007",
+        "label": "PR",
+        "name": "#14007 Bump speedate to v0.18.0"
+       },
+       {
+        "id": "davidhewitt",
+        "label": "Person",
+        "name": "davidhewitt"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.lock",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#14007",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.lock",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "davidhewitt",
+        "target": "pydantic/pydantic#14007",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "label": "File",
+        "name": "pydantic-core/Cargo.toml"
+       },
+       {
+        "id": "pydantic/pydantic#14007",
+        "label": "PR",
+        "name": "#14007 Bump speedate to v0.18.0"
+       },
+       {
+        "id": "davidhewitt",
+        "label": "Person",
+        "name": "davidhewitt"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#14007",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "davidhewitt",
+        "target": "pydantic/pydantic#14007",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "label": "File",
+        "name": "pydantic-core/src/input/input_python.rs"
+       },
+       {
+        "id": "pydantic/pydantic#13796",
+        "label": "PR",
+        "name": "#13796 Add an `ordered-dict` core schema"
+       },
+       {
+        "id": "davidhewitt",
+        "label": "Person",
+        "name": "davidhewitt"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13796",
+        "target": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "davidhewitt",
+        "target": "pydantic/pydantic#13796",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "label": "File",
+        "name": "pydantic-core/Cargo.toml"
+       },
+       {
+        "id": "pydantic/pydantic#13884",
+        "label": "PR",
+        "name": "#13884 Validate json models straight off the ji"
+       },
+       {
+        "id": "veria-ai",
+        "label": "Person",
+        "name": "veria-ai"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13884",
+        "target": "pydantic/pydantic:pydantic-core/Cargo.toml",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "veria-ai",
+        "target": "pydantic/pydantic#13884",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14003",
+        "label": "PR",
+        "name": "#14003 Bump PyO3 to 0.30.1, use `PyFrozenDict`"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "label": "File",
+        "name": "pydantic-core/src/lookup_key.rs"
+       },
+       {
+        "id": "pydantic/pydantic#13884",
+        "label": "PR",
+        "name": "#13884 Validate json models straight off the ji"
+       },
+       {
+        "id": "veria-ai",
+        "label": "Person",
+        "name": "veria-ai"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14003",
+        "target": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13884",
+        "target": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "veria-ai",
+        "target": "pydantic/pydantic#13884",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "veria-ai",
+        "label": "Person",
+        "name": "veria-ai"
+       },
+       {
+        "id": "pydantic/pydantic#13619",
+        "label": "PR",
+        "name": "#13619 Reject trailing input and non-ASCII digi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "veria-ai",
+        "target": "pydantic/pydantic#13619",
+        "type": "REVIEWED"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "pydantic/pydantic#14003",
+     "macroscopeapp",
+     "davidhewitt",
+     "veria-ai"
+    ]
+   },
+   {
+    "kind": "duplicate",
+    "question": "Is PR #14009 a duplicate?",
+    "answer": "Possibly related work for PR #14009 (\"json_schema: honour val_json_bytes in validation mode\"): it shares most of its files with #14005 (2/2 files, open), #13997 (2/2 files, merged), #13980 (2/2 files, merged).",
+    "tool_calls": [
+     {
+      "tool": "dup_shared_issue",
+      "params": {
+       "pr": "pydantic/pydantic#14009"
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:FIXES]->(i:Issue)<-[:FIXES]-(x:PR)\nWITH p, i, count(DISTINCT x) AS fixers WHERE fixers <= $max_issue_prs\nMATCH path = (p)-[:FIXES]->(i)<-[:FIXES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
+      "rows": []
+     },
+     {
+      "tool": "dup_file_overlap",
+      "params": {
+       "pr": "pydantic/pydantic#14009",
+       "min_overlap": 0.5,
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:TOUCHES]->(pf:File)\nWITH p, count(pf) AS mine\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)\nWHERE o <> p\nWITH o, mine, count(DISTINCT f) AS shared, collect(path) AS paths\nWHERE toFloat(shared) / mine >= $min_overlap\nRETURN o.id AS other, o.state AS state, o.title AS title, shared, mine,\n       paths[0..$max_paths] AS evidence\nORDER BY shared DESC LIMIT $k",
+      "rows": [
+       {
+        "other": "pydantic/pydantic#14005",
+        "state": "OPEN",
+        "title": "Use `val_json_bytes` for the format of `bytes` in validation JSON schemas",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13997",
+        "state": "MERGED",
+        "title": "Support explicit `by_alias` overriding `validate_by_alias` in validation JSON schemas",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13980",
+        "state": "MERGED",
+        "title": "Fix JSON Schema cache key mismatch with nested `json_schema_mode_override`",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13953",
+        "state": "OPEN",
+        "title": "Fix JSON Schema for `arguments` schema",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13899",
+        "state": "MERGED",
+        "title": "Respect propagated extra config in the JSON Schema of stdlib dataclasses",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13893",
+        "state": "MERGED",
+        "title": "Encode JSON Schema defaults with a consistent configuration",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13891",
+        "state": "MERGED",
+        "title": "Fix config propagation of stdlib dataclasses and `TypedDict`s in JSON Schema",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13877",
+        "state": "CLOSED",
+        "title": "Fix JSON schema generation for stdlib dataclasses missing __pydantic_config__",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13852",
+        "state": "CLOSED",
+        "title": "fix(json_schema): serialization mode schema respects serialize_by_alias config",
+        "shared": 2,
+        "mine": 2
+       },
+       {
+        "other": "pydantic/pydantic#13848",
+        "state": "OPEN",
+        "title": "Include `null` in serialization JSON Schema for `unless-none` field serializers",
+        "shared": 2,
+        "mine": 2
+       }
+      ]
+     },
+     {
+      "tool": "dup_similar_title",
+      "params": {
+       "pr": "pydantic/pydantic#14009",
+       "min_jaccard": 0.4,
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND o:PR AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
+      "rows": []
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14009",
+        "label": "PR",
+        "name": "#14009 json_schema: honour val_json_bytes in va"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/json_schema.py",
+        "label": "File",
+        "name": "pydantic/json_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#14005",
+        "label": "PR",
+        "name": "#14005 Use `val_json_bytes` for the format of `"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14009",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#14005",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14009",
+        "label": "PR",
+        "name": "#14009 json_schema: honour val_json_bytes in va"
+       },
+       {
+        "id": "pydantic/pydantic:tests/test_json_schema.py",
+        "label": "File",
+        "name": "tests/test_json_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#14005",
+        "label": "PR",
+        "name": "#14005 Use `val_json_bytes` for the format of `"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14009",
+        "target": "pydantic/pydantic:tests/test_json_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#14005",
+        "target": "pydantic/pydantic:tests/test_json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14009",
+        "label": "PR",
+        "name": "#14009 json_schema: honour val_json_bytes in va"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/json_schema.py",
+        "label": "File",
+        "name": "pydantic/json_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13997",
+        "label": "PR",
+        "name": "#13997 Support explicit `by_alias` overriding `"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14009",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13997",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic#14009",
+        "label": "PR",
+        "name": "#14009 json_schema: honour val_json_bytes in va"
+       },
+       {
+        "id": "pydantic/pydantic:tests/test_json_schema.py",
+        "label": "File",
+        "name": "tests/test_json_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13997",
+        "label": "PR",
+        "name": "#13997 Support explicit `by_alias` overriding `"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#14009",
+        "target": "pydantic/pydantic:tests/test_json_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13997",
+        "target": "pydantic/pydantic:tests/test_json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "pydantic/pydantic#14009",
+     "pydantic/pydantic#14005",
+     "pydantic/pydantic#13997",
+     "pydantic/pydantic#13980"
+    ]
+   },
+   {
+    "kind": "impact",
+    "question": "What breaks if pydantic/_internal/_generate_schema.py changes?",
+    "answer": "`pydantic/_internal/_generate_schema.py` has been changed together with 39 other files. The most coupled are `pydantic-core/python/pydantic_core/core_schema.py` (9 PRs), `pydantic/json_schema.py` (8 PRs), `pydantic-core/tests/test_schema_functions.py` (6 PRs), `pydantic/_internal/_fields.py` (6 PRs). Review those when this file changes.",
+    "tool_calls": [
+     {
+      "tool": "impact_file",
+      "params": {
+       "file": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH (f:File {id:$file})-[c:CO_CHANGED]-(g:File)\nOPTIONAL MATCH path = (f)<-[:TOUCHES]-(p:PR)-[:TOUCHES]->(g)\nWITH g, c.weight AS strength, collect(path) AS paths\nRETURN g.path AS file, strength, paths[0..$max_paths] AS evidence\nORDER BY strength DESC, file ASC LIMIT $k",
+      "rows": [
+       {
+        "file": "pydantic-core/python/pydantic_core/core_schema.py",
+        "strength": 9
+       },
+       {
+        "file": "pydantic/json_schema.py",
+        "strength": 8
+       },
+       {
+        "file": "pydantic-core/tests/test_schema_functions.py",
+        "strength": 6
+       },
+       {
+        "file": "pydantic/_internal/_fields.py",
+        "strength": 6
+       },
+       {
+        "file": "pydantic-core/src/validators/mod.rs",
+        "strength": 5
+       },
+       {
+        "file": "tests/test_edge_cases.py",
+        "strength": 5
+       },
+       {
+        "file": "docs/api/standard_library_types.md",
+        "strength": 4
+       },
+       {
+        "file": "docs/errors/validation_errors.md",
+        "strength": 4
+       },
+       {
+        "file": "pydantic-core/src/common/mod.rs",
+        "strength": 4
+       },
+       {
+        "file": "pydantic-core/src/errors/types.rs",
+        "strength": 4
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13634",
+        "label": "PR",
+        "name": "#13634 Add support for `frozendict` type"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/python/pydantic_core/core_schema.py",
+        "label": "File",
+        "name": "pydantic-core/python/pydantic_core/core_schema.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13634",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13634",
+        "target": "pydantic/pydantic:pydantic-core/python/pydantic_core/core_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13657",
+        "label": "PR",
+        "name": "#13657 fix: apply the `__pydantic_extra__` anno"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/python/pydantic_core/core_schema.py",
+        "label": "File",
+        "name": "pydantic-core/python/pydantic_core/core_schema.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13657",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13657",
+        "target": "pydantic/pydantic:pydantic-core/python/pydantic_core/core_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13682",
+        "label": "PR",
+        "name": "#13682 Simplify serialization core schemas in s"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/python/pydantic_core/core_schema.py",
+        "label": "File",
+        "name": "pydantic-core/python/pydantic_core/core_schema.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13682",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13682",
+        "target": "pydantic/pydantic:pydantic-core/python/pydantic_core/core_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13634",
+        "label": "PR",
+        "name": "#13634 Add support for `frozendict` type"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/json_schema.py",
+        "label": "File",
+        "name": "pydantic/json_schema.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13634",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13634",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13657",
+        "label": "PR",
+        "name": "#13657 fix: apply the `__pydantic_extra__` anno"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/json_schema.py",
+        "label": "File",
+        "name": "pydantic/json_schema.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13657",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13657",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13682",
+        "label": "PR",
+        "name": "#13682 Simplify serialization core schemas in s"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/json_schema.py",
+        "label": "File",
+        "name": "pydantic/json_schema.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13682",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13682",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13634",
+        "label": "PR",
+        "name": "#13634 Add support for `frozendict` type"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/tests/test_schema_functions.py",
+        "label": "File",
+        "name": "pydantic-core/tests/test_schema_functions.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13634",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13634",
+        "target": "pydantic/pydantic:pydantic-core/tests/test_schema_functions.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13757",
+        "label": "PR",
+        "name": "#13757 Add a `deque` core schema"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/tests/test_schema_functions.py",
+        "label": "File",
+        "name": "pydantic-core/tests/test_schema_functions.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13757",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13757",
+        "target": "pydantic/pydantic:pydantic-core/tests/test_schema_functions.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13779",
+        "label": "PR",
+        "name": "#13779 Do not mention `MISSING`\u00a0as a valid valu"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/tests/test_schema_functions.py",
+        "label": "File",
+        "name": "pydantic-core/tests/test_schema_functions.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13779",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13779",
+        "target": "pydantic/pydantic:pydantic-core/tests/test_schema_functions.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13651",
+        "label": "PR",
+        "name": "#13651 Fix field_title_generator override in in"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_fields.py",
+        "label": "File",
+        "name": "pydantic/_internal/_fields.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13651",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13651",
+        "target": "pydantic/pydantic:pydantic/_internal/_fields.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13652",
+        "label": "PR",
+        "name": "#13652 Fix field_title_generator override in in"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_fields.py",
+        "label": "File",
+        "name": "pydantic/_internal/_fields.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13652",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13652",
+        "target": "pydantic/pydantic:pydantic/_internal/_fields.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "label": "File",
+        "name": "pydantic/_internal/_generate_schema.py"
+       },
+       {
+        "id": "pydantic/pydantic#13775",
+        "label": "PR",
+        "name": "#13775 fix: respect MRO when base merely inheri"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_fields.py",
+        "label": "File",
+        "name": "pydantic/_internal/_fields.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "pydantic/pydantic#13775",
+        "target": "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "pydantic/pydantic#13775",
+        "target": "pydantic/pydantic:pydantic/_internal/_fields.py",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "pydantic/pydantic:pydantic/_internal/_generate_schema.py",
+     "pydantic/pydantic:pydantic-core/python/pydantic_core/core_schema.py",
+     "pydantic/pydantic:pydantic/json_schema.py",
+     "pydantic/pydantic:pydantic-core/tests/test_schema_functions.py",
+     "pydantic/pydantic:pydantic/_internal/_fields.py"
+    ]
+   },
+   {
+    "kind": "stalled",
+    "question": "Why is this repo stalled?",
+    "answer": "Signals from the graph: 17 PRs are open and 7 of them have no human review; the oldest, #13682 by Viicos, has waited 59 days; the last merge was #14008 on 2026-10-15 (1 days before the newest PR); review load is concentrated: Viicos did 32 of 102 human reviews in the top 10.",
+    "tool_calls": [
+     {
+      "tool": "stale_open_prs",
+      "params": {
+       "repo": "pydantic/pydantic",
+       "k": 10
+      },
+      "cypher": "MATCH path = (a:Person)-[:AUTHORED]->(p:PR {state:'OPEN'})-[:IN_REPO]->(:Repo {id:$repo})\nOPTIONAL MATCH (rv:Person)-[:REVIEWED]->(p)\nRETURN p.id AS pr, p.title AS title, p.created AS created, a.login AS author,\n       count(DISTINCT rv) AS reviewers, path AS evidence\nORDER BY created ASC LIMIT $k",
+      "rows": [
+       {
+        "pr": "pydantic/pydantic#13682",
+        "title": "Simplify serialization core schemas in some places",
+        "created": "2026-08-18T19:32:38Z",
+        "author": "Viicos",
+        "reviewers": 4
+       },
+       {
+        "pr": "pydantic/pydantic#13797",
+        "title": "add a model_config setting to control field deprecation warnings",
+        "created": "2026-09-11T09:46:17Z",
+        "author": "ilia-kats",
+        "reviewers": 1
+       },
+       {
+        "pr": "pydantic/pydantic#13798",
+        "title": "Document that model serializers are not inherited",
+        "created": "2026-09-11T10:03:14Z",
+        "author": "Rishini-Dharan",
+        "reviewers": 1
+       },
+       {
+        "pr": "pydantic/pydantic#13806",
+        "title": "Bump `jiter` to v0.17.0",
+        "created": "2026-09-14T14:21:33Z",
+        "author": "Viicos",
+        "reviewers": 1
+       },
+       {
+        "pr": "pydantic/pydantic#13848",
+        "title": "Include `null` in serialization JSON Schema for `unless-none` field serializers",
+        "created": "2026-09-22T16:37:24Z",
+        "author": "Kropiunig",
+        "reviewers": 1
+       },
+       {
+        "pr": "pydantic/pydantic#13856",
+        "title": "Keep pipeline order when folding a string transform into the schema",
+        "created": "2026-09-24T00:35:45Z",
+        "author": "Rodrigo-Palma",
+        "reviewers": 3
+       },
+       {
+        "pr": "pydantic/pydantic#13872",
+        "title": "fix: avoid leaking AliasPath root keys into model_extra in model_construct",
+        "created": "2026-09-25T16:35:36Z",
+        "author": "agustin18",
+        "reviewers": 2
+       },
+       {
+        "pr": "pydantic/pydantic#13875",
+        "title": "Keep earlier native constraints when a pipeline repeats a constraint",
+        "created": "2026-09-26T02:43:56Z",
+        "author": "breken-ai",
+        "reviewers": 0
+       },
+       {
+        "pr": "pydantic/pydantic#13876",
+        "title": "Keep earlier patterns and search semantics for `str_pattern()` in pipelines",
+        "created": "2026-09-26T02:49:42Z",
+        "author": "breken-ai",
+        "reviewers": 0
+       },
+       {
+        "pr": "pydantic/pydantic#13879",
+        "title": "Add JSON benchmarks for document shapes the suite does not cover",
+        "created": "2026-09-26T16:53:50Z",
+        "author": "strawgate",
+        "reviewers": 0
+       }
+      ]
+     },
+     {
+      "tool": "last_merges",
+      "params": {
+       "repo": "pydantic/pydantic",
+       "k": 10
+      },
+      "cypher": "MATCH path = (a:Person)-[:AUTHORED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.merged IS NOT NULL\nRETURN p.id AS pr, p.merged AS merged, a.login AS author, path AS evidence\nORDER BY merged DESC LIMIT $k",
+      "rows": [
+       {
+        "pr": "pydantic/pydantic#14008",
+        "merged": "2026-10-15T14:13:38Z",
+        "author": "XXXXXQ-0206"
+       },
+       {
+        "pr": "pydantic/pydantic#14006",
+        "merged": "2026-10-15T10:30:34Z",
+        "author": "XXXXXQ-0206"
+       },
+       {
+        "pr": "pydantic/pydantic#14007",
+        "merged": "2026-10-15T10:23:57Z",
+        "author": "Viicos"
+       },
+       {
+        "pr": "pydantic/pydantic#14000",
+        "merged": "2026-10-14T17:56:20Z",
+        "author": "Viicos"
+       },
+       {
+        "pr": "pydantic/pydantic#13819",
+        "merged": "2026-10-14T16:08:04Z",
+        "author": "Viicos"
+       },
+       {
+        "pr": "pydantic/pydantic#13997",
+        "merged": "2026-10-14T14:18:48Z",
+        "author": "Viicos"
+       },
+       {
+        "pr": "pydantic/pydantic#13989",
+        "merged": "2026-10-14T13:58:34Z",
+        "author": "spencer-tb"
+       },
+       {
+        "pr": "pydantic/pydantic#13995",
+        "merged": "2026-10-14T10:37:03Z",
+        "author": "Viicos"
+       },
+       {
+        "pr": "pydantic/pydantic#13996",
+        "merged": "2026-10-14T10:05:55Z",
+        "author": "Viicos"
+       },
+       {
+        "pr": "pydantic/pydantic#13994",
+        "merged": "2026-10-14T09:27:21Z",
+        "author": "Viicos"
+       }
+      ]
+     },
+     {
+      "tool": "reviewer_load",
+      "params": {
+       "repo": "pydantic/pydantic",
+       "k": 10,
+       "max_paths": 3
+      },
+      "cypher": "MATCH path = (rv:Person)-[:REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE NOT coalesce(rv.is_bot, false)\nWITH rv, count(DISTINCT p) AS reviewed,\n     count(DISTINCT CASE WHEN p.state = 'OPEN' THEN p END) AS open_reviewed,\n     collect(path) AS paths\nRETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS evidence\nORDER BY reviewed DESC LIMIT $k",
+      "rows": [
+       {
+        "reviewer": "Viicos",
+        "reviewed": 32,
+        "open_reviewed": 2
+       },
+       {
+        "reviewer": "macroscopeapp",
+        "reviewed": 26,
+        "open_reviewed": 3
+       },
+       {
+        "reviewer": "veria-ai",
+        "reviewed": 16,
+        "open_reviewed": 3
+       },
+       {
+        "reviewer": "davidhewitt",
+        "reviewed": 13,
+        "open_reviewed": 1
+       },
+       {
+        "reviewer": "Shriprasad-P",
+        "reviewed": 6,
+        "open_reviewed": 3
+       },
+       {
+        "reviewer": "chrikrah",
+        "reviewed": 2,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "Mukller",
+        "reviewed": 2,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "icecold009",
+        "reviewed": 2,
+        "open_reviewed": 2
+       },
+       {
+        "reviewer": "strawgate",
+        "reviewed": 2,
+        "open_reviewed": 0
+       },
+       {
+        "reviewer": "commonism",
+        "reviewed": 1,
+        "open_reviewed": 0
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13682",
+        "label": "PR",
+        "name": "#13682 Simplify serialization core schemas in s"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13682",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13682",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "ilia-kats",
+        "label": "Person",
+        "name": "ilia-kats"
+       },
+       {
+        "id": "pydantic/pydantic#13797",
+        "label": "PR",
+        "name": "#13797 add a model_config setting to control fi"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "ilia-kats",
+        "target": "pydantic/pydantic#13797",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13797",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Rishini-Dharan",
+        "label": "Person",
+        "name": "Rishini-Dharan"
+       },
+       {
+        "id": "pydantic/pydantic#13798",
+        "label": "PR",
+        "name": "#13798 Document that model serializers are not "
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Rishini-Dharan",
+        "target": "pydantic/pydantic#13798",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13798",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13806",
+        "label": "PR",
+        "name": "#13806 Bump `jiter` to v0.17.0"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13806",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13806",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "XXXXXQ-0206",
+        "label": "Person",
+        "name": "XXXXXQ-0206"
+       },
+       {
+        "id": "pydantic/pydantic#14008",
+        "label": "PR",
+        "name": "#14008 Add pre-commit hook to prevent invisible"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "XXXXXQ-0206",
+        "target": "pydantic/pydantic#14008",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#14008",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "XXXXXQ-0206",
+        "label": "Person",
+        "name": "XXXXXQ-0206"
+       },
+       {
+        "id": "pydantic/pydantic#14006",
+        "label": "PR",
+        "name": "#14006 Fix mangled comment in `test_pickle.py`"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "XXXXXQ-0206",
+        "target": "pydantic/pydantic#14006",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#14006",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13611",
+        "label": "PR",
+        "name": "#13611 Preserve `re.Pattern` instance for compi"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13611",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13611",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13623",
+        "label": "PR",
+        "name": "#13623 Allow `dict`, `frozendict` and `frozense"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13623",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13623",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13632",
+        "label": "PR",
+        "name": "#13632 Fix JSON schema discriminator mapping ke"
+       },
+       {
+        "id": "pydantic/pydantic",
+        "label": "Repo",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13632",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13632",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "pydantic/pydantic",
+     "pydantic/pydantic#13682",
+     "pydantic/pydantic#13797",
+     "pydantic/pydantic#13798",
+     "pydantic/pydantic#13806"
     ]
    }
   ],

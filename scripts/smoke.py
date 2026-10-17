@@ -2,7 +2,7 @@
 
     python scripts/smoke.py
 
-Reads data/*.json only (no GitHub calls). Prints row counts and errors; exit 1 on any error.
+Loops over every cached repo in data/*.json. Reads them only (no GitHub calls). Prints row counts and errors; exit 1 on any error.
 """
 import sys
 import time
@@ -12,12 +12,24 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from prgraph.agent.memory import MEMORY  # noqa: E402
-from prgraph.algos import ALGOS  # noqa: E402
+from prgraph.algos import ALGO_DEFAULTS, ALGOS  # noqa: E402
 from prgraph.db import connect  # noqa: E402
 from prgraph.ingest import DATA, fetch, load  # noqa: E402
 from prgraph.queries import DEFAULTS, QUERIES, param_names  # noqa: E402
 
-REPOS = ["copperheadhq/copperhead", "sqlfluff/sqlfluff"]
+def cached_repos() -> list[str]:
+    """Every repo with a cache in data/ (the "repo" field, not the filename)."""
+    import json
+    out = []
+    for f in sorted(DATA.glob("*.json")):
+        try:
+            out.append(json.loads(f.read_text(encoding="utf-8"))["repo"])
+        except (ValueError, KeyError):
+            print(f"skip {f.name}: not a repo cache")
+    return out
+
+
+REPOS = cached_repos()
 
 
 def sample(graph, repo):
@@ -35,7 +47,7 @@ def sample(graph, repo):
     return {"repo": repo, "pr": pr, "issue": issue, "file": f, "a": pr, "b": person,
             "session": "smoke", "qid": f"smoke-{repo}-{time.time()}", "question": "smoke",
             "answer": "smoke", "evidence": [], "about": [pr] if pr else [], "at": int(time.time()),
-            "ref": pr}
+            "ref": pr, "person": person}
 
 
 def main():
@@ -52,7 +64,7 @@ def main():
         for group in (QUERIES, ALGOS, MEMORY):
             for name, q in group.items():
                 need = param_names(q)
-                p = {k: v for k, v in {**DEFAULTS, **params}.items() if k in need}
+                p = {k: v for k, v in {**DEFAULTS, **ALGO_DEFAULTS, **params}.items() if k in need}
                 if any(p.get(k) is None for k in need):
                     print(f"  {name:20s} SKIP (no sample for {sorted(k for k in need if p.get(k) is None)})")
                     continue

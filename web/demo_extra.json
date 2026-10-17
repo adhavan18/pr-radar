@@ -1,6 +1,1423 @@
 {
  "generated_from": "data/*.json",
  "repos": {
+  "astral-sh/ruff": [
+   {
+    "kind": "bus_factor",
+    "question": "What if charliermarsh leaves ruff?",
+    "answer": "**89 of 294 files** charliermarsh has touched would have **no other human** who authored or reviewed a PR on them (30%). charliermarsh is on 97 of 300 cached PRs. Most exposed: `crates/ty_python_semantic/src/types/call/bind/positional.rs`, `crates/ty_python_semantic/src/types/cyclic.rs`, `crates/ty_python_semantic/src/types/visitor.rs`. By area: crates (89).",
+    "tool_calls": [
+     {
+      "tool": "bus_factor",
+      "params": {
+       "repo": "astral-sh/ruff",
+       "person": "charliermarsh",
+       "k": 10
+      },
+      "cypher": "MATCH (me:Person {login:$person})-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.created >= $since\nMATCH (p)-[:TOUCHES]->(f:File)\nWITH DISTINCT me, f\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f)\nWHERE q.created >= $since AND NOT coalesce(h.is_bot, false)\nWITH me, f, collect(DISTINCT h) AS humans, count(DISTINCT q) AS prs\nWHERE size(humans) = 1 AND humans[0] = me\nMATCH path = (me)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(f)\nWITH f, prs, collect(path) AS paths\nRETURN f.path AS file, prs, 0 AS remaining_humans, paths[0..$max_paths] AS evidence\nORDER BY prs DESC, file LIMIT $k",
+      "rows": [
+       {
+        "file": "crates/ty_python_semantic/src/types/call/bind/positional.rs",
+        "prs": 9,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/cyclic.rs",
+        "prs": 9,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/visitor.rs",
+        "prs": 9,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/bound_super.rs",
+        "prs": 8,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/class_base.rs",
+        "prs": 7,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/infer/builder/binary_expressions.rs",
+        "prs": 7,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/recursive.rs",
+        "prs": 7,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/constraints/resolution.rs",
+        "prs": 5,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/enums.rs",
+        "prs": 5,
+        "remaining_humans": 0
+       },
+       {
+        "file": "crates/ty_python_semantic/src/types/list_members.rs",
+        "prs": 5,
+        "remaining_humans": 0
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29309",
+        "label": "PR",
+        "name": "#29309 [ty] Match alternative positional unpack lengths"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind/positional.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/call/bind/positional.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29309",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29309",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind/positional.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29132",
+        "label": "PR",
+        "name": "#29132 [ty] Validate free type variables in ClassVar annotat"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/cyclic.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/cyclic.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29132",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29132",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/cyclic.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29133",
+        "label": "PR",
+        "name": "#29133 [ty] Validate type-variable defaults through aliases"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/visitor.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/visitor.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29133",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29133",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/visitor.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29228",
+        "label": "PR",
+        "name": "#29228 [ty] Represent protocol applications as recursive typ"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/bound_super.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/bound_super.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29228",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29228",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/bound_super.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29243",
+        "label": "PR",
+        "name": "#29243 [ty] Use one member lookup engine for recursive proof"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/class_base.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/class_base.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29243",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29243",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/class_base.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29284",
+        "label": "PR",
+        "name": "#29284 [ty] Defer recursive TypedDict value projections"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder/binary_expressions.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/infer/builder/binary_exp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29284",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29284",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder/binary_expressions.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "charliermarsh",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind/positional.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/cyclic.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/visitor.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/bound_super.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/class_base.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder/binary_expressions.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/recursive.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/constraints/resolution.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/enums.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/list_members.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/constraints/projection.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/context_manager.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/equality.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/mro.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/type_form.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/expression/lambda.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/scoping.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/type_properties/is_assignable_to.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/type_properties/is_subtype_of.md",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/class/slots.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/equality/enums.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder/type_form.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/set_theoretic/generic_gradual_intersections.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/variance/equations.rs",
+     "astral-sh/ruff:crates/ty_ide/src/goto_type_definition.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/annotations/generic_alias.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/annotations/union.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/call/builtins.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/call/type.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/cycle/basic.md"
+    ]
+   },
+   {
+    "kind": "bridges",
+    "question": "Who are the bridges?",
+    "answer": "Bridges are people whose PRs and reviews cross ownership clusters, so losing them cuts communication between parts of the code. **charliermarsh** spans 57 of 96 clusters (97 PRs); **carljm** spans 39 of 96 clusters (46 PRs); **AlexWaygood** spans 35 of 96 clusters (54 PRs); **sharkdp** spans 21 of 96 clusters (31 PRs).",
+    "tool_calls": [
+     {
+      "tool": "bridges",
+      "params": {
+       "repo": "astral-sh/ruff",
+       "k": 5
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH path = (h:Person)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(node)\nWHERE NOT coalesce(h.is_bot, false)\nWITH h, count(DISTINCT communityId) AS clusters, collect(path) AS paths\nRETURN h.login AS person, clusters, paths[0..$max_paths] AS evidence\nORDER BY clusters DESC LIMIT $k",
+      "rows": [
+       {
+        "person": "charliermarsh",
+        "clusters": 57,
+        "prs": 97
+       },
+       {
+        "person": "carljm",
+        "clusters": 39,
+        "prs": 46
+       },
+       {
+        "person": "AlexWaygood",
+        "clusters": 35,
+        "prs": 54
+       },
+       {
+        "person": "sharkdp",
+        "clusters": 21,
+        "prs": 31
+       },
+       {
+        "person": "dhruvmanila",
+        "clusters": 16,
+        "prs": 11
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29060",
+        "label": "PR",
+        "name": "#29060 [ty] Preserve unresolved generic bindings during cycl"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29060",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29060",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29060",
+        "label": "PR",
+        "name": "#29060 [ty] Preserve unresolved generic bindings during cycl"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/infer/builder.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29060",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29060",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "carljm",
+        "label": "Person",
+        "name": "carljm"
+       },
+       {
+        "id": "astral-sh/ruff#29097",
+        "label": "PR",
+        "name": "#29097 [ty] Fix type variable inference for final class obje"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "carljm",
+        "target": "astral-sh/ruff#29097",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29097",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "carljm",
+        "label": "Person",
+        "name": "carljm"
+       },
+       {
+        "id": "astral-sh/ruff#29119",
+        "label": "PR",
+        "name": "#29119 [ty] Support NewType definitions annotated with Final"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/infer/builder.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "carljm",
+        "target": "astral-sh/ruff#29119",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29119",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       },
+       {
+        "id": "astral-sh/ruff#29121",
+        "label": "PR",
+        "name": "#29121 [ty] Preserve unfinished research on bounded type che"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29121",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29121",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "AlexWaygood",
+        "label": "Person",
+        "name": "AlexWaygood"
+       },
+       {
+        "id": "astral-sh/ruff#29075",
+        "label": "PR",
+        "name": "#29075 [ty] Improve narrowing after match patterns"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md",
+        "label": "File",
+        "name": "crates/ty_python_semantic/resources/mdtest/generics/legacy/c"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29075",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29075",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "charliermarsh",
+     "carljm",
+     "AlexWaygood",
+     "sharkdp",
+     "dhruvmanila"
+    ]
+   },
+   {
+    "kind": "clusters",
+    "question": "Show ownership clusters",
+    "answer": "Label propagation over people, PRs and files finds **182 communities** in the 389-node overview. The largest: **.github/workflows** (8 files, sharkdp, AlexWaygood); **crates/ty_python_semantic** (5 files, charliermarsh, carljm); **crates/ruff_linter** (6 files, theworker02, nekomario28); **crates/ty_python_semantic** (6 files, charliermarsh, carljm). Colours on the graph are these clusters.",
+    "tool_calls": [
+     {
+      "tool": "ownership_clusters",
+      "params": {
+       "repo": "astral-sh/ruff",
+       "min_files": 3
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH (q:PR)-[:TOUCHES]->(node)\nWITH communityId, node, count(DISTINCT q) AS touches\nORDER BY touches DESC\nWITH communityId, count(node) AS files, collect(node.path)[0..5] AS top_files\nWHERE files >= $min_files\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f:File)\nWHERE f.id STARTS WITH ($repo + ':') AND f.path IN top_files AND NOT coalesce(h.is_bot, false)\nWITH communityId, files, top_files, h, count(DISTINCT q) AS w\nORDER BY w DESC\nWITH communityId, files, top_files, collect(h.login + ' (' + toString(w) + ')')[0..5] AS top_people\nRETURN communityId AS cluster, files, top_files, top_people\nORDER BY files DESC LIMIT $k",
+      "rows": [
+       {
+        "cluster": 0,
+        "area": ".github/workflows",
+        "files": 8,
+        "people": [
+         "sharkdp",
+         "AlexWaygood",
+         "ntBre"
+        ]
+       },
+       {
+        "cluster": 1,
+        "area": "crates/ty_python_semantic",
+        "files": 5,
+        "people": [
+         "charliermarsh",
+         "carljm",
+         "zsol"
+        ]
+       },
+       {
+        "cluster": 2,
+        "area": "crates/ruff_linter",
+        "files": 6,
+        "people": [
+         "theworker02",
+         "nekomario28",
+         "jdymitarai"
+        ]
+       },
+       {
+        "cluster": 3,
+        "area": "crates/ty_python_semantic",
+        "files": 6,
+        "people": [
+         "charliermarsh",
+         "carljm",
+         "sharkdp"
+        ]
+       },
+       {
+        "cluster": 4,
+        "area": "crates/ty_python_semantic",
+        "files": 4,
+        "people": [
+         "charliermarsh",
+         "ibraheemdev",
+         "carljm"
+        ]
+       },
+       {
+        "cluster": 5,
+        "area": "crates/ty_python_semantic",
+        "files": 3,
+        "people": [
+         "charliermarsh",
+         "sharkdp",
+         "AlexWaygood"
+        ]
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "sharkdp",
+        "label": "Person",
+        "name": "sharkdp"
+       },
+       {
+        "id": "astral-sh/ruff#29364",
+        "label": "PR",
+        "name": "#29364 Update uv to v0.13.1"
+       },
+       {
+        "id": "astral-sh/ruff:.github/workflows/publish-docs.yml",
+        "label": "File",
+        "name": ".github/workflows/publish-docs.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29364",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29364",
+        "target": "astral-sh/ruff:.github/workflows/publish-docs.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29060",
+        "label": "PR",
+        "name": "#29060 [ty] Preserve unresolved generic bindings during cycl"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/call/bind.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29060",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29060",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "theworker02",
+        "label": "Person",
+        "name": "theworker02"
+       },
+       {
+        "id": "astral-sh/ruff#29277",
+        "label": "PR",
+        "name": "#29277 fix(pycodestyle): exclude singleton literals from E27"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ruff_linter/resources/test/fixtures/pycodestyle/E27.py",
+        "label": "File",
+        "name": "crates/ruff_linter/resources/test/fixtures/pycodestyle/E27.p"
+       }
+      ],
+      "edges": [
+       {
+        "source": "theworker02",
+        "target": "astral-sh/ruff#29277",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29277",
+        "target": "astral-sh/ruff:crates/ruff_linter/resources/test/fixtures/pycodestyle/E27.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29152",
+        "label": "PR",
+        "name": "#29152 [ty] Avoid hangs on recursive tuple aliases in positi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/set_theoretic.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/set_theoretic.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29152",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29152",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/set_theoretic.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29078",
+        "label": "PR",
+        "name": "#29078 [ty] Share parameter-default inference between functi"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md",
+        "label": "File",
+        "name": "crates/ty_python_semantic/resources/mdtest/generics/legacy/c"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29078",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29078",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "charliermarsh",
+        "label": "Person",
+        "name": "charliermarsh"
+       },
+       {
+        "id": "astral-sh/ruff#29243",
+        "label": "PR",
+        "name": "#29243 [ty] Use one member lookup engine for recursive proof"
+       },
+       {
+        "id": "astral-sh/ruff:crates/ty_python_semantic/src/types/overrides/attributes.rs",
+        "label": "File",
+        "name": "crates/ty_python_semantic/src/types/overrides/attributes.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29243",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29243",
+        "target": "astral-sh/ruff:crates/ty_python_semantic/src/types/overrides/attributes.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "astral-sh/ruff#29111",
+     "astral-sh/ruff#29364",
+     "astral-sh/ruff#29109",
+     "astral-sh/ruff#29355",
+     "astral-sh/ruff:.github/workflows/publish-docs.yml",
+     "astral-sh/ruff:.github/workflows/publish-pypi.yml",
+     "astral-sh/ruff:.github/workflows/release.yml",
+     "astral-sh/ruff#29424",
+     "astral-sh/ruff:.github/workflows/memory_report.yaml",
+     "astral-sh/ruff:.github/workflows/publish-versions.yml",
+     "astral-sh/ruff:.github/workflows/release-prepare.yml",
+     "astral-sh/ruff:.github/workflows/ty-ecosystem-analyzer.yaml",
+     "astral-sh/ruff:.github/workflows/ty-ecosystem-report.yaml",
+     "charliermarsh",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/pep695/classes.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/call/function.md",
+     "astral-sh/ruff#29309",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind/positional.rs",
+     "astral-sh/ruff#29328",
+     "astral-sh/ruff#29376",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/call/overloads.md",
+     "astral-sh/ruff#29310",
+     "astral-sh/ruff#29392",
+     "astral-sh/ruff#29387",
+     "astral-sh/ruff#29388",
+     "jdymitarai",
+     "astral-sh/ruff#29322",
+     "astral-sh/ruff#29251",
+     "astral-sh/ruff#29260",
+     "astral-sh/ruff:crates/ruff_linter/resources/test/fixtures/pycodestyle/E27.py",
+     "astral-sh/ruff:crates/ruff_linter/src/rules/pycodestyle/rules/logical_lines/whitespace_around_keywords.rs",
+     "astral-sh/ruff:crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__multiple-spaces-after-keyword_E27.py.snap",
+     "astral-sh/ruff:crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__multiple-spaces-before-keyword_E27.py.snap",
+     "astral-sh/ruff:crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__tab-after-keyword_E27.py.snap",
+     "astral-sh/ruff:crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__tab-before-keyword_E27.py.snap",
+     "astral-sh/ruff#29342",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/set_theoretic.rs",
+     "astral-sh/ruff#29154",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/call.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/call/ambiguous.rs",
+     "astral-sh/ruff#29152",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/aliases.md",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/pep695/aliases.md",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/enums.rs",
+     "ibraheemdev",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/generics/legacy/classes.md",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/infer/builder/subscript.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/call/bind/constructor.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/bidirectional.md",
+     "astral-sh/ruff#29426",
+     "astral-sh/ruff#29146",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/overrides/attributes.rs",
+     "astral-sh/ruff:crates/ty_python_semantic/resources/mdtest/liskov.md",
+     "astral-sh/ruff:crates/ty_python_semantic/src/types/overrides.rs",
+     "astral-sh/ruff#29373",
+     "astral-sh/ruff#29327",
+     "astral-sh/ruff#29330",
+     "astral-sh/ruff#29384"
+    ]
+   },
+   {
+    "kind": "cross_repo",
+    "question": "Who works across repos?",
+    "answer": "5 people active here also authored or reviewed PRs in another ingested repo. Person nodes are shared by GitHub login, so one MATCH finds them: **sharkdp** in 2 repos (astral-sh/ruff (31), pydantic/pydantic (1)); **devpryan7792** in 2 repos (astral-sh/ruff (3), pydantic/pydantic (3)); **Cherith1222** in 2 repos (astral-sh/ruff (4), sqlfluff/sqlfluff (1)); **alok-108** in 2 repos (astral-sh/ruff (3), pydantic/pydantic (1)); **sai-sakalam** in 2 repos (astral-sh/ruff (1), sqlfluff/sqlfluff (1)).",
+    "tool_calls": [
+     {
+      "tool": "shared_contributors",
+      "params": {
+       "k": 10
+      },
+      "cypher": "MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)\nWHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'\nWITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample\nORDER BY prs DESC\nWITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total\nWHERE size(repos) >= 2\nUNWIND samples AS s\nMATCH path = (a)-[:AUTHORED|REVIEWED]->(s)-[:IN_REPO]->(:Repo)\nWITH a, repos, total, s, collect(path)[0] AS one\nWITH a, repos, total, collect(one) AS paths\nRETURN a.login AS person, size(repos) AS n_repos, repos, total AS prs, paths[0..$max_paths] AS evidence\nORDER BY n_repos DESC, prs DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "sharkdp",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (31)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 32
+       },
+       {
+        "person": "devpryan7792",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (3)",
+         "pydantic/pydantic (3)"
+        ],
+        "prs": 6
+       },
+       {
+        "person": "Cherith1222",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (4)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 5
+       },
+       {
+        "person": "alok-108",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (3)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "sai-sakalam",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (1)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 2
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29091",
+        "name": "#29091 [ty] Preserve tuple shapes when slicing NewTypes"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29091",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29091",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13853",
+        "name": "#13853 Consistently use `Dict` in `BaseModel` type annotatio"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "pydantic/pydantic#13853",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13853",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "devpryan7792",
+        "name": "devpryan7792"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29264",
+        "name": "#29264 fix(flake8-pyi): support stringized annotations in PY"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "devpryan7792",
+        "target": "astral-sh/ruff#29264",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29264",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "devpryan7792",
+        "name": "devpryan7792"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13968",
+        "name": "#13968 Enforce 'decimal_whole_digits' constraint when valida"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "devpryan7792",
+        "target": "pydantic/pydantic#13968",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13968",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Cherith1222",
+        "name": "Cherith1222"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29171",
+        "name": "#29171 Unwrap stringized annotations in PYI036"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Cherith1222",
+        "target": "astral-sh/ruff#29171",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29171",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Cherith1222",
+        "name": "Cherith1222"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8747",
+        "name": "#8747 fix(tsql): parse GROUP BY GROUPING SETS with more than"
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Cherith1222",
+        "target": "sqlfluff/sqlfluff#8747",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8747",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "alok-108",
+        "name": "alok-108"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29279",
+        "name": "#29279 docs(rules): clarify S113 timeout behavior for reques"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "alok-108",
+        "target": "astral-sh/ruff#29279",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29279",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "alok-108",
+        "name": "alok-108"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13975",
+        "name": "#13975 docs: fix conversion table template indentation"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "alok-108",
+        "target": "pydantic/pydantic#13975",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13975",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "sharkdp",
+     "devpryan7792",
+     "Cherith1222",
+     "alok-108",
+     "sai-sakalam"
+    ]
+   },
+   {
+    "kind": "cross_repo_expert",
+    "question": "Who reviewed similar work in other repos for PR #29409?",
+    "answer": "PR #29409 (\"[ty] Share recursion state through TypeOperations\") gets topic words from its title and file paths. People who reviewed PRs on those topics in OTHER repos: **Viicos** (24 reviews in pydantic on abstract, arguments, attribute, attributes; 0 PRs here); **davidhewitt** (10 reviews in pydantic on abstract, call, dict, enum; 0 PRs here); **keraion** (7 reviews in sqlfluff on alias, all, conditions, expression; 0 PRs here); **Shriprasad-P** (2 reviews in pydantic on abstract, dict, infer, known; 0 PRs here). 0 PRs here = an outside expert this repo has never pulled in.",
+    "tool_calls": [
+     {
+      "tool": "cross_repo_expert",
+      "params": {
+       "pr": "astral-sh/ruff#29409",
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(home:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nOPTIONAL MATCH (p)-[:TOUCHES]->(f:File)\nWITH p, home, me, collect(f.path) AS fps\nWITH p, home, me, coalesce(p.tokens, []) + reduce(acc = [], fp IN fps | acc + split(replace(replace(replace(replace(toLower(fp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS raw\nUNWIND raw AS t\nWITH p, home, me, t WHERE size(t) >= 3 AND NOT t IN ['src','lib','tests','test','docs','doc','init','main','index','crates','github','workflows','snap','snapshots','resources','fixtures','txt','json','toml','yml','yaml','lock','cfg','ini','rst','html','css','png','svg','the','and','for','with','from','add','fix','update','use','when','into','support','allow','make','new','remove','handle','change','improve','agents','claude','contributing','readme','changelog','license','commit','pre','precommit','config','setup','pyproject','workflow','release','version','bump','deps','dependency','dependencies']\nWITH p, home, me, collect(DISTINCT t) AS topic\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(other:Repo)\nWHERE other <> home AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)\nWITH DISTINCT home, topic, cand, q, other\nOPTIONAL MATCH (q)-[:TOUCHES]->(g:File)\nWITH home, topic, cand, q, other, collect(g.path) AS gps\nWITH home, topic, cand, q, other, coalesce(q.tokens, []) + reduce(acc = [], gp IN gps | acc + split(replace(replace(replace(replace(toLower(gp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS qraw\nWITH home, cand, q, other, [t IN topic WHERE t IN qraw] AS hits\nWHERE size(hits) >= 2\nWITH home, cand, q, other, hits ORDER BY size(hits) DESC\nWITH home, cand, collect(DISTINCT other.id) AS repos, count(DISTINCT q) AS prs, collect(q)[0] AS best,\n     collect(hits) AS allhits\nWITH home, cand, repos, prs, best, reduce(acc = [], h IN allhits | acc + [x IN h WHERE NOT x IN acc]) AS matched\nMATCH path = (cand)-[:REVIEWED]->(best)-[:IN_REPO]->(:Repo)\nWITH home, cand, repos, prs, matched, collect(path)[0] AS ev\nOPTIONAL MATCH (cand)-[:AUTHORED|REVIEWED]->(h:PR)-[:IN_REPO]->(home)\nWITH cand, repos, prs, matched, ev, count(DISTINCT h) AS here\nRETURN cand.login AS person, repos, prs AS matching_reviews, matched[0..8] AS topics, here AS prs_here,\n       size(matched) + log(1.0 + prs) AS score, [ev] AS evidence\nORDER BY score DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "Viicos",
+        "repos": [
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 24,
+        "topics": [
+         "abstract",
+         "arguments",
+         "attribute",
+         "attributes",
+         "bool",
+         "call",
+         "class",
+         "collection"
+        ],
+        "prs_here": 0,
+        "score": 29.2189
+       },
+       {
+        "person": "davidhewitt",
+        "repos": [
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 10,
+        "topics": [
+         "abstract",
+         "call",
+         "dict",
+         "enum",
+         "enums",
+         "function",
+         "generation",
+         "infer"
+        ],
+        "prs_here": 0,
+        "score": 20.3979
+       },
+       {
+        "person": "keraion",
+        "repos": [
+         "sqlfluff/sqlfluff"
+        ],
+        "matching_reviews": 7,
+        "topics": [
+         "alias",
+         "all",
+         "conditions",
+         "expression",
+         "function",
+         "list",
+         "match",
+         "paths"
+        ],
+        "prs_here": 0,
+        "score": 15.0794
+       },
+       {
+        "person": "Shriprasad-P",
+        "repos": [
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 2,
+        "topics": [
+         "abstract",
+         "dict",
+         "infer",
+         "known",
+         "mod",
+         "model",
+         "pydantic",
+         "python"
+        ],
+        "prs_here": 0,
+        "score": 13.0986
+       },
+       {
+        "person": "koriyoshi2041",
+        "repos": [
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 1,
+        "topics": [
+         "abstract",
+         "infer",
+         "known",
+         "list",
+         "mod",
+         "pydantic",
+         "python",
+         "type"
+        ],
+        "prs_here": 0,
+        "score": 10.6931
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Viicos",
+        "name": "Viicos"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13796",
+        "name": "#13796 Add an `ordered-dict` core schema"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13796",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13796",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "davidhewitt",
+        "name": "davidhewitt"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13796",
+        "name": "#13796 Add an `ordered-dict` core schema"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "davidhewitt",
+        "target": "pydantic/pydantic#13796",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13796",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "keraion",
+        "name": "keraion"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8682",
+        "name": "#8682 fix(mysql): indent procedural bodies, conditions and a"
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8682",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8682",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Shriprasad-P",
+        "name": "Shriprasad-P"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13796",
+        "name": "#13796 Add an `ordered-dict` core schema"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "pydantic/pydantic#13796",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13796",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "astral-sh/ruff#29409",
+     "Viicos",
+     "davidhewitt",
+     "keraion",
+     "Shriprasad-P"
+    ]
+   }
+  ],
   "copperheadhq/copperhead": [
    {
     "kind": "bus_factor",
@@ -531,7 +1948,7 @@
    {
     "kind": "clusters",
     "question": "Show ownership clusters",
-    "answer": "Label propagation over people, PRs and files finds **166 communities** in the 394-node overview. The largest: **test** (13 files, Bhumika-1432006, thegoodengineer); **test** (10 files, Chirag6722, AyushVUpadhye); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511). Colours on the graph are these clusters.",
+    "answer": "Label propagation over people, PRs and files finds **166 communities** in the 394-node overview. The largest: **test** (13 files, Bhumika-1432006, thegoodengineer); **test** (10 files, Chirag6722, animesh-chouhan); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511); **manual-tests/reference-boards** (14 files, henry32511, animesh-chouhan). Colours on the graph are these clusters.",
     "tool_calls": [
      {
       "tool": "ownership_clusters",
@@ -557,8 +1974,8 @@
         "files": 10,
         "people": [
          "Chirag6722",
-         "AyushVUpadhye",
-         "animesh-chouhan"
+         "animesh-chouhan",
+         "AyushVUpadhye"
         ]
        },
        {
@@ -575,8 +1992,8 @@
         "area": "manual-tests/reference-boards",
         "files": 14,
         "people": [
-         "animesh-chouhan",
-         "henry32511"
+         "henry32511",
+         "animesh-chouhan"
         ]
        },
        {
@@ -584,8 +2001,8 @@
         "area": "src/agent",
         "files": 7,
         "people": [
-         "Adityakk9031",
          "animesh-chouhan",
+         "Adityakk9031",
          "Devesh36"
         ]
        },
@@ -697,14 +2114,14 @@
      {
       "nodes": [
        {
-        "id": "animesh-chouhan",
+        "id": "henry32511",
         "label": "Person",
-        "name": "animesh-chouhan"
+        "name": "henry32511"
        },
        {
-        "id": "copperheadhq/copperhead#160",
+        "id": "copperheadhq/copperhead#365",
         "label": "PR",
-        "name": "#160 Propose deterministic-schematic-drafting: drafting engi"
+        "name": "#365 Fix observed create pipeline gates and export validatio"
        },
        {
         "id": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Connector_Generic.kicad_sym",
@@ -714,12 +2131,12 @@
       ],
       "edges": [
        {
-        "source": "animesh-chouhan",
-        "target": "copperheadhq/copperhead#160",
+        "source": "henry32511",
+        "target": "copperheadhq/copperhead#365",
         "type": "AUTHORED"
        },
        {
-        "source": "copperheadhq/copperhead#160",
+        "source": "copperheadhq/copperhead#365",
         "target": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Connector_Generic.kicad_sym",
         "type": "TOUCHES"
        }
@@ -728,14 +2145,14 @@
      {
       "nodes": [
        {
-        "id": "Adityakk9031",
+        "id": "animesh-chouhan",
         "label": "Person",
-        "name": "Adityakk9031"
+        "name": "animesh-chouhan"
        },
        {
-        "id": "copperheadhq/copperhead#370",
+        "id": "copperheadhq/copperhead#134",
         "label": "PR",
-        "name": "#370 fix(create): require ownership marker before recursive "
+        "name": "#134 feat(observability): stream turns to the terminal, and "
        },
        {
         "id": "copperheadhq/copperhead:src/agent/providers/claude-code.ts",
@@ -745,12 +2162,12 @@
       ],
       "edges": [
        {
-        "source": "Adityakk9031",
-        "target": "copperheadhq/copperhead#370",
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#134",
         "type": "AUTHORED"
        },
        {
-        "source": "copperheadhq/copperhead#370",
+        "source": "copperheadhq/copperhead#134",
         "target": "copperheadhq/copperhead:src/agent/providers/claude-code.ts",
         "type": "TOUCHES"
        }
@@ -889,6 +2306,3233 @@
      "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/REPORT.md",
      "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/drawn/board.kicad_sch",
      "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/render/drawn.png"
+    ]
+   },
+   {
+    "kind": "cross_repo",
+    "question": "Who works across repos?",
+    "answer": "1 person active here also authored or reviewed PRs in another ingested repo. Person nodes are shared by GitHub login, so one MATCH finds them: **adhavan18** in 2 repos (copperheadhq/copperhead (24), sqlfluff/sqlfluff (7)).",
+    "tool_calls": [
+     {
+      "tool": "shared_contributors",
+      "params": {
+       "k": 10
+      },
+      "cypher": "MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)\nWHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'\nWITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample\nORDER BY prs DESC\nWITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total\nWHERE size(repos) >= 2\nUNWIND samples AS s\nMATCH path = (a)-[:AUTHORED|REVIEWED]->(s)-[:IN_REPO]->(:Repo)\nWITH a, repos, total, s, collect(path)[0] AS one\nWITH a, repos, total, collect(one) AS paths\nRETURN a.login AS person, size(repos) AS n_repos, repos, total AS prs, paths[0..$max_paths] AS evidence\nORDER BY n_repos DESC, prs DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "adhavan18",
+        "n_repos": 2,
+        "repos": [
+         "copperheadhq/copperhead (24)",
+         "sqlfluff/sqlfluff (7)"
+        ],
+        "prs": 31
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "adhavan18",
+        "name": "adhavan18"
+       },
+       {
+        "label": "PR",
+        "id": "copperheadhq/copperhead#124",
+        "name": "#124 fix(docs): read markdown tables that omit the outer pip"
+       },
+       {
+        "label": "Repo",
+        "id": "copperheadhq/copperhead",
+        "name": "copperheadhq/copperhead"
+       }
+      ],
+      "edges": [
+       {
+        "source": "adhavan18",
+        "target": "copperheadhq/copperhead#124",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#124",
+        "target": "copperheadhq/copperhead",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "adhavan18",
+        "name": "adhavan18"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8526",
+        "name": "#8526 Redshift: parse array accessors in SUPER paths in the "
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "adhavan18",
+        "target": "sqlfluff/sqlfluff#8526",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8526",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "adhavan18"
+    ]
+   },
+   {
+    "kind": "cross_repo_expert",
+    "question": "Who reviewed similar work in other repos for PR #288?",
+    "answer": "PR #288 (\"fix(create): import installed footprints and address live pipeline blockers\") gets topic words from its title and file paths. People who reviewed PRs on those topics in OTHER repos: **keraion** (12 reviews in sqlfluff on cache, check, cli, continue; 0 PRs here); **rubytobi** (9 reviews in sqlfluff on cache, check, cli, commands; 0 PRs here); **Viicos** (3 reviews in pydantic on cache, core, key, mod; 0 PRs here); **YuriiMotov** (3 reviews in fastapi on cache, create, draft, key; 0 PRs here). 0 PRs here = an outside expert this repo has never pulled in.",
+    "tool_calls": [
+     {
+      "tool": "cross_repo_expert",
+      "params": {
+       "pr": "copperheadhq/copperhead#288",
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(home:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nOPTIONAL MATCH (p)-[:TOUCHES]->(f:File)\nWITH p, home, me, collect(f.path) AS fps\nWITH p, home, me, coalesce(p.tokens, []) + reduce(acc = [], fp IN fps | acc + split(replace(replace(replace(replace(toLower(fp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS raw\nUNWIND raw AS t\nWITH p, home, me, t WHERE size(t) >= 3 AND NOT t IN ['src','lib','tests','test','docs','doc','init','main','index','crates','github','workflows','snap','snapshots','resources','fixtures','txt','json','toml','yml','yaml','lock','cfg','ini','rst','html','css','png','svg','the','and','for','with','from','add','fix','update','use','when','into','support','allow','make','new','remove','handle','change','improve','agents','claude','contributing','readme','changelog','license','commit','pre','precommit','config','setup','pyproject','workflow','release','version','bump','deps','dependency','dependencies']\nWITH p, home, me, collect(DISTINCT t) AS topic\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(other:Repo)\nWHERE other <> home AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)\nWITH DISTINCT home, topic, cand, q, other\nOPTIONAL MATCH (q)-[:TOUCHES]->(g:File)\nWITH home, topic, cand, q, other, collect(g.path) AS gps\nWITH home, topic, cand, q, other, coalesce(q.tokens, []) + reduce(acc = [], gp IN gps | acc + split(replace(replace(replace(replace(toLower(gp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS qraw\nWITH home, cand, q, other, [t IN topic WHERE t IN qraw] AS hits\nWHERE size(hits) >= 2\nWITH home, cand, q, other, hits ORDER BY size(hits) DESC\nWITH home, cand, collect(DISTINCT other.id) AS repos, count(DISTINCT q) AS prs, collect(q)[0] AS best,\n     collect(hits) AS allhits\nWITH home, cand, repos, prs, best, reduce(acc = [], h IN allhits | acc + [x IN h WHERE NOT x IN acc]) AS matched\nMATCH path = (cand)-[:REVIEWED]->(best)-[:IN_REPO]->(:Repo)\nWITH home, cand, repos, prs, matched, collect(path)[0] AS ev\nOPTIONAL MATCH (cand)-[:AUTHORED|REVIEWED]->(h:PR)-[:IN_REPO]->(home)\nWITH cand, repos, prs, matched, ev, count(DISTINCT h) AS here\nRETURN cand.login AS person, repos, prs AS matching_reviews, matched[0..8] AS topics, here AS prs_here,\n       size(matched) + log(1.0 + prs) AS score, [ev] AS evidence\nORDER BY score DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "keraion",
+        "repos": [
+         "sqlfluff/sqlfluff"
+        ],
+        "matching_reviews": 12,
+        "topics": [
+         "cache",
+         "check",
+         "cli",
+         "continue",
+         "core",
+         "create",
+         "design",
+         "engine"
+        ],
+        "prs_here": 0,
+        "score": 17.5649
+       },
+       {
+        "person": "rubytobi",
+        "repos": [
+         "sqlfluff/sqlfluff"
+        ],
+        "matching_reviews": 9,
+        "topics": [
+         "cache",
+         "check",
+         "cli",
+         "commands",
+         "core",
+         "create",
+         "engine",
+         "examples"
+        ],
+        "prs_here": 0,
+        "score": 14.3026
+       },
+       {
+        "person": "Viicos",
+        "repos": [
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 3,
+        "topics": [
+         "cache",
+         "core",
+         "key",
+         "mod",
+         "pipeline",
+         "table"
+        ],
+        "prs_here": 0,
+        "score": 7.3863
+       },
+       {
+        "person": "YuriiMotov",
+        "repos": [
+         "fastapi/fastapi"
+        ],
+        "matching_reviews": 3,
+        "topics": [
+         "cache",
+         "create",
+         "draft",
+         "key",
+         "response",
+         "simple"
+        ],
+        "prs_here": 0,
+        "score": 7.3863
+       },
+       {
+        "person": "Shriprasad-P",
+        "repos": [
+         "fastapi/fastapi",
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 2,
+        "topics": [
+         "check",
+         "core",
+         "mod",
+         "pipeline",
+         "response",
+         "table"
+        ],
+        "prs_here": 0,
+        "score": 7.0986
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "keraion",
+        "name": "keraion"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8652",
+        "name": "#8652 fix: check that verbose-debug  compiles"
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8652",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8652",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "rubytobi",
+        "name": "rubytobi"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8652",
+        "name": "#8652 fix: check that verbose-debug  compiles"
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8652",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8652",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Viicos",
+        "name": "Viicos"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13796",
+        "name": "#13796 Add an `ordered-dict` core schema"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13796",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13796",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "YuriiMotov",
+        "name": "YuriiMotov"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16152",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "YuriiMotov",
+        "target": "fastapi/fastapi#16152",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "copperheadhq/copperhead#288",
+     "keraion",
+     "rubytobi",
+     "Viicos",
+     "YuriiMotov"
+    ]
+   }
+  ],
+  "fastapi/fastapi": [
+   {
+    "kind": "bus_factor",
+    "question": "What if tiangolo leaves fastapi?",
+    "answer": "**55 of 100 files** tiangolo has touched would have **no other human** who authored or reviewed a PR on them (55%). tiangolo is on 58 of 300 cached PRs. Most exposed: `fastapi/__init__.py`, `.github/pr-submit.yml`, `fastapi/telemetry/_asgi.py`. By area: tests (23), docs (15), fastapi (7), .github (6).",
+    "tool_calls": [
+     {
+      "tool": "bus_factor",
+      "params": {
+       "repo": "fastapi/fastapi",
+       "person": "tiangolo",
+       "k": 10
+      },
+      "cypher": "MATCH (me:Person {login:$person})-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.created >= $since\nMATCH (p)-[:TOUCHES]->(f:File)\nWITH DISTINCT me, f\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f)\nWHERE q.created >= $since AND NOT coalesce(h.is_bot, false)\nWITH me, f, collect(DISTINCT h) AS humans, count(DISTINCT q) AS prs\nWHERE size(humans) = 1 AND humans[0] = me\nMATCH path = (me)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(f)\nWITH f, prs, collect(path) AS paths\nRETURN f.path AS file, prs, 0 AS remaining_humans, paths[0..$max_paths] AS evidence\nORDER BY prs DESC, file LIMIT $k",
+      "rows": [
+       {
+        "file": "fastapi/__init__.py",
+        "prs": 11,
+        "remaining_humans": 0
+       },
+       {
+        "file": ".github/pr-submit.yml",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "fastapi/telemetry/_asgi.py",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "fastapi/telemetry/_runtime.py",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "tests/test_telemetry/test_runtime.py",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": ".github/pr-push.yml",
+        "prs": 2,
+        "remaining_humans": 0
+       },
+       {
+        "file": ".github/workflows/labeler.yml",
+        "prs": 2,
+        "remaining_humans": 0
+       },
+       {
+        "file": ".github/workflows/latest-changes.yml",
+        "prs": 2,
+        "remaining_humans": 0
+       },
+       {
+        "file": "docs/en/data/sponsors.yml",
+        "prs": 2,
+        "remaining_humans": 0
+       },
+       {
+        "file": "docs/en/docs/advanced/opentelemetry.md",
+        "prs": 2,
+        "remaining_humans": 0
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16072",
+        "label": "PR",
+        "name": "#16072 \ud83d\udd16 Release version 0.140.5"
+       },
+       {
+        "id": "fastapi/fastapi:fastapi/__init__.py",
+        "label": "File",
+        "name": "fastapi/__init__.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16072",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16072",
+        "target": "fastapi/fastapi:fastapi/__init__.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16167",
+        "label": "PR",
+        "name": "#16167 \ud83d\udd10 Use PR Submit for pull requests"
+       },
+       {
+        "id": "fastapi/fastapi:.github/pr-submit.yml",
+        "label": "File",
+        "name": ".github/pr-submit.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16167",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16167",
+        "target": "fastapi/fastapi:.github/pr-submit.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16403",
+        "label": "PR",
+        "name": "#16403 \u2728 Add native OpenTelemetry support"
+       },
+       {
+        "id": "fastapi/fastapi:fastapi/telemetry/_asgi.py",
+        "label": "File",
+        "name": "fastapi/telemetry/_asgi.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16403",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16403",
+        "target": "fastapi/fastapi:fastapi/telemetry/_asgi.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16418",
+        "label": "PR",
+        "name": "#16418 \ud83d\udc1b Allow startup when automatic OpenTelemetry configur"
+       },
+       {
+        "id": "fastapi/fastapi:fastapi/telemetry/_runtime.py",
+        "label": "File",
+        "name": "fastapi/telemetry/_runtime.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16418",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16418",
+        "target": "fastapi/fastapi:fastapi/telemetry/_runtime.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16476",
+        "label": "PR",
+        "name": "#16476 \ud83d\udca5 Require opt-in for automatic OpenTelemetry exporter"
+       },
+       {
+        "id": "fastapi/fastapi:tests/test_telemetry/test_runtime.py",
+        "label": "File",
+        "name": "tests/test_telemetry/test_runtime.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16476",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16476",
+        "target": "fastapi/fastapi:tests/test_telemetry/test_runtime.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16161",
+        "label": "PR",
+        "name": "#16161 \ud83d\udd12 Replace pre-commit PAT with PR Push"
+       },
+       {
+        "id": "fastapi/fastapi:.github/pr-push.yml",
+        "label": "File",
+        "name": ".github/pr-push.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16161",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16161",
+        "target": "fastapi/fastapi:.github/pr-push.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "tiangolo",
+     "fastapi/fastapi:fastapi/__init__.py",
+     "fastapi/fastapi:.github/pr-submit.yml",
+     "fastapi/fastapi:fastapi/telemetry/_asgi.py",
+     "fastapi/fastapi:fastapi/telemetry/_runtime.py",
+     "fastapi/fastapi:tests/test_telemetry/test_runtime.py",
+     "fastapi/fastapi:.github/pr-push.yml",
+     "fastapi/fastapi:.github/workflows/labeler.yml",
+     "fastapi/fastapi:.github/workflows/latest-changes.yml",
+     "fastapi/fastapi:docs/en/data/sponsors.yml",
+     "fastapi/fastapi:docs/en/docs/advanced/opentelemetry.md",
+     "fastapi/fastapi:docs/en/docs/newsletter.md",
+     "fastapi/fastapi:docs/en/docs/tutorial/frontend.md",
+     "fastapi/fastapi:fastapi/telemetry/_api.py",
+     "fastapi/fastapi:tests/test_telemetry/_subprocess.py",
+     "fastapi/fastapi:tests/test_telemetry/conftest.py",
+     "fastapi/fastapi:tests/test_telemetry/test_data.py",
+     "fastapi/fastapi:tests/test_telemetry/test_environment_integrations.py",
+     "fastapi/fastapi:.github/labeler.yml",
+     "fastapi/fastapi:.github/latest-changes.yml",
+     "fastapi/fastapi:docs/en/data/topic_repos.yml",
+     "fastapi/fastapi:docs/en/docs/advanced/advanced-python-types.md",
+     "fastapi/fastapi:docs/en/docs/advanced/security/http-basic-auth.md",
+     "fastapi/fastapi:docs/en/docs/async.md",
+     "fastapi/fastapi:docs/en/docs/css/termynal.css",
+     "fastapi/fastapi:docs/en/docs/deployment/cloud.md",
+     "fastapi/fastapi:docs/en/docs/img/tutorial/opentelemetry/image01.png",
+     "fastapi/fastapi:docs/en/docs/js/termynal.js",
+     "fastapi/fastapi:docs/en/docs/tutorial/dependencies/sub-dependencies.md",
+     "fastapi/fastapi:docs/en/docs/tutorial/extra-models.md",
+     "fastapi/fastapi:docs/en/overrides/partials/banner-sponsors.html"
+    ]
+   },
+   {
+    "kind": "bridges",
+    "question": "Who are the bridges?",
+    "answer": "Bridges are people whose PRs and reviews cross ownership clusters, so losing them cuts communication between parts of the code. **zach-overflow** spans 19 of 38 clusters (1 PRs); **Susmitha5425** spans 15 of 38 clusters (1 PRs); **tiangolo** spans 10 of 38 clusters (58 PRs); **YuriiMotov** spans 7 of 38 clusters (19 PRs).",
+    "tool_calls": [
+     {
+      "tool": "bridges",
+      "params": {
+       "repo": "fastapi/fastapi",
+       "k": 5
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH path = (h:Person)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(node)\nWHERE NOT coalesce(h.is_bot, false)\nWITH h, count(DISTINCT communityId) AS clusters, collect(path) AS paths\nRETURN h.login AS person, clusters, paths[0..$max_paths] AS evidence\nORDER BY clusters DESC LIMIT $k",
+      "rows": [
+       {
+        "person": "zach-overflow",
+        "clusters": 19,
+        "prs": 1
+       },
+       {
+        "person": "Susmitha5425",
+        "clusters": 15,
+        "prs": 1
+       },
+       {
+        "person": "tiangolo",
+        "clusters": 10,
+        "prs": 58
+       },
+       {
+        "person": "YuriiMotov",
+        "clusters": 7,
+        "prs": 19
+       },
+       {
+        "person": "Kritijaiswal2901",
+        "clusters": 5,
+        "prs": 1
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "zach-overflow",
+        "label": "Person",
+        "name": "zach-overflow"
+       },
+       {
+        "id": "fastapi/fastapi#16358",
+        "label": "PR",
+        "name": "#16358 Migrate `httpx` to `httpx2`"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/mkdocs.yml",
+        "label": "File",
+        "name": "docs/en/mkdocs.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "zach-overflow",
+        "target": "fastapi/fastapi#16358",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16358",
+        "target": "fastapi/fastapi:docs/en/mkdocs.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "zach-overflow",
+        "label": "Person",
+        "name": "zach-overflow"
+       },
+       {
+        "id": "fastapi/fastapi#16358",
+        "label": "PR",
+        "name": "#16358 Migrate `httpx` to `httpx2`"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/docs/advanced/async-tests.md",
+        "label": "File",
+        "name": "docs/en/docs/advanced/async-tests.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "zach-overflow",
+        "target": "fastapi/fastapi#16358",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16358",
+        "target": "fastapi/fastapi:docs/en/docs/advanced/async-tests.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Susmitha5425",
+        "label": "Person",
+        "name": "Susmitha5425"
+       },
+       {
+        "id": "fastapi/fastapi#16248",
+        "label": "PR",
+        "name": "#16248 Codefix@c3f316b7e/master"
+       },
+       {
+        "id": "fastapi/fastapi:scripts/notify_translations.py",
+        "label": "File",
+        "name": "scripts/notify_translations.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Susmitha5425",
+        "target": "fastapi/fastapi#16248",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16248",
+        "target": "fastapi/fastapi:scripts/notify_translations.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Susmitha5425",
+        "label": "Person",
+        "name": "Susmitha5425"
+       },
+       {
+        "id": "fastapi/fastapi#16248",
+        "label": "PR",
+        "name": "#16248 Codefix@c3f316b7e/master"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/docs/tutorial/security/oauth2-jwt.md",
+        "label": "File",
+        "name": "docs/en/docs/tutorial/security/oauth2-jwt.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Susmitha5425",
+        "target": "fastapi/fastapi#16248",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16248",
+        "target": "fastapi/fastapi:docs/en/docs/tutorial/security/oauth2-jwt.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16168",
+        "label": "PR",
+        "name": "#16168 \ud83d\udd10 Use PR Submit for translations"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/translate.yml",
+        "label": "File",
+        "name": ".github/workflows/translate.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16168",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16168",
+        "target": "fastapi/fastapi:.github/workflows/translate.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16403",
+        "label": "PR",
+        "name": "#16403 \u2728 Add native OpenTelemetry support"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/mkdocs.yml",
+        "label": "File",
+        "name": "docs/en/mkdocs.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16403",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16403",
+        "target": "fastapi/fastapi:docs/en/mkdocs.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "zach-overflow",
+     "Susmitha5425",
+     "tiangolo",
+     "YuriiMotov",
+     "Kritijaiswal2901"
+    ]
+   },
+   {
+    "kind": "clusters",
+    "question": "Show ownership clusters",
+    "answer": "Label propagation over people, PRs and files finds **198 communities** in the 366-node overview. The largest: **docs/en** (2 files, tiangolo, Kritijaiswal2901); **.github/workflows** (8 files, YuriiMotov, tiangolo); **tests** (2 files, Shriprasad-P, YuriiMotov); **docs/de** (7 files, zach-overflow, Susmitha5425). Colours on the graph are these clusters.",
+    "tool_calls": [
+     {
+      "tool": "ownership_clusters",
+      "params": {
+       "repo": "fastapi/fastapi",
+       "min_files": 3
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH (q:PR)-[:TOUCHES]->(node)\nWITH communityId, node, count(DISTINCT q) AS touches\nORDER BY touches DESC\nWITH communityId, count(node) AS files, collect(node.path)[0..5] AS top_files\nWHERE files >= $min_files\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f:File)\nWHERE f.id STARTS WITH ($repo + ':') AND f.path IN top_files AND NOT coalesce(h.is_bot, false)\nWITH communityId, files, top_files, h, count(DISTINCT q) AS w\nORDER BY w DESC\nWITH communityId, files, top_files, collect(h.login + ' (' + toString(w) + ')')[0..5] AS top_people\nRETURN communityId AS cluster, files, top_files, top_people\nORDER BY files DESC LIMIT $k",
+      "rows": [
+       {
+        "cluster": 0,
+        "area": "docs/en",
+        "files": 2,
+        "people": [
+         "tiangolo",
+         "Kritijaiswal2901"
+        ]
+       },
+       {
+        "cluster": 1,
+        "area": ".github/workflows",
+        "files": 8,
+        "people": [
+         "YuriiMotov",
+         "tiangolo"
+        ]
+       },
+       {
+        "cluster": 2,
+        "area": "tests",
+        "files": 2,
+        "people": [
+         "Shriprasad-P",
+         "YuriiMotov",
+         "amir-rezaei"
+        ]
+       },
+       {
+        "cluster": 3,
+        "area": "docs/de",
+        "files": 7,
+        "people": [
+         "zach-overflow",
+         "Susmitha5425"
+        ]
+       },
+       {
+        "cluster": 4,
+        "area": "(root)",
+        "files": 1,
+        "people": [
+         "tiangolo",
+         "manideep997",
+         "YuriiMotov"
+        ]
+       },
+       {
+        "cluster": 5,
+        "area": "tests",
+        "files": 2,
+        "people": [
+         "manideep997",
+         "zlynv",
+         "tiangolo"
+        ]
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16072",
+        "label": "PR",
+        "name": "#16072 \ud83d\udd16 Release version 0.140.5"
+       },
+       {
+        "id": "fastapi/fastapi:docs/en/docs/release-notes.md",
+        "label": "File",
+        "name": "docs/en/docs/release-notes.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16072",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16072",
+        "target": "fastapi/fastapi:docs/en/docs/release-notes.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "YuriiMotov",
+        "label": "Person",
+        "name": "YuriiMotov"
+       },
+       {
+        "id": "fastapi/fastapi#16152",
+        "label": "PR",
+        "name": "#16152 \ud83d\udc77 Optimize cache usage in workflows"
+       },
+       {
+        "id": "fastapi/fastapi:.github/workflows/translate.yml",
+        "label": "File",
+        "name": ".github/workflows/translate.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "YuriiMotov",
+        "target": "fastapi/fastapi#16152",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16152",
+        "target": "fastapi/fastapi:.github/workflows/translate.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Shriprasad-P",
+        "label": "Person",
+        "name": "Shriprasad-P"
+       },
+       {
+        "id": "fastapi/fastapi#16350",
+        "label": "PR",
+        "name": "#16350 Fix jsonable_encoder raising an unclear UnicodeDecode"
+       },
+       {
+        "id": "fastapi/fastapi:tests/test_jsonable_encoder.py",
+        "label": "File",
+        "name": "tests/test_jsonable_encoder.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "fastapi/fastapi#16350",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "fastapi/fastapi#16350",
+        "target": "fastapi/fastapi:tests/test_jsonable_encoder.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "zach-overflow",
+        "label": "Person",
+        "name": "zach-overflow"
+       },
+       {
+        "id": "fastapi/fastapi#16358",
+        "label": "PR",
+        "name": "#16358 Migrate `httpx` to `httpx2`"
+       },
+       {
+        "id": "fastapi/fastapi:docs/de/docs/advanced/async-tests.md",
+        "label": "File",
+        "name": "docs/de/docs/advanced/async-tests.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "zach-overflow",
+        "target": "fastapi/fastapi#16358",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16358",
+        "target": "fastapi/fastapi:docs/de/docs/advanced/async-tests.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "tiangolo",
+        "label": "Person",
+        "name": "tiangolo"
+       },
+       {
+        "id": "fastapi/fastapi#16102",
+        "label": "PR",
+        "name": "#16102 \u2728 Add `app.frontend(check_dir=\"auto\")`, to make local"
+       },
+       {
+        "id": "fastapi/fastapi:pyproject.toml",
+        "label": "File",
+        "name": "pyproject.toml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "tiangolo",
+        "target": "fastapi/fastapi#16102",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16102",
+        "target": "fastapi/fastapi:pyproject.toml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "manideep997",
+        "label": "Person",
+        "name": "manideep997"
+       },
+       {
+        "id": "fastapi/fastapi#16274",
+        "label": "PR",
+        "name": "#16274 Fix/16034 freeze time route field build"
+       },
+       {
+        "id": "fastapi/fastapi:tests/test_router_include_context.py",
+        "label": "File",
+        "name": "tests/test_router_include_context.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "manideep997",
+        "target": "fastapi/fastapi#16274",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16274",
+        "target": "fastapi/fastapi:tests/test_router_include_context.py",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "tiangolo",
+     "fastapi/fastapi:docs/en/docs/release-notes.md",
+     "fastapi/fastapi:fastapi/__init__.py",
+     "fastapi/fastapi#16072",
+     "fastapi/fastapi#16074",
+     "fastapi/fastapi#16078",
+     "fastapi/fastapi#16088",
+     "fastapi/fastapi#16089",
+     "fastapi/fastapi#16093",
+     "fastapi/fastapi#16094",
+     "fastapi/fastapi#16095",
+     "fastapi/fastapi#16096",
+     "fastapi/fastapi#16103",
+     "fastapi/fastapi#16106",
+     "fastapi/fastapi#16411",
+     "fastapi/fastapi#16415",
+     "fastapi/fastapi#16419",
+     "fastapi/fastapi#16469",
+     "fastapi/fastapi#16471",
+     "fastapi/fastapi#16477",
+     "fastapi/fastapi#16485",
+     "fastapi/fastapi#16504",
+     "fastapi/fastapi#16510",
+     "fastapi/fastapi#16120",
+     "fastapi/fastapi#16152",
+     "fastapi/fastapi#16249",
+     "fastapi/fastapi#16438",
+     "fastapi/fastapi:.github/workflows/translate.yml",
+     "fastapi/fastapi:.github/workflows/prepare-release.yml",
+     "fastapi/fastapi:.github/workflows/topic-repos.yml",
+     "fastapi/fastapi:.github/workflows/create-draft-release.yml",
+     "fastapi/fastapi:.github/workflows/deploy-docs.yml",
+     "fastapi/fastapi:.github/workflows/label-approved.yml",
+     "fastapi/fastapi:.github/workflows/notify-translations.yml",
+     "fastapi/fastapi:.github/workflows/publish.yml",
+     "Shriprasad-P",
+     "amir-rezaei",
+     "fastapi/fastapi:tests/test_jsonable_encoder.py",
+     "fastapi/fastapi#16265",
+     "fastapi/fastapi#16354",
+     "fastapi/fastapi#16080",
+     "fastapi/fastapi:fastapi/sse.py",
+     "fastapi/fastapi#16081",
+     "fastapi/fastapi#16209",
+     "fastapi/fastapi:docs/de/docs/advanced/async-tests.md",
+     "fastapi/fastapi:docs/de/docs/advanced/openapi-callbacks.md",
+     "fastapi/fastapi:docs/de/docs/alternatives.md",
+     "fastapi/fastapi:docs/de/docs/features.md",
+     "fastapi/fastapi:docs/de/docs/index.md",
+     "fastapi/fastapi:docs/de/docs/tutorial/security/oauth2-jwt.md",
+     "fastapi/fastapi:docs/de/docs/tutorial/testing.md",
+     "YuriiMotov",
+     "fastapi/fastapi:pyproject.toml",
+     "fastapi/fastapi#16170",
+     "fastapi/fastapi#16217",
+     "fastapi/fastapi#16252",
+     "fastapi/fastapi#16261",
+     "fastapi/fastapi#16439",
+     "fastapi/fastapi#16446",
+     "manideep997",
+     "fastapi/fastapi:tests/test_router_include_context.py",
+     "fastapi/fastapi#16274",
+     "fastapi/fastapi#16271",
+     "fastapi/fastapi#16275",
+     "fastapi/fastapi#16279",
+     "fastapi/fastapi:tests/test_include_router_freeze_time.py",
+     "fastapi/fastapi#16484"
+    ]
+   },
+   {
+    "kind": "cross_repo",
+    "question": "Who works across repos?",
+    "answer": "12 people active here also authored or reviewed PRs in another ingested repo. Person nodes are shared by GitHub login, so one MATCH finds them (top 10 shown): **Shriprasad-P** in 2 repos (fastapi/fastapi (8), pydantic/pydantic (6)); **VimalN2005** in 2 repos (fastapi/fastapi (6), pydantic/pydantic (1)); **SparshGarg999** in 2 repos (fastapi/fastapi (2), pydantic/pydantic (2)); **icecold009** in 2 repos (fastapi/fastapi (2), pydantic/pydantic (2)); **vaibhavmashal** in 2 repos (fastapi/fastapi (3), pydantic/pydantic (1)).",
+    "tool_calls": [
+     {
+      "tool": "shared_contributors",
+      "params": {
+       "k": 10
+      },
+      "cypher": "MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)\nWHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'\nWITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample\nORDER BY prs DESC\nWITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total\nWHERE size(repos) >= 2\nUNWIND samples AS s\nMATCH path = (a)-[:AUTHORED|REVIEWED]->(s)-[:IN_REPO]->(:Repo)\nWITH a, repos, total, s, collect(path)[0] AS one\nWITH a, repos, total, collect(one) AS paths\nRETURN a.login AS person, size(repos) AS n_repos, repos, total AS prs, paths[0..$max_paths] AS evidence\nORDER BY n_repos DESC, prs DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "Shriprasad-P",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (8)",
+         "pydantic/pydantic (6)"
+        ],
+        "prs": 14
+       },
+       {
+        "person": "VimalN2005",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (6)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 7
+       },
+       {
+        "person": "SparshGarg999",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (2)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "icecold009",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (2)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "vaibhavmashal",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (3)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "Manateek1",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 3
+       },
+       {
+        "person": "Mukller",
+        "n_repos": 2,
+        "repos": [
+         "pydantic/pydantic (2)",
+         "fastapi/fastapi (1)"
+        ],
+        "prs": 3
+       },
+       {
+        "person": "OmmprakashMohanty01",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (1)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 2
+       },
+       {
+        "person": "itzzdev09",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (1)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 2
+       },
+       {
+        "person": "loulanyue",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (1)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 2
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Shriprasad-P",
+        "name": "Shriprasad-P"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16147",
+        "name": "#16147 \ud83d\udc1b Fix response_model_include/exclude ignored for Serv"
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "fastapi/fastapi#16147",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16147",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Shriprasad-P",
+        "name": "Shriprasad-P"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13755",
+        "name": "#13755 Use the field name in serialization JSON schemas when"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "pydantic/pydantic#13755",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13755",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "VimalN2005",
+        "name": "VimalN2005"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16231",
+        "name": "#16231 docs: rename read_items to update_item in extra data "
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "VimalN2005",
+        "target": "fastapi/fastapi#16231",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16231",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "VimalN2005",
+        "name": "VimalN2005"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13801",
+        "name": "#13801 Support type alias to None or MISSING in discriminate"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "VimalN2005",
+        "target": "pydantic/pydantic#13801",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13801",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "SparshGarg999",
+        "name": "SparshGarg999"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16198",
+        "name": "#16198 Support dotted client-side paths in app.frontend inde"
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "SparshGarg999",
+        "target": "fastapi/fastapi#16198",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16198",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "SparshGarg999",
+        "name": "SparshGarg999"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13662",
+        "name": "#13662 fix: handle Literal[None] in discriminated unions (#1"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "SparshGarg999",
+        "target": "pydantic/pydantic#13662",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13662",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "icecold009",
+        "name": "icecold009"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16111",
+        "name": "#16111 \ud83d\udc1b Fix PEP 695 sequence aliases in form models"
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "icecold009",
+        "target": "fastapi/fastapi#16111",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "fastapi/fastapi#16111",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "icecold009",
+        "name": "icecold009"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13856",
+        "name": "#13856 Keep pipeline order when folding a string transform i"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "icecold009",
+        "target": "pydantic/pydantic#13856",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13856",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "Shriprasad-P",
+     "VimalN2005",
+     "SparshGarg999",
+     "icecold009",
+     "vaibhavmashal",
+     "Manateek1"
+    ]
+   },
+   {
+    "kind": "cross_repo_expert",
+    "question": "Who reviewed similar work in other repos for PR #16505?",
+    "answer": "PR #16505 (\"\ud83c\udfa8 Update Python format in Markdown with Ruff\") gets topic words from its title and file paths. People who reviewed PRs on those topics in OTHER repos: **charliermarsh** (17 reviews in ruff on basic, python, references, ruff; 0 PRs here); **AlexWaygood** (14 reviews in ruff on async, basic, python, ruff; 0 PRs here); **sharkdp** (16 reviews in ruff on async, python, ruff, types; 0 PRs here); **Viicos** (7 reviews in pydantic on model, models, python, types; 0 PRs here). 0 PRs here = an outside expert this repo has never pulled in.",
+    "tool_calls": [
+     {
+      "tool": "cross_repo_expert",
+      "params": {
+       "pr": "fastapi/fastapi#16505",
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(home:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nOPTIONAL MATCH (p)-[:TOUCHES]->(f:File)\nWITH p, home, me, collect(f.path) AS fps\nWITH p, home, me, coalesce(p.tokens, []) + reduce(acc = [], fp IN fps | acc + split(replace(replace(replace(replace(toLower(fp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS raw\nUNWIND raw AS t\nWITH p, home, me, t WHERE size(t) >= 3 AND NOT t IN ['src','lib','tests','test','docs','doc','init','main','index','crates','github','workflows','snap','snapshots','resources','fixtures','txt','json','toml','yml','yaml','lock','cfg','ini','rst','html','css','png','svg','the','and','for','with','from','add','fix','update','use','when','into','support','allow','make','new','remove','handle','change','improve','agents','claude','contributing','readme','changelog','license','commit','pre','precommit','config','setup','pyproject','workflow','release','version','bump','deps','dependency','dependencies']\nWITH p, home, me, collect(DISTINCT t) AS topic\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(other:Repo)\nWHERE other <> home AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)\nWITH DISTINCT home, topic, cand, q, other\nOPTIONAL MATCH (q)-[:TOUCHES]->(g:File)\nWITH home, topic, cand, q, other, collect(g.path) AS gps\nWITH home, topic, cand, q, other, coalesce(q.tokens, []) + reduce(acc = [], gp IN gps | acc + split(replace(replace(replace(replace(toLower(gp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS qraw\nWITH home, cand, q, other, [t IN topic WHERE t IN qraw] AS hits\nWHERE size(hits) >= 2\nWITH home, cand, q, other, hits ORDER BY size(hits) DESC\nWITH home, cand, collect(DISTINCT other.id) AS repos, count(DISTINCT q) AS prs, collect(q)[0] AS best,\n     collect(hits) AS allhits\nWITH home, cand, repos, prs, best, reduce(acc = [], h IN allhits | acc + [x IN h WHERE NOT x IN acc]) AS matched\nMATCH path = (cand)-[:REVIEWED]->(best)-[:IN_REPO]->(:Repo)\nWITH home, cand, repos, prs, matched, collect(path)[0] AS ev\nOPTIONAL MATCH (cand)-[:AUTHORED|REVIEWED]->(h:PR)-[:IN_REPO]->(home)\nWITH cand, repos, prs, matched, ev, count(DISTINCT h) AS here\nRETURN cand.login AS person, repos, prs AS matching_reviews, matched[0..8] AS topics, here AS prs_here,\n       size(matched) + log(1.0 + prs) AS score, [ev] AS evidence\nORDER BY score DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "charliermarsh",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 17,
+        "topics": [
+         "basic",
+         "python",
+         "references",
+         "ruff",
+         "types"
+        ],
+        "prs_here": 0,
+        "score": 7.8904
+       },
+       {
+        "person": "AlexWaygood",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 14,
+        "topics": [
+         "async",
+         "basic",
+         "python",
+         "ruff",
+         "types"
+        ],
+        "prs_here": 0,
+        "score": 7.7081
+       },
+       {
+        "person": "sharkdp",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 16,
+        "topics": [
+         "async",
+         "python",
+         "ruff",
+         "types"
+        ],
+        "prs_here": 0,
+        "score": 6.8332
+       },
+       {
+        "person": "Viicos",
+        "repos": [
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 7,
+        "topics": [
+         "model",
+         "models",
+         "python",
+         "types"
+        ],
+        "prs_here": 0,
+        "score": 6.0794
+       },
+       {
+        "person": "ntBre",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 4,
+        "topics": [
+         "features",
+         "python",
+         "ruff",
+         "tutorial"
+        ],
+        "prs_here": 0,
+        "score": 5.6094
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "charliermarsh",
+        "name": "charliermarsh"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29232",
+        "name": "#29232 [ty] Mitigate pauses from clearing cached ASTs in mor"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29232",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29232",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "AlexWaygood",
+        "name": "AlexWaygood"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29295",
+        "name": "#29295 [ty] Prepare mdtests for return type inference"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29295",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29295",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29295",
+        "name": "#29295 [ty] Prepare mdtests for return type inference"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29295",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29295",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Viicos",
+        "name": "Viicos"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13682",
+        "name": "#13682 Simplify serialization core schemas in some places"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13682",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13682",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "fastapi/fastapi#16505",
+     "charliermarsh",
+     "AlexWaygood",
+     "sharkdp",
+     "Viicos"
+    ]
+   }
+  ],
+  "pydantic/pydantic": [
+   {
+    "kind": "bus_factor",
+    "question": "What if Viicos leaves pydantic?",
+    "answer": "**154 of 307 files** Viicos has touched would have **no other human** who authored or reviewed a PR on them (50%). Viicos is on 128 of 300 cached PRs. Most exposed: `uv.lock`, `pydantic-core/src/serializers/fields.rs`, `pydantic-core/src/definitions.rs`. By area: pydantic-core (111), tests (17), .github (8), pydantic (8).",
+    "tool_calls": [
+     {
+      "tool": "bus_factor",
+      "params": {
+       "repo": "pydantic/pydantic",
+       "person": "Viicos",
+       "k": 10
+      },
+      "cypher": "MATCH (me:Person {login:$person})-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.created >= $since\nMATCH (p)-[:TOUCHES]->(f:File)\nWITH DISTINCT me, f\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f)\nWHERE q.created >= $since AND NOT coalesce(h.is_bot, false)\nWITH me, f, collect(DISTINCT h) AS humans, count(DISTINCT q) AS prs\nWHERE size(humans) = 1 AND humans[0] = me\nMATCH path = (me)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(f)\nWITH f, prs, collect(path) AS paths\nRETURN f.path AS file, prs, 0 AS remaining_humans, paths[0..$max_paths] AS evidence\nORDER BY prs DESC, file LIMIT $k",
+      "rows": [
+       {
+        "file": "uv.lock",
+        "prs": 8,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/src/serializers/fields.rs",
+        "prs": 5,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/src/definitions.rs",
+        "prs": 4,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/src/validators/fraction.rs",
+        "prs": 4,
+        "remaining_humans": 0
+       },
+       {
+        "file": ".github/workflows/third-party.yml",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/pyproject.toml",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/src/py_gc.rs",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/src/serializers/type_serializers/missing_sentinel.rs",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/src/validators/int.rs",
+        "prs": 3,
+        "remaining_humans": 0
+       },
+       {
+        "file": "pydantic-core/src/validators/missing_sentinel.rs",
+        "prs": 3,
+        "remaining_humans": 0
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13618",
+        "label": "PR",
+        "name": "#13618 Bump `typing-inspection` to v0.4.3"
+       },
+       {
+        "id": "pydantic/pydantic:uv.lock",
+        "label": "File",
+        "name": "uv.lock"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13618",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13618",
+        "target": "pydantic/pydantic:uv.lock",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13615",
+        "label": "PR",
+        "name": "#13615 Try 2227df27b1e42b43c9a3a184acb5d2842ea10750"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/serializers/fields.rs",
+        "label": "File",
+        "name": "pydantic-core/src/serializers/fields.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13615",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13615",
+        "target": "pydantic/pydantic:pydantic-core/src/serializers/fields.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13628",
+        "label": "PR",
+        "name": "#13628 Replace `impl_py_gc_traverse!` with a `#[derive(PyGcT"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/definitions.rs",
+        "label": "File",
+        "name": "pydantic-core/src/definitions.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13628",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13628",
+        "target": "pydantic/pydantic:pydantic-core/src/definitions.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13873",
+        "label": "PR",
+        "name": "#13873 Add support for `multiple_of` constraint in `fraction"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/validators/fraction.rs",
+        "label": "File",
+        "name": "pydantic-core/src/validators/fraction.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13873",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13873",
+        "target": "pydantic/pydantic:pydantic-core/src/validators/fraction.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13674",
+        "label": "PR",
+        "name": "#13674 Fix third-party tests"
+       },
+       {
+        "id": "pydantic/pydantic:.github/workflows/third-party.yml",
+        "label": "File",
+        "name": ".github/workflows/third-party.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13674",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13674",
+        "target": "pydantic/pydantic:.github/workflows/third-party.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13626",
+        "label": "PR",
+        "name": "#13626 Check GC traversal completeness when constructing val"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/pyproject.toml",
+        "label": "File",
+        "name": "pydantic-core/pyproject.toml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13626",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13626",
+        "target": "pydantic/pydantic:pydantic-core/pyproject.toml",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "Viicos",
+     "pydantic/pydantic:uv.lock",
+     "pydantic/pydantic:pydantic-core/src/serializers/fields.rs",
+     "pydantic/pydantic:pydantic-core/src/definitions.rs",
+     "pydantic/pydantic:pydantic-core/src/validators/fraction.rs",
+     "pydantic/pydantic:.github/workflows/third-party.yml",
+     "pydantic/pydantic:pydantic-core/pyproject.toml",
+     "pydantic/pydantic:pydantic-core/src/py_gc.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/missing_sentinel.rs",
+     "pydantic/pydantic:pydantic-core/src/validators/int.rs",
+     "pydantic/pydantic:pydantic-core/src/validators/missing_sentinel.rs",
+     "pydantic/pydantic:pydantic-core/tests/test_garbage_collection.py",
+     "pydantic/pydantic:.github/actions/core-build-pgo-wheel/action.yml",
+     "pydantic/pydantic:.github/workflows/docs-update.yml",
+     "pydantic/pydantic:pydantic-core/python/pydantic_core/__init__.py",
+     "pydantic/pydantic:pydantic-core/src/build_tools.rs",
+     "pydantic/pydantic:pydantic-core/src/common/frozendict.rs",
+     "pydantic/pydantic:pydantic-core/src/errors/value_exception.rs",
+     "pydantic/pydantic:pydantic-core/src/input/datetime.rs",
+     "pydantic/pydantic:pydantic-core/src/input/return_enums.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/config.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/errors.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/mod.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/dict.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/enum_.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/float.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/frozendict.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/generator.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/list.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/literal.rs",
+     "pydantic/pydantic:pydantic-core/src/serializers/type_serializers/set_frozenset.rs"
+    ]
+   },
+   {
+    "kind": "bridges",
+    "question": "Who are the bridges?",
+    "answer": "Bridges are people whose PRs and reviews cross ownership clusters, so losing them cuts communication between parts of the code. **Viicos** spans 27 of 33 clusters (128 PRs); **davidhewitt** spans 11 of 33 clusters (13 PRs); **strawgate** spans 8 of 33 clusters (7 PRs); **Shriprasad-P** spans 7 of 33 clusters (6 PRs).",
+    "tool_calls": [
+     {
+      "tool": "bridges",
+      "params": {
+       "repo": "pydantic/pydantic",
+       "k": 5
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH path = (h:Person)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(node)\nWHERE NOT coalesce(h.is_bot, false)\nWITH h, count(DISTINCT communityId) AS clusters, collect(path) AS paths\nRETURN h.login AS person, clusters, paths[0..$max_paths] AS evidence\nORDER BY clusters DESC LIMIT $k",
+      "rows": [
+       {
+        "person": "Viicos",
+        "clusters": 27,
+        "prs": 128
+       },
+       {
+        "person": "davidhewitt",
+        "clusters": 11,
+        "prs": 13
+       },
+       {
+        "person": "strawgate",
+        "clusters": 8,
+        "prs": 7
+       },
+       {
+        "person": "Shriprasad-P",
+        "clusters": 7,
+        "prs": 6
+       },
+       {
+        "person": "koriyoshi2041",
+        "clusters": 7,
+        "prs": 1
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13615",
+        "label": "PR",
+        "name": "#13615 Try 2227df27b1e42b43c9a3a184acb5d2842ea10750"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/serializers/shared.rs",
+        "label": "File",
+        "name": "pydantic-core/src/serializers/shared.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13615",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13615",
+        "target": "pydantic/pydantic:pydantic-core/src/serializers/shared.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13648",
+        "label": "PR",
+        "name": "#13648 Do not error on unhashable generic aliases during cor"
+       },
+       {
+        "id": "pydantic/pydantic:pyproject.toml",
+        "label": "File",
+        "name": "pyproject.toml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13648",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13648",
+        "target": "pydantic/pydantic:pyproject.toml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "davidhewitt",
+        "label": "Person",
+        "name": "davidhewitt"
+       },
+       {
+        "id": "pydantic/pydantic#13680",
+        "label": "PR",
+        "name": "#13680 Allow any `CoreSchema`\u00a0to be used as serialization"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/serializers/shared.rs",
+        "label": "File",
+        "name": "pydantic-core/src/serializers/shared.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "davidhewitt",
+        "target": "pydantic/pydantic#13680",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13680",
+        "target": "pydantic/pydantic:pydantic-core/src/serializers/shared.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "davidhewitt",
+        "label": "Person",
+        "name": "davidhewitt"
+       },
+       {
+        "id": "pydantic/pydantic#13796",
+        "label": "PR",
+        "name": "#13796 Add an `ordered-dict` core schema"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "label": "File",
+        "name": "pydantic-core/src/input/input_python.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "davidhewitt",
+        "target": "pydantic/pydantic#13796",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13796",
+        "target": "pydantic/pydantic:pydantic-core/src/input/input_python.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "strawgate",
+        "label": "Person",
+        "name": "strawgate"
+       },
+       {
+        "id": "pydantic/pydantic#13884",
+        "label": "PR",
+        "name": "#13884 Validate json models straight off the jiter cursor"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "label": "File",
+        "name": "pydantic-core/src/lookup_key.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "strawgate",
+        "target": "pydantic/pydantic#13884",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13884",
+        "target": "pydantic/pydantic:pydantic-core/src/lookup_key.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "strawgate",
+        "label": "Person",
+        "name": "strawgate"
+       },
+       {
+        "id": "pydantic/pydantic#13884",
+        "label": "PR",
+        "name": "#13884 Validate json models straight off the jiter cursor"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/validators/list.rs",
+        "label": "File",
+        "name": "pydantic-core/src/validators/list.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "strawgate",
+        "target": "pydantic/pydantic#13884",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13884",
+        "target": "pydantic/pydantic:pydantic-core/src/validators/list.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "Viicos",
+     "davidhewitt",
+     "strawgate",
+     "Shriprasad-P",
+     "koriyoshi2041"
+    ]
+   },
+   {
+    "kind": "clusters",
+    "question": "Show ownership clusters",
+    "answer": "Label propagation over people, PRs and files finds **206 communities** in the 393-node overview. The largest: **pydantic/_internal** (2 files, chrikrah, harmehak0173); **pydantic** (2 files, shashiKundur1, Kunal8954); **pydantic** (2 files, Kropiunig, ansh-rohilla); **tests** (2 files, Viicos, NoiceHax). Colours on the graph are these clusters.",
+    "tool_calls": [
+     {
+      "tool": "ownership_clusters",
+      "params": {
+       "repo": "pydantic/pydantic",
+       "min_files": 3
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH (q:PR)-[:TOUCHES]->(node)\nWITH communityId, node, count(DISTINCT q) AS touches\nORDER BY touches DESC\nWITH communityId, count(node) AS files, collect(node.path)[0..5] AS top_files\nWHERE files >= $min_files\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f:File)\nWHERE f.id STARTS WITH ($repo + ':') AND f.path IN top_files AND NOT coalesce(h.is_bot, false)\nWITH communityId, files, top_files, h, count(DISTINCT q) AS w\nORDER BY w DESC\nWITH communityId, files, top_files, collect(h.login + ' (' + toString(w) + ')')[0..5] AS top_people\nRETURN communityId AS cluster, files, top_files, top_people\nORDER BY files DESC LIMIT $k",
+      "rows": [
+       {
+        "cluster": 0,
+        "area": "pydantic/_internal",
+        "files": 2,
+        "people": [
+         "chrikrah",
+         "harmehak0173",
+         "destopianpirate"
+        ]
+       },
+       {
+        "cluster": 1,
+        "area": "pydantic",
+        "files": 2,
+        "people": [
+         "shashiKundur1",
+         "Kunal8954",
+         "Viicos"
+        ]
+       },
+       {
+        "cluster": 2,
+        "area": "pydantic",
+        "files": 2,
+        "people": [
+         "Kropiunig",
+         "ansh-rohilla",
+         "Viicos"
+        ]
+       },
+       {
+        "cluster": 3,
+        "area": "tests",
+        "files": 2,
+        "people": [
+         "Viicos",
+         "NoiceHax",
+         "davidhewitt"
+        ]
+       },
+       {
+        "cluster": 4,
+        "area": "pydantic/experimental",
+        "files": 2,
+        "people": [
+         "icecold009",
+         "TusharND12",
+         "Rodrigo-Palma"
+        ]
+       },
+       {
+        "cluster": 5,
+        "area": "pydantic-core/src",
+        "files": 2,
+        "people": [
+         "Viicos",
+         "chinmayasameeru",
+         "meetgudlani7"
+        ]
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "chrikrah",
+        "label": "Person",
+        "name": "chrikrah"
+       },
+       {
+        "id": "pydantic/pydantic#13928",
+        "label": "PR",
+        "name": "#13928 feat: support attribute docstrings inheritance for Ty"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/_internal/_docs_extraction.py",
+        "label": "File",
+        "name": "pydantic/_internal/_docs_extraction.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "chrikrah",
+        "target": "pydantic/pydantic#13928",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13928",
+        "target": "pydantic/pydantic:pydantic/_internal/_docs_extraction.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "shashiKundur1",
+        "label": "Person",
+        "name": "shashiKundur1"
+       },
+       {
+        "id": "pydantic/pydantic#13665",
+        "label": "PR",
+        "name": "#13665 Take `ser_json_temporal` into account when generating"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/json_schema.py",
+        "label": "File",
+        "name": "pydantic/json_schema.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "shashiKundur1",
+        "target": "pydantic/pydantic#13665",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13665",
+        "target": "pydantic/pydantic:pydantic/json_schema.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Kropiunig",
+        "label": "Person",
+        "name": "Kropiunig"
+       },
+       {
+        "id": "pydantic/pydantic#13635",
+        "label": "PR",
+        "name": "#13635 Return `NotImplemented` from URL equality comparisons"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/networks.py",
+        "label": "File",
+        "name": "pydantic/networks.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Kropiunig",
+        "target": "pydantic/pydantic#13635",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13635",
+        "target": "pydantic/pydantic:pydantic/networks.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13668",
+        "label": "PR",
+        "name": "#13668 Respect runtime alias validation configuration when w"
+       },
+       {
+        "id": "pydantic/pydantic:tests/test_validators.py",
+        "label": "File",
+        "name": "tests/test_validators.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13668",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13668",
+        "target": "pydantic/pydantic:tests/test_validators.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "icecold009",
+        "label": "Person",
+        "name": "icecold009"
+       },
+       {
+        "id": "pydantic/pydantic#13856",
+        "label": "PR",
+        "name": "#13856 Keep pipeline order when folding a string transform i"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic/experimental/pipeline.py",
+        "label": "File",
+        "name": "pydantic/experimental/pipeline.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "icecold009",
+        "target": "pydantic/pydantic#13856",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13856",
+        "target": "pydantic/pydantic:pydantic/experimental/pipeline.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Viicos",
+        "label": "Person",
+        "name": "Viicos"
+       },
+       {
+        "id": "pydantic/pydantic#13628",
+        "label": "PR",
+        "name": "#13628 Replace `impl_py_gc_traverse!` with a `#[derive(PyGcT"
+       },
+       {
+        "id": "pydantic/pydantic:pydantic-core/src/validators/generator.rs",
+        "label": "File",
+        "name": "pydantic-core/src/validators/generator.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Viicos",
+        "target": "pydantic/pydantic#13628",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13628",
+        "target": "pydantic/pydantic:pydantic-core/src/validators/generator.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "harmehak0173",
+     "pydantic/pydantic#13928",
+     "pydantic/pydantic:pydantic/_internal/_docs_extraction.py",
+     "pydantic/pydantic:tests/test_docs_extraction.py",
+     "pydantic/pydantic#13636",
+     "pydantic/pydantic#13637",
+     "pydantic/pydantic#13638",
+     "pydantic/pydantic#13639",
+     "Viicos",
+     "pydantic/pydantic:pydantic/json_schema.py",
+     "pydantic/pydantic:tests/test_json_schema.py",
+     "pydantic/pydantic#13891",
+     "pydantic/pydantic#13893",
+     "pydantic/pydantic#13899",
+     "pydantic/pydantic#13953",
+     "pydantic/pydantic#13980",
+     "Kropiunig",
+     "pydantic/pydantic:pydantic/networks.py",
+     "pydantic/pydantic:tests/test_networks.py",
+     "pydantic/pydantic#13718",
+     "pydantic/pydantic#13635",
+     "pydantic/pydantic#13641",
+     "pydantic/pydantic#13897",
+     "NoiceHax",
+     "pydantic/pydantic#13682",
+     "pydantic/pydantic:tests/test_validators.py",
+     "pydantic/pydantic#13658",
+     "pydantic/pydantic#13668",
+     "pydantic/pydantic:pydantic/functional_validators.py",
+     "breken-ai",
+     "pydantic/pydantic:pydantic/experimental/pipeline.py",
+     "pydantic/pydantic:tests/test_pipeline.py",
+     "pydantic/pydantic#13659",
+     "pydantic/pydantic#13875",
+     "pydantic/pydantic#13876",
+     "chinmayasameeru",
+     "pydantic/pydantic:pydantic-core/src/validators/generator.rs",
+     "pydantic/pydantic:pydantic-core/src/validators/function.rs",
+     "pydantic/pydantic#13880",
+     "pydantic/pydantic#13881",
+     "pydantic/pydantic#13882"
+    ]
+   },
+   {
+    "kind": "cross_repo",
+    "question": "Who works across repos?",
+    "answer": "18 people active here also authored or reviewed PRs in another ingested repo. Person nodes are shared by GitHub login, so one MATCH finds them (top 10 shown): **sharkdp** in 2 repos (astral-sh/ruff (31), pydantic/pydantic (1)); **Shriprasad-P** in 2 repos (fastapi/fastapi (8), pydantic/pydantic (6)); **VimalN2005** in 2 repos (fastapi/fastapi (6), pydantic/pydantic (1)); **devpryan7792** in 2 repos (astral-sh/ruff (3), pydantic/pydantic (3)); **simpleqt** in 2 repos (pydantic/pydantic (4), sqlfluff/sqlfluff (2)).",
+    "tool_calls": [
+     {
+      "tool": "shared_contributors",
+      "params": {
+       "k": 10
+      },
+      "cypher": "MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)\nWHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'\nWITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample\nORDER BY prs DESC\nWITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total\nWHERE size(repos) >= 2\nUNWIND samples AS s\nMATCH path = (a)-[:AUTHORED|REVIEWED]->(s)-[:IN_REPO]->(:Repo)\nWITH a, repos, total, s, collect(path)[0] AS one\nWITH a, repos, total, collect(one) AS paths\nRETURN a.login AS person, size(repos) AS n_repos, repos, total AS prs, paths[0..$max_paths] AS evidence\nORDER BY n_repos DESC, prs DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "sharkdp",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (31)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 32
+       },
+       {
+        "person": "Shriprasad-P",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (8)",
+         "pydantic/pydantic (6)"
+        ],
+        "prs": 14
+       },
+       {
+        "person": "VimalN2005",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (6)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 7
+       },
+       {
+        "person": "devpryan7792",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (3)",
+         "pydantic/pydantic (3)"
+        ],
+        "prs": 6
+       },
+       {
+        "person": "simpleqt",
+        "n_repos": 2,
+        "repos": [
+         "pydantic/pydantic (4)",
+         "sqlfluff/sqlfluff (2)"
+        ],
+        "prs": 6
+       },
+       {
+        "person": "SparshGarg999",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (2)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "alok-108",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (3)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "icecold009",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (2)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "vaibhavmashal",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (3)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "Manateek1",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 3
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29091",
+        "name": "#29091 [ty] Preserve tuple shapes when slicing NewTypes"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29091",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29091",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13853",
+        "name": "#13853 Consistently use `Dict` in `BaseModel` type annotatio"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "pydantic/pydantic#13853",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13853",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Shriprasad-P",
+        "name": "Shriprasad-P"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16147",
+        "name": "#16147 \ud83d\udc1b Fix response_model_include/exclude ignored for Serv"
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "fastapi/fastapi#16147",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16147",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Shriprasad-P",
+        "name": "Shriprasad-P"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13755",
+        "name": "#13755 Use the field name in serialization JSON schemas when"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "pydantic/pydantic#13755",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13755",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "VimalN2005",
+        "name": "VimalN2005"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16231",
+        "name": "#16231 docs: rename read_items to update_item in extra data "
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "VimalN2005",
+        "target": "fastapi/fastapi#16231",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16231",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "VimalN2005",
+        "name": "VimalN2005"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13801",
+        "name": "#13801 Support type alias to None or MISSING in discriminate"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "VimalN2005",
+        "target": "pydantic/pydantic#13801",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13801",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "devpryan7792",
+        "name": "devpryan7792"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29264",
+        "name": "#29264 fix(flake8-pyi): support stringized annotations in PY"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "devpryan7792",
+        "target": "astral-sh/ruff#29264",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29264",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "devpryan7792",
+        "name": "devpryan7792"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13968",
+        "name": "#13968 Enforce 'decimal_whole_digits' constraint when valida"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "devpryan7792",
+        "target": "pydantic/pydantic#13968",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13968",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "sharkdp",
+     "Shriprasad-P",
+     "VimalN2005",
+     "devpryan7792",
+     "simpleqt",
+     "SparshGarg999"
+    ]
+   },
+   {
+    "kind": "cross_repo_expert",
+    "question": "Who reviewed similar work in other repos for PR #13824?",
+    "answer": "PR #13824 (\"Add a `counter` core schema\") gets topic words from its title and file paths. People who reviewed PRs on those topics in OTHER repos: **AlexWaygood** (15 reviews in ruff on core, generate, infer, known; 0 PRs here); **carljm** (13 reviews in ruff on core, infer, internal, metadata; 0 PRs here); **sharkdp** (20 reviews in ruff on infer, known, metadata, pydantic; 1 PRs here); **charliermarsh** (18 reviews in ruff on core, generate, infer, known; 0 PRs here). 0 PRs here = an outside expert this repo has never pulled in.",
+    "tool_calls": [
+     {
+      "tool": "cross_repo_expert",
+      "params": {
+       "pr": "pydantic/pydantic#13824",
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(home:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nOPTIONAL MATCH (p)-[:TOUCHES]->(f:File)\nWITH p, home, me, collect(f.path) AS fps\nWITH p, home, me, coalesce(p.tokens, []) + reduce(acc = [], fp IN fps | acc + split(replace(replace(replace(replace(toLower(fp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS raw\nUNWIND raw AS t\nWITH p, home, me, t WHERE size(t) >= 3 AND NOT t IN ['src','lib','tests','test','docs','doc','init','main','index','crates','github','workflows','snap','snapshots','resources','fixtures','txt','json','toml','yml','yaml','lock','cfg','ini','rst','html','css','png','svg','the','and','for','with','from','add','fix','update','use','when','into','support','allow','make','new','remove','handle','change','improve','agents','claude','contributing','readme','changelog','license','commit','pre','precommit','config','setup','pyproject','workflow','release','version','bump','deps','dependency','dependencies']\nWITH p, home, me, collect(DISTINCT t) AS topic\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(other:Repo)\nWHERE other <> home AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)\nWITH DISTINCT home, topic, cand, q, other\nOPTIONAL MATCH (q)-[:TOUCHES]->(g:File)\nWITH home, topic, cand, q, other, collect(g.path) AS gps\nWITH home, topic, cand, q, other, coalesce(q.tokens, []) + reduce(acc = [], gp IN gps | acc + split(replace(replace(replace(replace(toLower(gp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS qraw\nWITH home, cand, q, other, [t IN topic WHERE t IN qraw] AS hits\nWHERE size(hits) >= 2\nWITH home, cand, q, other, hits ORDER BY size(hits) DESC\nWITH home, cand, collect(DISTINCT other.id) AS repos, count(DISTINCT q) AS prs, collect(q)[0] AS best,\n     collect(hits) AS allhits\nWITH home, cand, repos, prs, best, reduce(acc = [], h IN allhits | acc + [x IN h WHERE NOT x IN acc]) AS matched\nMATCH path = (cand)-[:REVIEWED]->(best)-[:IN_REPO]->(:Repo)\nWITH home, cand, repos, prs, matched, collect(path)[0] AS ev\nOPTIONAL MATCH (cand)-[:AUTHORED|REVIEWED]->(h:PR)-[:IN_REPO]->(home)\nWITH cand, repos, prs, matched, ev, count(DISTINCT h) AS here\nRETURN cand.login AS person, repos, prs AS matching_reviews, matched[0..8] AS topics, here AS prs_here,\n       size(matched) + log(1.0 + prs) AS score, [ev] AS evidence\nORDER BY score DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "AlexWaygood",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 15,
+        "topics": [
+         "core",
+         "generate",
+         "infer",
+         "known",
+         "library",
+         "metadata",
+         "python",
+         "schema"
+        ],
+        "prs_here": 0,
+        "score": 15.7726
+       },
+       {
+        "person": "carljm",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 13,
+        "topics": [
+         "core",
+         "infer",
+         "internal",
+         "metadata",
+         "mod",
+         "python",
+         "schema",
+         "shared"
+        ],
+        "prs_here": 0,
+        "score": 12.6391
+       },
+       {
+        "person": "sharkdp",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 20,
+        "topics": [
+         "infer",
+         "known",
+         "metadata",
+         "pydantic",
+         "python",
+         "schema",
+         "shared",
+         "type"
+        ],
+        "prs_here": 1,
+        "score": 12.0445
+       },
+       {
+        "person": "charliermarsh",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 18,
+        "topics": [
+         "core",
+         "generate",
+         "infer",
+         "known",
+         "metadata",
+         "pydantic",
+         "python",
+         "type"
+        ],
+        "prs_here": 0,
+        "score": 11.9444
+       },
+       {
+        "person": "keraion",
+        "repos": [
+         "sqlfluff/sqlfluff"
+        ],
+        "matching_reviews": 5,
+        "topics": [
+         "api",
+         "core",
+         "generate",
+         "plugins",
+         "python",
+         "shared",
+         "table",
+         "types"
+        ],
+        "prs_here": 0,
+        "score": 9.7918
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "AlexWaygood",
+        "name": "AlexWaygood"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29439",
+        "name": "#29439 [ty] Enable return type inference in scripts and tool"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29439",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29439",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "carljm",
+        "name": "carljm"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29144",
+        "name": "#29144 [ty] Pass inferable typevars to satisfiability checks"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "carljm",
+        "target": "astral-sh/ruff#29144",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29144",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29305",
+        "name": "#29305 [ty] Add diagnostics when modifying frozen pydantic f"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29305",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29305",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "charliermarsh",
+        "name": "charliermarsh"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29125",
+        "name": "#29125 [ty] Narrow tuple unions through truthiness and type "
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "charliermarsh",
+        "target": "astral-sh/ruff#29125",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29125",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "pydantic/pydantic#13824",
+     "AlexWaygood",
+     "carljm",
+     "sharkdp",
+     "charliermarsh"
     ]
    }
   ],
@@ -1230,7 +5874,7 @@
    {
     "kind": "clusters",
     "question": "Show ownership clusters",
-    "answer": "Label propagation over people, PRs and files finds **183 communities** in the 398-node overview. The largest: **test/fixtures** (24 files, rfanth, keraion); **sqlfluffrs/sqlfluffrs_parser** (8 files, rubytobi, keraion); **docsv** (1 files, rubytobi, keraion); **test/fixtures** (3 files, nietus, yousefissa). Colours on the graph are these clusters.",
+    "answer": "Label propagation over people, PRs and files finds **183 communities** in the 398-node overview. The largest: **test/fixtures** (24 files, keraion, rfanth); **sqlfluffrs/sqlfluffrs_parser** (8 files, keraion, rubytobi); **docsv** (1 files, keraion, alanmcruickshank); **test/fixtures** (3 files, zhaoruizhe81, nietus). Colours on the graph are these clusters.",
     "tool_calls": [
      {
       "tool": "ownership_clusters",
@@ -1245,8 +5889,8 @@
         "area": "test/fixtures",
         "files": 24,
         "people": [
-         "rfanth",
-         "keraion"
+         "keraion",
+         "rfanth"
         ]
        },
        {
@@ -1254,8 +5898,8 @@
         "area": "sqlfluffrs/sqlfluffrs_parser",
         "files": 8,
         "people": [
-         "rubytobi",
          "keraion",
+         "rubytobi",
          "taslater"
         ]
        },
@@ -1264,9 +5908,9 @@
         "area": "docsv",
         "files": 1,
         "people": [
-         "rubytobi",
          "keraion",
-         "alanmcruickshank"
+         "alanmcruickshank",
+         "rubytobi"
         ]
        },
        {
@@ -1274,8 +5918,8 @@
         "area": "test/fixtures",
         "files": 3,
         "people": [
+         "zhaoruizhe81",
          "nietus",
-         "yousefissa",
          "LuisFigueroaG"
         ]
        },
@@ -1284,9 +5928,9 @@
         "area": "src/sqlfluff",
         "files": 2,
         "people": [
-         "dajiaohuang",
+         "udsy19",
          "WAHIB-EL-KHADIRI",
-         "udsy19"
+         "dajiaohuang"
         ]
        },
        {
@@ -1294,9 +5938,9 @@
         "area": "src/sqlfluff",
         "files": 2,
         "people": [
-         "devYRPauli",
+         "rubytobi",
          "Tejas5405",
-         "peterbud"
+         "devYRPauli"
         ]
        }
       ]
@@ -1306,9 +5950,9 @@
      {
       "nodes": [
        {
-        "id": "rfanth",
+        "id": "keraion",
         "label": "Person",
-        "name": "rfanth"
+        "name": "keraion"
        },
        {
         "id": "sqlfluff/sqlfluff#8531",
@@ -1323,9 +5967,9 @@
       ],
       "edges": [
        {
-        "source": "rfanth",
+        "source": "keraion",
         "target": "sqlfluff/sqlfluff#8531",
-        "type": "AUTHORED"
+        "type": "REVIEWED"
        },
        {
         "source": "sqlfluff/sqlfluff#8531",
@@ -1337,9 +5981,9 @@
      {
       "nodes": [
        {
-        "id": "rubytobi",
+        "id": "keraion",
         "label": "Person",
-        "name": "rubytobi"
+        "name": "keraion"
        },
        {
         "id": "sqlfluff/sqlfluff#8650",
@@ -1354,13 +5998,106 @@
       ],
       "edges": [
        {
-        "source": "rubytobi",
+        "source": "keraion",
         "target": "sqlfluff/sqlfluff#8650",
-        "type": "REVIEWED"
+        "type": "AUTHORED"
        },
        {
         "source": "sqlfluff/sqlfluff#8650",
         "target": "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/helpers.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8630",
+        "label": "PR",
+        "name": "#8630 build(deps): bump axios from 1.16.1 to 1.20.0 in /docs"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
+        "label": "File",
+        "name": "docsv/pnpm-lock.yaml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8630",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8630",
+        "target": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "zhaoruizhe81",
+        "label": "Person",
+        "name": "zhaoruizhe81"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8732",
+        "label": "PR",
+        "name": "#8732 Postgres: support ALTER COLUMN SET EXPRESSION AS (Post"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_postgres.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "zhaoruizhe81",
+        "target": "sqlfluff/sqlfluff#8732",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8732",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "udsy19",
+        "label": "Person",
+        "name": "udsy19"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8720",
+        "label": "PR",
+        "name": "#8720 fix(ST01): preserve comments when removing redundant E"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
+        "label": "File",
+        "name": "src/sqlfluff/rules/structure/ST01.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "udsy19",
+        "target": "sqlfluff/sqlfluff#8720",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8720",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
         "type": "TOUCHES"
        }
       ]
@@ -1373,102 +6110,9 @@
         "name": "rubytobi"
        },
        {
-        "id": "sqlfluff/sqlfluff#8639",
+        "id": "sqlfluff/sqlfluff#8617",
         "label": "PR",
-        "name": "#8639 build(deps): bump postcss from 8.5.14 to 8.5.28 in /do"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
-        "label": "File",
-        "name": "docsv/pnpm-lock.yaml"
-       }
-      ],
-      "edges": [
-       {
-        "source": "rubytobi",
-        "target": "sqlfluff/sqlfluff#8639",
-        "type": "REVIEWED"
-       },
-       {
-        "source": "sqlfluff/sqlfluff#8639",
-        "target": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
-        "type": "TOUCHES"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "nietus",
-        "label": "Person",
-        "name": "nietus"
-       },
-       {
-        "id": "sqlfluff/sqlfluff#8741",
-        "label": "PR",
-        "name": "#8741 PostgreSQL: parse ALTER COLUMN SET EXPRESSION AS"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_postgres.py"
-       }
-      ],
-      "edges": [
-       {
-        "source": "nietus",
-        "target": "sqlfluff/sqlfluff#8741",
-        "type": "AUTHORED"
-       },
-       {
-        "source": "sqlfluff/sqlfluff#8741",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
-        "type": "TOUCHES"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "dajiaohuang",
-        "label": "Person",
-        "name": "dajiaohuang"
-       },
-       {
-        "id": "sqlfluff/sqlfluff#8578",
-        "label": "PR",
-        "name": "#8578 fix(ST01): preserve comment when removing redundant EL"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
-        "label": "File",
-        "name": "src/sqlfluff/rules/structure/ST01.py"
-       }
-      ],
-      "edges": [
-       {
-        "source": "dajiaohuang",
-        "target": "sqlfluff/sqlfluff#8578",
-        "type": "AUTHORED"
-       },
-       {
-        "source": "sqlfluff/sqlfluff#8578",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
-        "type": "TOUCHES"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "devYRPauli",
-        "label": "Person",
-        "name": "devYRPauli"
-       },
-       {
-        "id": "sqlfluff/sqlfluff#8580",
-        "label": "PR",
-        "name": "#8580 LT05: add a list_wrapping option to fill long lists"
+        "name": "#8617 LT05: Do not move a trailing comment that contains a t"
        },
        {
         "id": "sqlfluff/sqlfluff:src/sqlfluff/utils/reflow/reindent.py",
@@ -1478,12 +6122,12 @@
       ],
       "edges": [
        {
-        "source": "devYRPauli",
-        "target": "sqlfluff/sqlfluff#8580",
-        "type": "AUTHORED"
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8617",
+        "type": "REVIEWED"
        },
        {
-        "source": "sqlfluff/sqlfluff#8580",
+        "source": "sqlfluff/sqlfluff#8617",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/utils/reflow/reindent.py",
         "type": "TOUCHES"
        }
@@ -1555,7 +6199,1017 @@
      "sqlfluff/sqlfluff#8617",
      "sqlfluff/sqlfluff#8622"
     ]
+   },
+   {
+    "kind": "cross_repo",
+    "question": "Who works across repos?",
+    "answer": "8 people active here also authored or reviewed PRs in another ingested repo. Person nodes are shared by GitHub login, so one MATCH finds them: **adhavan18** in 2 repos (copperheadhq/copperhead (24), sqlfluff/sqlfluff (7)); **simpleqt** in 2 repos (pydantic/pydantic (4), sqlfluff/sqlfluff (2)); **Cherith1222** in 2 repos (astral-sh/ruff (4), sqlfluff/sqlfluff (1)); **dajiaohuang** in 2 repos (sqlfluff/sqlfluff (2), pydantic/pydantic (1)); **dylanpulver** in 2 repos (pydantic/pydantic (2), sqlfluff/sqlfluff (1)).",
+    "tool_calls": [
+     {
+      "tool": "shared_contributors",
+      "params": {
+       "k": 10
+      },
+      "cypher": "MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)\nWHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'\nWITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample\nORDER BY prs DESC\nWITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total\nWHERE size(repos) >= 2\nUNWIND samples AS s\nMATCH path = (a)-[:AUTHORED|REVIEWED]->(s)-[:IN_REPO]->(:Repo)\nWITH a, repos, total, s, collect(path)[0] AS one\nWITH a, repos, total, collect(one) AS paths\nRETURN a.login AS person, size(repos) AS n_repos, repos, total AS prs, paths[0..$max_paths] AS evidence\nORDER BY n_repos DESC, prs DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "adhavan18",
+        "n_repos": 2,
+        "repos": [
+         "copperheadhq/copperhead (24)",
+         "sqlfluff/sqlfluff (7)"
+        ],
+        "prs": 31
+       },
+       {
+        "person": "simpleqt",
+        "n_repos": 2,
+        "repos": [
+         "pydantic/pydantic (4)",
+         "sqlfluff/sqlfluff (2)"
+        ],
+        "prs": 6
+       },
+       {
+        "person": "Cherith1222",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (4)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 5
+       },
+       {
+        "person": "dajiaohuang",
+        "n_repos": 2,
+        "repos": [
+         "sqlfluff/sqlfluff (2)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 3
+       },
+       {
+        "person": "dylanpulver",
+        "n_repos": 2,
+        "repos": [
+         "pydantic/pydantic (2)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 3
+       },
+       {
+        "person": "ansh-rohilla",
+        "n_repos": 2,
+        "repos": [
+         "pydantic/pydantic (1)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 2
+       },
+       {
+        "person": "itzzdev09",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (1)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 2
+       },
+       {
+        "person": "sai-sakalam",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (1)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 2
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "adhavan18",
+        "name": "adhavan18"
+       },
+       {
+        "label": "PR",
+        "id": "copperheadhq/copperhead#124",
+        "name": "#124 fix(docs): read markdown tables that omit the outer pip"
+       },
+       {
+        "label": "Repo",
+        "id": "copperheadhq/copperhead",
+        "name": "copperheadhq/copperhead"
+       }
+      ],
+      "edges": [
+       {
+        "source": "adhavan18",
+        "target": "copperheadhq/copperhead#124",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#124",
+        "target": "copperheadhq/copperhead",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "adhavan18",
+        "name": "adhavan18"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8526",
+        "name": "#8526 Redshift: parse array accessors in SUPER paths in the "
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "adhavan18",
+        "target": "sqlfluff/sqlfluff#8526",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8526",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "simpleqt",
+        "name": "simpleqt"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13766",
+        "name": "#13766 Fix than/that typo and sharpen `ConfigDict` docs anch"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "simpleqt",
+        "target": "pydantic/pydantic#13766",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13766",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "simpleqt",
+        "name": "simpleqt"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8525",
+        "name": "#8525 docs(parser): drop the stale tf arg from RustParser.pa"
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "simpleqt",
+        "target": "sqlfluff/sqlfluff#8525",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8525",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Cherith1222",
+        "name": "Cherith1222"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29171",
+        "name": "#29171 Unwrap stringized annotations in PYI036"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Cherith1222",
+        "target": "astral-sh/ruff#29171",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "astral-sh/ruff#29171",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Cherith1222",
+        "name": "Cherith1222"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8747",
+        "name": "#8747 fix(tsql): parse GROUP BY GROUPING SETS with more than"
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Cherith1222",
+        "target": "sqlfluff/sqlfluff#8747",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8747",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "dajiaohuang",
+        "name": "dajiaohuang"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8578",
+        "name": "#8578 fix(ST01): preserve comment when removing redundant EL"
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "dajiaohuang",
+        "target": "sqlfluff/sqlfluff#8578",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8578",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "dajiaohuang",
+        "name": "dajiaohuang"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#14002",
+        "name": "#14002 Validate multiple_of annotated metadata"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "dajiaohuang",
+        "target": "pydantic/pydantic#14002",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#14002",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "adhavan18",
+     "simpleqt",
+     "Cherith1222",
+     "dajiaohuang",
+     "dylanpulver",
+     "ansh-rohilla"
+    ]
+   },
+   {
+    "kind": "cross_repo_expert",
+    "question": "Who reviewed similar work in other repos for PR #8636?",
+    "answer": "PR #8636 (\"docs: retire legacy Sphinx source after VitePress cutover\") gets topic words from its title and file paths. People who reviewed PRs on those topics in OTHER repos: **AlexWaygood** (8 reviews in ruff on default, generate, jinja, merge; 0 PRs here); **AniketR10** (3 reviews in copperhead on cli, configuration, design, diff; 0 PRs here); **ntBre** (7 reviews in ruff on after, configuration, default, documentation; 0 PRs here); **sharkdp** (9 reviews in ruff on configuration, legacy, python, rules; 0 PRs here). 0 PRs here = an outside expert this repo has never pulled in.",
+    "tool_calls": [
+     {
+      "tool": "cross_repo_expert",
+      "params": {
+       "pr": "sqlfluff/sqlfluff#8636",
+       "k": 10
+      },
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(home:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nOPTIONAL MATCH (p)-[:TOUCHES]->(f:File)\nWITH p, home, me, collect(f.path) AS fps\nWITH p, home, me, coalesce(p.tokens, []) + reduce(acc = [], fp IN fps | acc + split(replace(replace(replace(replace(toLower(fp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS raw\nUNWIND raw AS t\nWITH p, home, me, t WHERE size(t) >= 3 AND NOT t IN ['src','lib','tests','test','docs','doc','init','main','index','crates','github','workflows','snap','snapshots','resources','fixtures','txt','json','toml','yml','yaml','lock','cfg','ini','rst','html','css','png','svg','the','and','for','with','from','add','fix','update','use','when','into','support','allow','make','new','remove','handle','change','improve','agents','claude','contributing','readme','changelog','license','commit','pre','precommit','config','setup','pyproject','workflow','release','version','bump','deps','dependency','dependencies']\nWITH p, home, me, collect(DISTINCT t) AS topic\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(other:Repo)\nWHERE other <> home AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)\nWITH DISTINCT home, topic, cand, q, other\nOPTIONAL MATCH (q)-[:TOUCHES]->(g:File)\nWITH home, topic, cand, q, other, collect(g.path) AS gps\nWITH home, topic, cand, q, other, coalesce(q.tokens, []) + reduce(acc = [], gp IN gps | acc + split(replace(replace(replace(replace(toLower(gp),'.','/'),'_','/'),'-','/'),' ','/'),'/')) AS qraw\nWITH home, cand, q, other, [t IN topic WHERE t IN qraw] AS hits\nWHERE size(hits) >= 2\nWITH home, cand, q, other, hits ORDER BY size(hits) DESC\nWITH home, cand, collect(DISTINCT other.id) AS repos, count(DISTINCT q) AS prs, collect(q)[0] AS best,\n     collect(hits) AS allhits\nWITH home, cand, repos, prs, best, reduce(acc = [], h IN allhits | acc + [x IN h WHERE NOT x IN acc]) AS matched\nMATCH path = (cand)-[:REVIEWED]->(best)-[:IN_REPO]->(:Repo)\nWITH home, cand, repos, prs, matched, collect(path)[0] AS ev\nOPTIONAL MATCH (cand)-[:AUTHORED|REVIEWED]->(h:PR)-[:IN_REPO]->(home)\nWITH cand, repos, prs, matched, ev, count(DISTINCT h) AS here\nRETURN cand.login AS person, repos, prs AS matching_reviews, matched[0..8] AS topics, here AS prs_here,\n       size(matched) + log(1.0 + prs) AS score, [ev] AS evidence\nORDER BY score DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "AlexWaygood",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 8,
+        "topics": [
+         "default",
+         "generate",
+         "jinja",
+         "merge",
+         "publish",
+         "python",
+         "rule",
+         "rules"
+        ],
+        "prs_here": 0,
+        "score": 12.1972
+       },
+       {
+        "person": "AniketR10",
+        "repos": [
+         "copperheadhq/copperhead"
+        ],
+        "matching_reviews": 3,
+        "topics": [
+         "cli",
+         "configuration",
+         "design",
+         "diff",
+         "example",
+         "gitignore",
+         "install",
+         "integration"
+        ],
+        "prs_here": 0,
+        "score": 11.3863
+       },
+       {
+        "person": "ntBre",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 7,
+        "topics": [
+         "after",
+         "configuration",
+         "default",
+         "documentation",
+         "jinja",
+         "publish",
+         "python",
+         "rule"
+        ],
+        "prs_here": 0,
+        "score": 11.0794
+       },
+       {
+        "person": "sharkdp",
+        "repos": [
+         "astral-sh/ruff"
+        ],
+        "matching_reviews": 9,
+        "topics": [
+         "configuration",
+         "legacy",
+         "python",
+         "rules",
+         "shared",
+         "static"
+        ],
+        "prs_here": 0,
+        "score": 8.3026
+       },
+       {
+        "person": "Shriprasad-P",
+        "repos": [
+         "fastapi/fastapi",
+         "pydantic/pydantic"
+        ],
+        "matching_reviews": 2,
+        "topics": [
+         "api",
+         "default",
+         "generate",
+         "plugins",
+         "python",
+         "shared",
+         "status"
+        ],
+        "prs_here": 0,
+        "score": 8.0986
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "AlexWaygood",
+        "name": "AlexWaygood"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29336",
+        "name": "#29336 Require hashes for build dependencies"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AlexWaygood",
+        "target": "astral-sh/ruff#29336",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29336",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "AniketR10",
+        "name": "AniketR10"
+       },
+       {
+        "label": "PR",
+        "id": "copperheadhq/copperhead#74",
+        "name": "#74 feat(provider): add LM Studio as a local-model provider "
+       },
+       {
+        "label": "Repo",
+        "id": "copperheadhq/copperhead",
+        "name": "copperheadhq/copperhead"
+       }
+      ],
+      "edges": [
+       {
+        "source": "AniketR10",
+        "target": "copperheadhq/copperhead#74",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "copperheadhq/copperhead#74",
+        "target": "copperheadhq/copperhead",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "ntBre",
+        "name": "ntBre"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29374",
+        "name": "#29374 Clarify documentation and correct stale guidance"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "ntBre",
+        "target": "astral-sh/ruff#29374",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29374",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29342",
+        "name": "#29342 [ty] Preserve shared structure in ambiguous overload "
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29342",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29342",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "sqlfluff/sqlfluff#8636",
+     "AlexWaygood",
+     "AniketR10",
+     "ntBre",
+     "sharkdp"
+    ]
    }
+  ],
+  "all": [
+   {
+    "kind": "cross_repo",
+    "question": "Who works across repos?",
+    "answer": "22 people authored or reviewed PRs in 2+ ingested repos. Person nodes are shared by GitHub login, so one MATCH finds them (top 10 shown): **sharkdp** in 2 repos (astral-sh/ruff (31), pydantic/pydantic (1)); **adhavan18** in 2 repos (copperheadhq/copperhead (24), sqlfluff/sqlfluff (7)); **Shriprasad-P** in 2 repos (fastapi/fastapi (8), pydantic/pydantic (6)); **VimalN2005** in 2 repos (fastapi/fastapi (6), pydantic/pydantic (1)); **devpryan7792** in 2 repos (astral-sh/ruff (3), pydantic/pydantic (3)).",
+    "tool_calls": [
+     {
+      "tool": "shared_contributors",
+      "params": {
+       "k": 10
+      },
+      "cypher": "MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)\nWHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'\nWITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample\nORDER BY prs DESC\nWITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total\nWHERE size(repos) >= 2\nUNWIND samples AS s\nMATCH path = (a)-[:AUTHORED|REVIEWED]->(s)-[:IN_REPO]->(:Repo)\nWITH a, repos, total, s, collect(path)[0] AS one\nWITH a, repos, total, collect(one) AS paths\nRETURN a.login AS person, size(repos) AS n_repos, repos, total AS prs, paths[0..$max_paths] AS evidence\nORDER BY n_repos DESC, prs DESC, person LIMIT $k",
+      "rows": [
+       {
+        "person": "sharkdp",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (31)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 32
+       },
+       {
+        "person": "adhavan18",
+        "n_repos": 2,
+        "repos": [
+         "copperheadhq/copperhead (24)",
+         "sqlfluff/sqlfluff (7)"
+        ],
+        "prs": 31
+       },
+       {
+        "person": "Shriprasad-P",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (8)",
+         "pydantic/pydantic (6)"
+        ],
+        "prs": 14
+       },
+       {
+        "person": "VimalN2005",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (6)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 7
+       },
+       {
+        "person": "devpryan7792",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (3)",
+         "pydantic/pydantic (3)"
+        ],
+        "prs": 6
+       },
+       {
+        "person": "simpleqt",
+        "n_repos": 2,
+        "repos": [
+         "pydantic/pydantic (4)",
+         "sqlfluff/sqlfluff (2)"
+        ],
+        "prs": 6
+       },
+       {
+        "person": "Cherith1222",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (4)",
+         "sqlfluff/sqlfluff (1)"
+        ],
+        "prs": 5
+       },
+       {
+        "person": "SparshGarg999",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (2)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "alok-108",
+        "n_repos": 2,
+        "repos": [
+         "astral-sh/ruff (3)",
+         "pydantic/pydantic (1)"
+        ],
+        "prs": 4
+       },
+       {
+        "person": "icecold009",
+        "n_repos": 2,
+        "repos": [
+         "fastapi/fastapi (2)",
+         "pydantic/pydantic (2)"
+        ],
+        "prs": 4
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "astral-sh/ruff#29091",
+        "name": "#29091 [ty] Preserve tuple shapes when slicing NewTypes"
+       },
+       {
+        "label": "Repo",
+        "id": "astral-sh/ruff",
+        "name": "astral-sh/ruff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "astral-sh/ruff#29091",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "astral-sh/ruff#29091",
+        "target": "astral-sh/ruff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "sharkdp",
+        "name": "sharkdp"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13853",
+        "name": "#13853 Consistently use `Dict` in `BaseModel` type annotatio"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sharkdp",
+        "target": "pydantic/pydantic#13853",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13853",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "adhavan18",
+        "name": "adhavan18"
+       },
+       {
+        "label": "PR",
+        "id": "copperheadhq/copperhead#124",
+        "name": "#124 fix(docs): read markdown tables that omit the outer pip"
+       },
+       {
+        "label": "Repo",
+        "id": "copperheadhq/copperhead",
+        "name": "copperheadhq/copperhead"
+       }
+      ],
+      "edges": [
+       {
+        "source": "adhavan18",
+        "target": "copperheadhq/copperhead#124",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#124",
+        "target": "copperheadhq/copperhead",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "adhavan18",
+        "name": "adhavan18"
+       },
+       {
+        "label": "PR",
+        "id": "sqlfluff/sqlfluff#8526",
+        "name": "#8526 Redshift: parse array accessors in SUPER paths in the "
+       },
+       {
+        "label": "Repo",
+        "id": "sqlfluff/sqlfluff",
+        "name": "sqlfluff/sqlfluff"
+       }
+      ],
+      "edges": [
+       {
+        "source": "adhavan18",
+        "target": "sqlfluff/sqlfluff#8526",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8526",
+        "target": "sqlfluff/sqlfluff",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Shriprasad-P",
+        "name": "Shriprasad-P"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16147",
+        "name": "#16147 \ud83d\udc1b Fix response_model_include/exclude ignored for Serv"
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "fastapi/fastapi#16147",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16147",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "Shriprasad-P",
+        "name": "Shriprasad-P"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13755",
+        "name": "#13755 Use the field name in serialization JSON schemas when"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Shriprasad-P",
+        "target": "pydantic/pydantic#13755",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "pydantic/pydantic#13755",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "VimalN2005",
+        "name": "VimalN2005"
+       },
+       {
+        "label": "PR",
+        "id": "fastapi/fastapi#16231",
+        "name": "#16231 docs: rename read_items to update_item in extra data "
+       },
+       {
+        "label": "Repo",
+        "id": "fastapi/fastapi",
+        "name": "fastapi/fastapi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "VimalN2005",
+        "target": "fastapi/fastapi#16231",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "fastapi/fastapi#16231",
+        "target": "fastapi/fastapi",
+        "type": "IN_REPO"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "label": "Person",
+        "id": "VimalN2005",
+        "name": "VimalN2005"
+       },
+       {
+        "label": "PR",
+        "id": "pydantic/pydantic#13801",
+        "name": "#13801 Support type alias to None or MISSING in discriminate"
+       },
+       {
+        "label": "Repo",
+        "id": "pydantic/pydantic",
+        "name": "pydantic/pydantic"
+       }
+      ],
+      "edges": [
+       {
+        "source": "VimalN2005",
+        "target": "pydantic/pydantic#13801",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "pydantic/pydantic#13801",
+        "target": "pydantic/pydantic",
+        "type": "IN_REPO"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "sharkdp",
+     "adhavan18",
+     "Shriprasad-P",
+     "VimalN2005",
+     "devpryan7792",
+     "simpleqt"
+    ]
+   }
+  ]
+ },
+ "suggestions": {
+  "astral-sh/ruff": [
+   "What if charliermarsh leaves ruff?",
+   "Who are the bridges?",
+   "Who reviewed similar work in other repos for PR #29409?",
+   "Who should review ruff PR #29410?",
+   "Is PR #29450 a duplicate?",
+   "Show ownership clusters",
+   "Who works across repos?",
+   "Why is this repo stalled?"
+  ],
+  "copperheadhq/copperhead": [
+   "What if animesh-chouhan leaves copperhead?",
+   "Who are the bridges?",
+   "Who reviewed similar work in other repos for PR #288?",
+   "Who should review copperhead PR #243?",
+   "Is PR #279 a duplicate?",
+   "Show ownership clusters",
+   "Who works across repos?",
+   "Why is this repo stalled?"
+  ],
+  "fastapi/fastapi": [
+   "What if tiangolo leaves fastapi?",
+   "Who are the bridges?",
+   "Who reviewed similar work in other repos for PR #16505?",
+   "Who should review fastapi PR #16407?",
+   "Is PR #16511 a duplicate?",
+   "Show ownership clusters",
+   "Who works across repos?",
+   "Why is this repo stalled?"
+  ],
+  "pydantic/pydantic": [
+   "What if Viicos leaves pydantic?",
+   "Who are the bridges?",
+   "Who reviewed similar work in other repos for PR #13824?",
+   "Who should review pydantic PR #14003?",
+   "Is PR #14009 a duplicate?",
+   "Show ownership clusters",
+   "Who works across repos?",
+   "Why is this repo stalled?"
+  ],
+  "sqlfluff/sqlfluff": [
+   "What if keraion leaves sqlfluff?",
+   "Who are the bridges?",
+   "Who reviewed similar work in other repos for PR #8636?",
+   "Who should review sqlfluff PR #8550?",
+   "Is PR #8731 a duplicate?",
+   "Show ownership clusters",
+   "Who works across repos?",
+   "Why is this repo stalled?"
+  ],
+  "all": [
+   "Who works across repos?"
   ]
  }
 }

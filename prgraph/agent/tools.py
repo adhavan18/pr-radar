@@ -44,6 +44,11 @@ TOOL_SPECS: dict[str, tuple] = {
                            {"k": _K, "min_files": {"type": "integer", "description": "smallest cluster to show (default 3)"}}),
     "bridges": ("Connector people: betweenness centrality on the author-reviewer COLLAB graph (their departure "
                 "would split collaboration between groups).", {"k": _K}),
+    "shared_contributors": ("Cross-repo: people active (authored/reviewed) in 2+ of the ingested repos, with "
+                            "per-repo PR counts and one evidence path per repo.", {"k": _K}),
+    "cross_repo_expert": ("Cross-repo: for a PR, people who reviewed similar work (title words, file path/extension "
+                          "tokens) in OTHER ingested repos; prs_here shows if they already work in this repo.",
+                          {"pr": _PR, "k": _K}),
     "recall_about": ("Earlier conclusions stored in graph memory about a PR/issue/file/person.",
                      {"ref": {"type": ["string", "integer"], "description": "PR/issue number or id, file id, or login"}}),
     "remember_finding": ("Store a conclusion in graph memory so later sessions can recall it.",
@@ -53,7 +58,7 @@ TOOL_SPECS: dict[str, tuple] = {
                                        "description": "ids of nodes cited as evidence"}}),
 }
 REQUIRED = {"dup_shared_issue": ["pr"], "dup_file_overlap": ["pr"], "dup_similar_title": ["pr"],
-            "issue_fixed_by": ["issue"], "reviewers": ["pr"], "impact": ["pr"], "impact_file": ["file"], "connection": ["a", "b"],
+            "issue_fixed_by": ["issue"], "reviewers": ["pr"], "cross_repo_expert": ["pr"], "impact": ["pr"], "impact_file": ["file"], "connection": ["a", "b"],
             "bus_factor": ["person"],
             "recall_about": ["ref"], "remember_finding": ["question", "answer", "about"]}
 

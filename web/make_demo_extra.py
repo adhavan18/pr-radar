@@ -13,6 +13,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from prgraph.algos import ALGOS, _LPA
+from prgraph.queries import QUERIES
 from web.make_graph import DATA, analyse, load, overview
 
 HERE = Path(__file__).resolve().parent
@@ -177,14 +178,97 @@ def g_nodes(g):
     return {n["id"]: n for n in g["nodes"]}
 
 
+def _fmt_shared(rows):
+    return "; ".join(f"**{r['person']}** in {r['n_repos']} repos ({', '.join(r['repos'])})" for r in rows[:5])
+
+
+def strip_ev(rows):
+    return [{k: v for k, v in r.items() if k != "evidence"} for r in rows]
+
+
+def cross_items(cx, repo: str | None) -> list[dict]:
+    """shared_contributors (+ cross_repo_expert for one real PR of `repo`), computed offline."""
+    out = []
+    rows = cx.shared_contributors(k=10_000)
+    if repo:
+        rows = [r for r in rows if any(x.startswith(repo + " (") for x in r["repos"])]
+    total, rows = len(rows), rows[:10]
+    out.append({
+        "kind": "cross_repo",
+        "question": "Who works across repos?",
+        "answer": ((f"{total} " + ("person" if total == 1 else "people") + (" active here also authored or reviewed PRs in another ingested repo." if repo
+                     else " authored or reviewed PRs in 2+ ingested repos.") + " Person nodes are shared by GitHub "
+                    "login, so one MATCH finds them" + (" (top 10 shown)" if total > 10 else "") + ": " + _fmt_shared(rows) + ".") if rows else
+                   "No human in the snapshot is active in two ingested repos."),
+        "tool_calls": [{"tool": "shared_contributors", "params": {"k": 10},
+                        "cypher": QUERIES["shared_contributors"].strip(), "rows": strip_ev(rows)}],
+        "evidence_paths": [e for r in rows[:4] for e in r["evidence"][:2]],
+        "focus": [r["person"] for r in rows[:6]],
+    })
+    if not repo:
+        return out
+    # the PR with the strongest cross-repo match, preferring experts new to this repo
+    best, best_rows = None, []
+    for pid in sorted((p for p, r in cx.repo_of.items() if r == repo),
+                      key=lambda p: -cx.pr[p]["number"])[:150]:
+        rws = cx.cross_repo_expert(pid, k=5)
+        key = (min(3, len([r for r in rws if r["prs_here"] == 0])), sum(r["score"] for r in rws[:3]))
+        if rws and (best is None or key > best[0]):
+            best, best_rows = (key, pid), rws
+    if not best:
+        return out
+    pid = best[1]
+    n = pid.split("#")[1]
+    out.append({
+        "kind": "cross_repo_expert",
+        "question": f"Who reviewed similar work in other repos for PR #{n}?",
+        "answer": (f"PR #{n} (\"{cx.pr[pid]['title']}\") gets topic words from its title and file paths. People who "
+                   "reviewed PRs on those topics in OTHER repos: " +
+                   "; ".join(f"**{r['person']}** ({r['matching_reviews']} reviews in "
+                             f"{', '.join(x.split('/')[-1] for x in r['repos'])} on {', '.join(r['topics'][:4])}; "
+                             f"{r['prs_here']} PRs here)" for r in best_rows[:4]) +
+                   ". 0 PRs here = an outside expert this repo has never pulled in."),
+        "tool_calls": [{"tool": "cross_repo_expert", "params": {"pr": pid, "k": 10},
+                        "cypher": QUERIES["cross_repo_expert"].strip(), "rows": strip_ev(best_rows)}],
+        "evidence_paths": [e for r in best_rows[:4] for e in r["evidence"]],
+        "focus": [pid] + [r["person"] for r in best_rows[:4]],
+    })
+    return out
+
+
+def suggestions(repo: str, items: list[dict]) -> list[str]:
+    """Chip questions per repo, all from real canned answers (real PR numbers and people)."""
+    try:
+        base = json.loads((HERE / "demo_responses.json").read_text(encoding="utf-8"))["repos"].get(repo, [])
+    except (OSError, ValueError):
+        base = []
+    by = {}
+    for x in base + items:
+        by.setdefault(x["kind"], x["question"])
+    order = ["bus_factor", "bridges", "cross_repo_expert", "reviewers", "duplicate", "clusters", "cross_repo", "stalled"]
+    return [by[k] for k in order if k in by]
+
+
 def main() -> None:
-    out = {}
+    from web.cross import Cross
+    from web.make_graph import ALL
+
+    out, rows_by = {}, {}
     for f in sorted(DATA.glob("*.json")):
         repo, rows = load(f)
+        rows_by[repo] = rows
         out[repo] = build(repo, rows)
-        for x in out[repo]:
-            print(f"{repo} | {x['question']}\n  {x['answer'][:220]}")
-    OUT.write_text(json.dumps({"generated_from": "data/*.json", "repos": out}, indent=1), encoding="utf-8")
+    if len(rows_by) >= 2:
+        cx = Cross(rows_by)
+        for repo in rows_by:
+            out[repo] += cross_items(cx, repo)
+        out[ALL] = cross_items(cx, None)
+    for repo, items in out.items():
+        for x in items:
+            print(f"{repo} | {x['question']}\n  {x['answer'][:240]}")
+    sugg = {r: suggestions(r, items) for r, items in out.items()}
+    OUT.write_text(json.dumps({"generated_from": "data/*.json", "repos": out, "suggestions": sugg}, indent=1),
+                   encoding="utf-8")
 
 
 if __name__ == "__main__":

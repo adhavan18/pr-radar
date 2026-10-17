@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import importlib
 import json
+import math
 import os
 import re
 import time
@@ -49,6 +50,10 @@ def _kind(q: str) -> str | None:
     q = q.lower()
     if "leave" in q or "bus factor" in q or "left" in q:
         return "bus_factor"
+    if re.search(r"(other|another|different) repo", q):
+        return "cross_repo_expert"
+    if re.search(r"across repos|cross[- ]repo|shared (contributor|people)|(2|two|multiple) repos", q):
+        return "cross_repo"
     if "bridge" in q:
         return "bridges"
     if "cluster" in q or "ownership" in q or "communit" in q:
@@ -93,7 +98,7 @@ def demo_answer(question: str, repo: str) -> dict:
             return {**hit, "question": question, "demo": True}
         if hit is None:
             return {"answer": "Demo mode answers the example question types: reviewers, duplicates, "
-                              "impact, stalled, bus factor, bridges and ownership clusters.",
+                              "impact, stalled, bus factor, bridges, ownership clusters and cross-repo experts.",
                     "tool_calls": [], "evidence_paths": [], "demo": True}
         hit = {**hit, "answer": f"(Demo: closest canned question is \"{hit['question']}\")\n\n" + hit["answer"]}
     return {**hit, "demo": True}
@@ -102,7 +107,7 @@ def demo_answer(question: str, repo: str) -> dict:
 @app.get("/api/repos")
 def repos():
     if demo_mode():
-        names = list(_demo())
+        names = [r for r in _demo() if r != ALL]
     else:
         names = []
         for f in sorted(DATA.glob("*.json")):
@@ -113,7 +118,15 @@ def repos():
                 names.append(m.group(1) if m else f.stem.replace("_", "/", 1))
             except OSError:
                 continue
-    return {"repos": names, "demo": demo_mode()}
+    if len(names) >= 2:
+        names.append(ALL)
+    sugg = {}
+    if EXTRA_FILE.exists():
+        try:
+            sugg = json.loads(EXTRA_FILE.read_text(encoding="utf-8")).get("suggestions", {})
+        except ValueError:
+            pass
+    return {"repos": names, "demo": demo_mode(), "suggestions": sugg}
 
 
 @app.post("/api/ask")
@@ -156,6 +169,43 @@ RETURN DISTINCT coalesce(a.id, a.login) AS source, coalesce(b.id, b.login) AS ta
 ]
 
 
+ALL = "all"  # pseudo-repo: every ingested repo, joined through shared Person nodes
+
+# "All repos" view: Repo hubs, each repo's most active humans, and everyone active in 2+ repos.
+LIVE_ALL = """MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)
+WHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'
+WITH a, r, count(DISTINCT p) AS prs
+RETURN a.login AS person, r.id AS repo, prs"""
+
+
+def live_all() -> dict:
+    db = importlib.import_module("prgraph.db")
+    rows = _rows(db.connect().query(LIVE_ALL))
+    per: dict = {}
+    for r in rows:
+        per.setdefault(r["person"], {})[r["repo"]] = r["prs"]
+    names = sorted({r["repo"] for r in rows})
+    idx = {r: i for i, r in enumerate(names)}
+    shared = {p for p, d in per.items() if len(d) >= 2}
+    keep = set(shared)
+    for r in names:
+        keep |= set(sorted((p for p in per if r in per[p]), key=lambda p: -per[p][r])[:25])
+    nodes = {r: {"id": r, "label": "Repo", "name": r, "cluster": idx[r], "degree": 0, "pagerank": 6.0} for r in names}
+    edges = []
+    for p in sorted(keep):
+        d = per[p]
+        nodes[p] = {"id": p, "label": "Person", "name": p, "degree": len(d),
+                    "cluster": len(names) if p in shared else idx[max(d, key=d.get)],
+                    "pagerank": round(1 + 2 * len(d) + math.log(1 + sum(d.values())), 3)}
+        for r, n in d.items():
+            edges.append({"source": p, "target": r, "type": "ACTIVE_IN", "weight": n})
+            nodes[r]["degree"] += 1
+    clusters = [{"id": idx[r], "area": r.split("/")[-1], "owner": None} for r in names]
+    clusters.append({"id": len(names), "area": f"bridges: active in 2+ repos ({len(shared)})", "owner": None})
+    return {"nodes": list(nodes.values()), "edges": edges, "clusters": clusters,
+            "totals": {"nodes": len(nodes), "edges": len(edges), "repos": len(names), "bridges": len(shared)}}
+
+
 def _rows(res) -> list[dict]:
     cols = [c[1] if isinstance(c, (list, tuple)) else c for c in res.header]
     return [dict(zip(cols, r)) for r in res.result_set]
@@ -189,7 +239,7 @@ def graph(repo: str):
         out = repos[repo]
     else:
         try:
-            out = live_graph(repo)
+            out = live_all() if repo == ALL else live_graph(repo)
         except Exception as e:
             raise HTTPException(502, f"graph error: {type(e).__name__}: {e}")
     return {**out, "repo": repo, "demo": demo_mode(), "ms": round((time.perf_counter() - t0) * 1000, 1)}
