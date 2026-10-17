@@ -68,3 +68,27 @@ def test_live_without_agent_is_503(monkeypatch):
     monkeypatch.setattr("web.app.importlib.import_module", fake)
     r = TestClient(app).post("/api/ask", json={"question": "q", "repo": "copperheadhq/copperhead"})
     assert r.status_code == 503
+
+
+@pytest.mark.parametrize("q", ["What if animesh-chouhan leaves copperhead?", "Who are the bridges?",
+                               "Show ownership clusters", "Why is copperhead stalled?"])
+def test_ask_extra(demo, q):
+    d = demo.post("/api/ask", json={"question": q, "repo": "copperheadhq/copperhead"}).json()
+    assert d["answer"] and d["tool_calls"] and d["evidence_paths"]
+    for p in d["evidence_paths"]:
+        ids = {n["id"] for n in p["nodes"]}
+        assert all(e["source"] in ids and e["target"] in ids for e in p["edges"])
+
+
+def test_graph_demo(demo):
+    g = demo.get("/api/graph", params={"repo": "copperheadhq/copperhead"}).json()
+    ids = {n["id"] for n in g["nodes"]}
+    assert 50 < len(ids) <= 400 and g["edges"]
+    assert all(e["source"] in ids and e["target"] in ids for e in g["edges"])
+    assert all({"cluster", "pagerank", "label"} <= n.keys() for n in g["nodes"])
+    assert demo.get("/api/graph", params={"repo": "a/b"}).status_code == 404
+
+
+def test_eval_endpoint(demo):
+    d = demo.get("/api/eval").json()
+    assert d["repos"] and "reviewers" in d["repos"][0]

@@ -1,0 +1,1561 @@
+{
+ "generated_from": "data/*.json",
+ "repos": {
+  "copperheadhq/copperhead": [
+   {
+    "kind": "bus_factor",
+    "question": "What if animesh-chouhan leaves copperhead?",
+    "answer": "**625 of 780 files** animesh-chouhan has touched would have **no other human** who authored or reviewed a PR on them (80%). animesh-chouhan is on 67 of 200 cached PRs. Most exposed: `src/kicad/draft/engine.ts`, `manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.png`, `manual-tests/reference-boards/npn-switch/reference/npn-switch.png`. By area: intake (150), openspec (130), test (120), manual-tests (101).",
+    "tool_calls": [
+     {
+      "tool": "bus_factor",
+      "params": {
+       "repo": "copperheadhq/copperhead",
+       "person": "animesh-chouhan",
+       "k": 10
+      },
+      "cypher": "MATCH (me:Person {login:$person})-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.created >= $since\nMATCH (p)-[:TOUCHES]->(f:File)\nWITH DISTINCT me, f\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f)\nWHERE q.created >= $since AND NOT coalesce(h.is_bot, false)\nWITH me, f, collect(DISTINCT h) AS humans, count(DISTINCT q) AS prs\nWHERE size(humans) = 1 AND humans[0] = me\nMATCH path = (me)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(f)\nWITH f, prs, collect(path) AS paths\nRETURN f.path AS file, prs, 0 AS remaining_humans, paths[0..$max_paths] AS evidence\nORDER BY prs DESC, file LIMIT $k",
+      "rows": [
+       {
+        "file": "src/kicad/draft/engine.ts",
+        "prs": 15,
+        "remaining_humans": 0
+       },
+       {
+        "file": "manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.png",
+        "prs": 11,
+        "remaining_humans": 0
+       },
+       {
+        "file": "manual-tests/reference-boards/npn-switch/reference/npn-switch.png",
+        "prs": 11,
+        "remaining_humans": 0
+       },
+       {
+        "file": "manual-tests/reference-boards/usb-atmega-node/reference/usb-atmega-node.png",
+        "prs": 11,
+        "remaining_humans": 0
+       },
+       {
+        "file": "docs/src/content/docs/reference/schematic-drafting.md",
+        "prs": 9,
+        "remaining_humans": 0
+       },
+       {
+        "file": "docs/src/content/docs/reference/schematic-legibility.md",
+        "prs": 9,
+        "remaining_humans": 0
+       },
+       {
+        "file": "manual-tests/reference-boards/ldo-demo/reference/ldo-demo.png",
+        "prs": 9,
+        "remaining_humans": 0
+       },
+       {
+        "file": "src/kicad/draft/draft.ts",
+        "prs": 9,
+        "remaining_humans": 0
+       },
+       {
+        "file": "test/fixtures/golden/tierC-board.kicad_sch",
+        "prs": 8,
+        "remaining_humans": 0
+       },
+       {
+        "file": "test/draft-layout.test.ts",
+        "prs": 7,
+        "remaining_humans": 0
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#160",
+        "label": "PR",
+        "name": "#160 Propose deterministic-schematic-drafting: drafting engi"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/kicad/draft/engine.ts",
+        "label": "File",
+        "name": "src/kicad/draft/engine.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#160",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#160",
+        "target": "copperheadhq/copperhead:src/kicad/draft/engine.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#198",
+        "label": "PR",
+        "name": "#198 fix(kicad): rank symbol candidates usefully, add cross-"
+       },
+       {
+        "id": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.png",
+        "label": "File",
+        "name": "manual-tests/reference-boards/buck-12v-5v/reference/buck-12v"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#198",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#198",
+        "target": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.png",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#216",
+        "label": "PR",
+        "name": "#216 test(draft): run the engine against real designs via th"
+       },
+       {
+        "id": "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/reference/npn-switch.png",
+        "label": "File",
+        "name": "manual-tests/reference-boards/npn-switch/reference/npn-switc"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#216",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#216",
+        "target": "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/reference/npn-switch.png",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#224",
+        "label": "PR",
+        "name": "#224 Drawing quality: labels inside the frame, text collisio"
+       },
+       {
+        "id": "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/reference/usb-atmega-node.png",
+        "label": "File",
+        "name": "manual-tests/reference-boards/usb-atmega-node/reference/usb-"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#224",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#224",
+        "target": "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/reference/usb-atmega-node.png",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#265",
+        "label": "PR",
+        "name": "#265 Hang a part on the pin it serves: pin-anchored placemen"
+       },
+       {
+        "id": "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-drafting.md",
+        "label": "File",
+        "name": "docs/src/content/docs/reference/schematic-drafting.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#265",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#265",
+        "target": "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-drafting.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#148",
+        "label": "PR",
+        "name": "#148 Propose readable-schematic-drafting: gate schematic leg"
+       },
+       {
+        "id": "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-legibility.md",
+        "label": "File",
+        "name": "docs/src/content/docs/reference/schematic-legibility.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#148",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#148",
+        "target": "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-legibility.md",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "animesh-chouhan",
+     "copperheadhq/copperhead:src/kicad/draft/engine.ts",
+     "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.png",
+     "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/reference/npn-switch.png",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/reference/usb-atmega-node.png",
+     "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-drafting.md",
+     "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-legibility.md",
+     "copperheadhq/copperhead:manual-tests/reference-boards/ldo-demo/reference/ldo-demo.png",
+     "copperheadhq/copperhead:src/kicad/draft/draft.ts",
+     "copperheadhq/copperhead:test/fixtures/golden/tierC-board.kicad_sch",
+     "copperheadhq/copperhead:test/draft-layout.test.ts",
+     "copperheadhq/copperhead:test/fixtures/golden/tierC-score.json",
+     "copperheadhq/copperhead:src/kicad/emit.ts",
+     "copperheadhq/copperhead:test/draft-ir-bom.test.ts",
+     "copperheadhq/copperhead:test/draft-idioms.test.ts",
+     "copperheadhq/copperhead:test/draft-sheet-fit.test.ts",
+     "copperheadhq/copperhead:.claude/skills/pr-review/SKILL.md",
+     "copperheadhq/copperhead:test/net-merge-guard.test.ts",
+     "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-intent.md",
+     "copperheadhq/copperhead:intake/core/fields.ts",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/REPORT.md",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/drawn/board.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/render/drawn.png",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/interf_u/REPORT.md",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/interf_u/drawn/board.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/interf_u/render/drawn.png",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/REPORT.md",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/drawn/board.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/render/drawn.png",
+     "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/copperhead_power.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/ldo-demo/sym-lib-cache/copperhead_power.kicad_sym"
+    ]
+   },
+   {
+    "kind": "bridges",
+    "question": "Who are the bridges?",
+    "answer": "Bridges are people whose PRs and reviews cross ownership clusters, so losing them cuts communication between parts of the code. **animesh-chouhan** spans 70 of 98 clusters (67 PRs); **Devesh36** spans 28 of 98 clusters (7 PRs); **thegoodengineer** spans 19 of 98 clusters (13 PRs); **DevSars24** spans 17 of 98 clusters (12 PRs).",
+    "tool_calls": [
+     {
+      "tool": "bridges",
+      "params": {
+       "repo": "copperheadhq/copperhead",
+       "k": 5
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH path = (h:Person)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(node)\nWHERE NOT coalesce(h.is_bot, false)\nWITH h, count(DISTINCT communityId) AS clusters, collect(path) AS paths\nRETURN h.login AS person, clusters, paths[0..$max_paths] AS evidence\nORDER BY clusters DESC LIMIT $k",
+      "rows": [
+       {
+        "person": "animesh-chouhan",
+        "clusters": 70,
+        "prs": 67
+       },
+       {
+        "person": "Devesh36",
+        "clusters": 28,
+        "prs": 7
+       },
+       {
+        "person": "thegoodengineer",
+        "clusters": 19,
+        "prs": 13
+       },
+       {
+        "person": "DevSars24",
+        "clusters": 17,
+        "prs": 12
+       },
+       {
+        "person": "Chirag6722",
+        "clusters": 15,
+        "prs": 15
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#113",
+        "label": "PR",
+        "name": "#113 feat(repl): session UI with pinned observability dock a"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/commands/create.ts",
+        "label": "File",
+        "name": "src/commands/create.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#113",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#113",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#113",
+        "label": "PR",
+        "name": "#113 feat(repl): session UI with pinned observability dock a"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/cli.ts",
+        "label": "File",
+        "name": "src/cli.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#113",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#113",
+        "target": "copperheadhq/copperhead:src/cli.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Devesh36",
+        "label": "Person",
+        "name": "Devesh36"
+       },
+       {
+        "id": "copperheadhq/copperhead#330",
+        "label": "PR",
+        "name": "#330 Fix agent , filesystem , provider and create pipeline r"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/commands/create.ts",
+        "label": "File",
+        "name": "src/commands/create.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Devesh36",
+        "target": "copperheadhq/copperhead#330",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#330",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Devesh36",
+        "label": "Person",
+        "name": "Devesh36"
+       },
+       {
+        "id": "copperheadhq/copperhead#255",
+        "label": "PR",
+        "name": "#255 feat(cli): add skill commands for listing and running r"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/cli.ts",
+        "label": "File",
+        "name": "src/cli.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Devesh36",
+        "target": "copperheadhq/copperhead#255",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#255",
+        "target": "copperheadhq/copperhead:src/cli.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "thegoodengineer",
+        "label": "Person",
+        "name": "thegoodengineer"
+       },
+       {
+        "id": "copperheadhq/copperhead#112",
+        "label": "PR",
+        "name": "#112 feat: generalise OpenAI provider for OpenAI-compatible "
+       },
+       {
+        "id": "copperheadhq/copperhead:src/commands/create.ts",
+        "label": "File",
+        "name": "src/commands/create.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "thegoodengineer",
+        "target": "copperheadhq/copperhead#112",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#112",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "thegoodengineer",
+        "label": "Person",
+        "name": "thegoodengineer"
+       },
+       {
+        "id": "copperheadhq/copperhead#112",
+        "label": "PR",
+        "name": "#112 feat: generalise OpenAI provider for OpenAI-compatible "
+       },
+       {
+        "id": "copperheadhq/copperhead:src/cli.ts",
+        "label": "File",
+        "name": "src/cli.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "thegoodengineer",
+        "target": "copperheadhq/copperhead#112",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#112",
+        "target": "copperheadhq/copperhead:src/cli.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "animesh-chouhan",
+     "Devesh36",
+     "thegoodengineer",
+     "DevSars24",
+     "Chirag6722"
+    ]
+   },
+   {
+    "kind": "clusters",
+    "question": "Show ownership clusters",
+    "answer": "Label propagation over people, PRs and files finds **166 communities** in the 394-node overview. The largest: **test** (13 files, Bhumika-1432006, thegoodengineer); **test** (10 files, Chirag6722, animesh-chouhan); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511); **manual-tests/reference-boards** (14 files, animesh-chouhan, henry32511). Colours on the graph are these clusters.",
+    "tool_calls": [
+     {
+      "tool": "ownership_clusters",
+      "params": {
+       "repo": "copperheadhq/copperhead",
+       "min_files": 3
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH (q:PR)-[:TOUCHES]->(node)\nWITH communityId, node, count(DISTINCT q) AS touches\nORDER BY touches DESC\nWITH communityId, count(node) AS files, collect(node.path)[0..5] AS top_files\nWHERE files >= $min_files\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f:File)\nWHERE f.id STARTS WITH ($repo + ':') AND f.path IN top_files AND NOT coalesce(h.is_bot, false)\nWITH communityId, files, top_files, h, count(DISTINCT q) AS w\nORDER BY w DESC\nWITH communityId, files, top_files, collect(h.login + ' (' + toString(w) + ')')[0..5] AS top_people\nRETURN communityId AS cluster, files, top_files, top_people\nORDER BY files DESC LIMIT $k",
+      "rows": [
+       {
+        "cluster": 0,
+        "area": "test",
+        "files": 13,
+        "people": [
+         "Bhumika-1432006",
+         "thegoodengineer",
+         "animesh-chouhan"
+        ]
+       },
+       {
+        "cluster": 1,
+        "area": "test",
+        "files": 10,
+        "people": [
+         "Chirag6722",
+         "animesh-chouhan",
+         "AyushVUpadhye"
+        ]
+       },
+       {
+        "cluster": 2,
+        "area": "manual-tests/reference-boards",
+        "files": 14,
+        "people": [
+         "animesh-chouhan",
+         "henry32511"
+        ]
+       },
+       {
+        "cluster": 3,
+        "area": "manual-tests/reference-boards",
+        "files": 14,
+        "people": [
+         "animesh-chouhan",
+         "henry32511"
+        ]
+       },
+       {
+        "cluster": 4,
+        "area": "src/agent",
+        "files": 7,
+        "people": [
+         "animesh-chouhan",
+         "Adityakk9031",
+         "Devesh36"
+        ]
+       },
+       {
+        "cluster": 5,
+        "area": "manual-tests/real-designs",
+        "files": 9,
+        "people": [
+         "animesh-chouhan"
+        ]
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "Bhumika-1432006",
+        "label": "Person",
+        "name": "Bhumika-1432006"
+       },
+       {
+        "id": "copperheadhq/copperhead#193",
+        "label": "PR",
+        "name": "#193 fix(doctor): catch a missing openspec CLI before spec-s"
+       },
+       {
+        "id": "copperheadhq/copperhead:README.md",
+        "label": "File",
+        "name": "README.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Bhumika-1432006",
+        "target": "copperheadhq/copperhead#193",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#193",
+        "target": "copperheadhq/copperhead:README.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "Chirag6722",
+        "label": "Person",
+        "name": "Chirag6722"
+       },
+       {
+        "id": "copperheadhq/copperhead#126",
+        "label": "PR",
+        "name": "#126 fix(create): strengthen stage isComplete contracts to p"
+       },
+       {
+        "id": "copperheadhq/copperhead:src/commands/create.ts",
+        "label": "File",
+        "name": "src/commands/create.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "Chirag6722",
+        "target": "copperheadhq/copperhead#126",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#126",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#160",
+        "label": "PR",
+        "name": "#160 Propose deterministic-schematic-drafting: drafting engi"
+       },
+       {
+        "id": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.kicad_sch",
+        "label": "File",
+        "name": "manual-tests/reference-boards/buck-12v-5v/reference/buck-12v"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#160",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#160",
+        "target": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.kicad_sch",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#160",
+        "label": "PR",
+        "name": "#160 Propose deterministic-schematic-drafting: drafting engi"
+       },
+       {
+        "id": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Connector_Generic.kicad_sym",
+        "label": "File",
+        "name": "manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Conn"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#160",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#160",
+        "target": "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Connector_Generic.kicad_sym",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#134",
+        "label": "PR",
+        "name": "#134 feat(observability): stream turns to the terminal, and "
+       },
+       {
+        "id": "copperheadhq/copperhead:src/agent/providers/claude-code.ts",
+        "label": "File",
+        "name": "src/agent/providers/claude-code.ts"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#134",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#134",
+        "target": "copperheadhq/copperhead:src/agent/providers/claude-code.ts",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#216",
+        "label": "PR",
+        "name": "#216 test(draft): run the engine against real designs via th"
+       },
+       {
+        "id": "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/REPORT.md",
+        "label": "File",
+        "name": "manual-tests/real-designs/examples/cm5_minima/REPORT.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#216",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "copperheadhq/copperhead#216",
+        "target": "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/REPORT.md",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "DevSars24",
+     "AniketR10",
+     "Bhumika-1432006",
+     "copperheadhq/copperhead:README.md",
+     "copperheadhq/copperhead:test/init-check.test.ts",
+     "copperheadhq/copperhead:src/commands/check.ts",
+     "copperheadhq/copperhead:src/kicad/cli.ts",
+     "copperheadhq/copperhead:src/kicad/sexp.ts",
+     "copperheadhq/copperhead#76",
+     "copperheadhq/copperhead#80",
+     "copperheadhq/copperhead:test/budget-efficiency.test.ts",
+     "copperheadhq/copperhead:src/kicad/report.ts",
+     "copperheadhq/copperhead:src/commands/doctor.ts",
+     "copperheadhq/copperhead#130",
+     "copperheadhq/copperhead#157",
+     "copperheadhq/copperhead:test/kicad-cli-resolve.test.ts",
+     "copperheadhq/copperhead:test/helpers.ts",
+     "copperheadhq/copperhead#244",
+     "copperheadhq/copperhead:test/cli-surface.test.ts",
+     "copperheadhq/copperhead:test/doctor.test.ts",
+     "copperheadhq/copperhead:test/sexp.test.ts",
+     "copperheadhq/copperhead#193",
+     "copperheadhq/copperhead#122",
+     "copperheadhq/copperhead#158",
+     "Chirag6722",
+     "AyushVUpadhye",
+     "copperheadhq/copperhead:src/commands/create.ts",
+     "copperheadhq/copperhead:src/agent/tools.ts",
+     "copperheadhq/copperhead:test/gating-sync.test.ts",
+     "copperheadhq/copperhead#51",
+     "copperheadhq/copperhead:test/create-stage-turns.test.ts",
+     "copperheadhq/copperhead:test/stage-completion.test.ts",
+     "copperheadhq/copperhead:src/commands/sync.ts",
+     "copperheadhq/copperhead:test/create-resilience.test.ts",
+     "copperheadhq/copperhead:src/openspec/cli.ts",
+     "copperheadhq/copperhead:src/agent/ledger.ts",
+     "copperheadhq/copperhead:test/preflight.test.ts",
+     "copperheadhq/copperhead#126",
+     "copperheadhq/copperhead#172",
+     "copperheadhq/copperhead#106",
+     "copperheadhq/copperhead#143",
+     "copperheadhq/copperhead#153",
+     "copperheadhq/copperhead#173",
+     "copperheadhq/copperhead#179",
+     "copperheadhq/copperhead#187",
+     "copperheadhq/copperhead#311",
+     "copperheadhq/copperhead#266",
+     "copperheadhq/copperhead#267",
+     "copperheadhq/copperhead#265",
+     "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/reference/npn-switch.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/reference/usb-atmega-node.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/reference/buck-12v-5v.png",
+     "copperheadhq/copperhead:manual-tests/reference-boards/ldo-demo/reference/ldo-demo.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/reference/npn-switch.png",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/reference/usb-atmega-node.png",
+     "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-drafting.md",
+     "copperheadhq/copperhead:docs/src/content/docs/reference/schematic-legibility.md",
+     "copperheadhq/copperhead:manual-tests/reference-boards/ldo-demo/reference/ldo-demo.png",
+     "copperheadhq/copperhead:test/fixtures/golden/tierC-board.kicad_sch",
+     "copperheadhq/copperhead:test/draft-layout.test.ts",
+     "copperheadhq/copperhead:src/kicad/emit.ts",
+     "copperheadhq/copperhead:test/draft-sheet-fit.test.ts",
+     "copperheadhq/copperhead#160",
+     "copperheadhq/copperhead#198",
+     "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Connector_Generic.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Device.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/buck-12v-5v/sym-lib-cache/Regulator_Switching.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/ldo-demo/sym-lib-cache/Connector_Generic.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/ldo-demo/sym-lib-cache/Device.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/ldo-demo/sym-lib-cache/Regulator_Linear.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/sym-lib-cache/Connector_Generic.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/sym-lib-cache/Device.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/npn-switch/sym-lib-cache/MCU_Microchip_ATtiny.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/sym-lib-cache/Connector.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/sym-lib-cache/Connector_Generic.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/sym-lib-cache/Device.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/sym-lib-cache/MCU_Microchip_ATmega.kicad_sym",
+     "copperheadhq/copperhead:manual-tests/reference-boards/usb-atmega-node/sym-lib-cache/Regulator_Linear.kicad_sym",
+     "Adityakk9031",
+     "copperheadhq/copperhead:src/agent/providers/claude-code.ts",
+     "copperheadhq/copperhead:.env.example",
+     "copperheadhq/copperhead#370",
+     "copperheadhq/copperhead:src/agent/providers/codex.ts",
+     "copperheadhq/copperhead:src/agent/providers/cursor.ts",
+     "copperheadhq/copperhead:test/codex-provider.test.ts",
+     "copperheadhq/copperhead:test/tmp-sweep.test.ts",
+     "copperheadhq/copperhead#374",
+     "copperheadhq/copperhead:src/util/tmp.ts",
+     "copperheadhq/copperhead#375",
+     "copperheadhq/copperhead#224",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/REPORT.md",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/drawn/board.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/cm5_minima/render/drawn.png",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/interf_u/REPORT.md",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/interf_u/drawn/board.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/interf_u/render/drawn.png",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/REPORT.md",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/drawn/board.kicad_sch",
+     "copperheadhq/copperhead:manual-tests/real-designs/examples/royalblue54L_feather/render/drawn.png"
+    ]
+   }
+  ],
+  "sqlfluff/sqlfluff": [
+   {
+    "kind": "bus_factor",
+    "question": "What if keraion leaves sqlfluff?",
+    "answer": "**2 of 291 files** keraion has touched would have **no other human** who authored or reviewed a PR on them (1%). keraion is on 36 of 200 cached PRs. Most exposed: `.github/PULL_REQUEST_TEMPLATE.md`, `AI_POLICY.md`. By area: .github (1), AI_POLICY.md (1).",
+    "tool_calls": [
+     {
+      "tool": "bus_factor",
+      "params": {
+       "repo": "sqlfluff/sqlfluff",
+       "person": "keraion",
+       "k": 10
+      },
+      "cypher": "MATCH (me:Person {login:$person})-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(:Repo {id:$repo})\nWHERE p.created >= $since\nMATCH (p)-[:TOUCHES]->(f:File)\nWITH DISTINCT me, f\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f)\nWHERE q.created >= $since AND NOT coalesce(h.is_bot, false)\nWITH me, f, collect(DISTINCT h) AS humans, count(DISTINCT q) AS prs\nWHERE size(humans) = 1 AND humans[0] = me\nMATCH path = (me)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(f)\nWITH f, prs, collect(path) AS paths\nRETURN f.path AS file, prs, 0 AS remaining_humans, paths[0..$max_paths] AS evidence\nORDER BY prs DESC, file LIMIT $k",
+      "rows": [
+       {
+        "file": ".github/PULL_REQUEST_TEMPLATE.md",
+        "prs": 1,
+        "remaining_humans": 0
+       },
+       {
+        "file": "AI_POLICY.md",
+        "prs": 1,
+        "remaining_humans": 0
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8675",
+        "label": "PR",
+        "name": "#8675 docs: add Human Voice AI contribution policy"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:.github/PULL_REQUEST_TEMPLATE.md",
+        "label": "File",
+        "name": ".github/PULL_REQUEST_TEMPLATE.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8675",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8675",
+        "target": "sqlfluff/sqlfluff:.github/PULL_REQUEST_TEMPLATE.md",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8675",
+        "label": "PR",
+        "name": "#8675 docs: add Human Voice AI contribution policy"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:AI_POLICY.md",
+        "label": "File",
+        "name": "AI_POLICY.md"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8675",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8675",
+        "target": "sqlfluff/sqlfluff:AI_POLICY.md",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "keraion",
+     "sqlfluff/sqlfluff:.github/PULL_REQUEST_TEMPLATE.md",
+     "sqlfluff/sqlfluff:AI_POLICY.md"
+    ]
+   },
+   {
+    "kind": "bridges",
+    "question": "Who are the bridges?",
+    "answer": "Bridges are people whose PRs and reviews cross ownership clusters, so losing them cuts communication between parts of the code. **alanmcruickshank** spans 35 of 91 clusters (13 PRs); **rubytobi** spans 34 of 91 clusters (35 PRs); **keraion** spans 31 of 91 clusters (36 PRs); **taslater** spans 28 of 91 clusters (33 PRs).",
+    "tool_calls": [
+     {
+      "tool": "bridges",
+      "params": {
+       "repo": "sqlfluff/sqlfluff",
+       "k": 5
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH path = (h:Person)-[:AUTHORED|REVIEWED]->(:PR)-[:TOUCHES]->(node)\nWHERE NOT coalesce(h.is_bot, false)\nWITH h, count(DISTINCT communityId) AS clusters, collect(path) AS paths\nRETURN h.login AS person, clusters, paths[0..$max_paths] AS evidence\nORDER BY clusters DESC LIMIT $k",
+      "rows": [
+       {
+        "person": "alanmcruickshank",
+        "clusters": 35,
+        "prs": 13
+       },
+       {
+        "person": "rubytobi",
+        "clusters": 34,
+        "prs": 35
+       },
+       {
+        "person": "keraion",
+        "clusters": 31,
+        "prs": 36
+       },
+       {
+        "person": "taslater",
+        "clusters": 28,
+        "prs": 33
+       },
+       {
+        "person": "youssefadly237",
+        "clusters": 17,
+        "prs": 1
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "alanmcruickshank",
+        "label": "Person",
+        "name": "alanmcruickshank"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8519",
+        "label": "PR",
+        "name": "#8519 Databricks: parse DROP MATERIALIZED VIEW"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "alanmcruickshank",
+        "target": "sqlfluff/sqlfluff#8519",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8519",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "alanmcruickshank",
+        "label": "Person",
+        "name": "alanmcruickshank"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8604",
+        "label": "PR",
+        "name": "#8604 Postgres: accept PG 16-17 utility options and ON/OFF/0"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_postgres.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "alanmcruickshank",
+        "target": "sqlfluff/sqlfluff#8604",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8604",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "rubytobi",
+        "label": "Person",
+        "name": "rubytobi"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8511",
+        "label": "PR",
+        "name": "#8511 Databricks: support MANAGED LOCATION on CREATE CATALOG"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8511",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8511",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "rubytobi",
+        "label": "Person",
+        "name": "rubytobi"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8513",
+        "label": "PR",
+        "name": "#8513 Databricks: restore LIVE and STREAMING LIVE view suppo"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "label": "File",
+        "name": "test/dialects/databricks_test.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8513",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8513",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8516",
+        "label": "PR",
+        "name": "#8516 Databricks: support SHOW GRANTS"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8516",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8516",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8661",
+        "label": "PR",
+        "name": "#8661 fix(postgres): preserve spacing after VARIADIC (#8623)"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_postgres.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8661",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8661",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "alanmcruickshank",
+     "rubytobi",
+     "keraion",
+     "taslater",
+     "youssefadly237"
+    ]
+   },
+   {
+    "kind": "clusters",
+    "question": "Show ownership clusters",
+    "answer": "Label propagation over people, PRs and files finds **183 communities** in the 398-node overview. The largest: **test/fixtures** (24 files, keraion, rfanth); **sqlfluffrs/sqlfluffrs_parser** (8 files, keraion, rubytobi); **docsv** (1 files, keraion, alanmcruickshank); **test/fixtures** (3 files, zhaoruizhe81, nietus). Colours on the graph are these clusters.",
+    "tool_calls": [
+     {
+      "tool": "ownership_clusters",
+      "params": {
+       "repo": "sqlfluff/sqlfluff",
+       "min_files": 3
+      },
+      "cypher": "CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId\nWITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')\nMATCH (q:PR)-[:TOUCHES]->(node)\nWITH communityId, node, count(DISTINCT q) AS touches\nORDER BY touches DESC\nWITH communityId, count(node) AS files, collect(node.path)[0..5] AS top_files\nWHERE files >= $min_files\nMATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(f:File)\nWHERE f.id STARTS WITH ($repo + ':') AND f.path IN top_files AND NOT coalesce(h.is_bot, false)\nWITH communityId, files, top_files, h, count(DISTINCT q) AS w\nORDER BY w DESC\nWITH communityId, files, top_files, collect(h.login + ' (' + toString(w) + ')')[0..5] AS top_people\nRETURN communityId AS cluster, files, top_files, top_people\nORDER BY files DESC LIMIT $k",
+      "rows": [
+       {
+        "cluster": 0,
+        "area": "test/fixtures",
+        "files": 24,
+        "people": [
+         "keraion",
+         "rfanth"
+        ]
+       },
+       {
+        "cluster": 1,
+        "area": "sqlfluffrs/sqlfluffrs_parser",
+        "files": 8,
+        "people": [
+         "keraion",
+         "rubytobi",
+         "taslater"
+        ]
+       },
+       {
+        "cluster": 2,
+        "area": "docsv",
+        "files": 1,
+        "people": [
+         "keraion",
+         "alanmcruickshank",
+         "rubytobi"
+        ]
+       },
+       {
+        "cluster": 3,
+        "area": "test/fixtures",
+        "files": 3,
+        "people": [
+         "zhaoruizhe81",
+         "nietus",
+         "yousefissa"
+        ]
+       },
+       {
+        "cluster": 4,
+        "area": "src/sqlfluff",
+        "files": 2,
+        "people": [
+         "WAHIB-EL-KHADIRI",
+         "udsy19",
+         "dajiaohuang"
+        ]
+       },
+       {
+        "cluster": 5,
+        "area": "src/sqlfluff",
+        "files": 2,
+        "people": [
+         "devYRPauli",
+         "rubytobi",
+         "Tejas5405"
+        ]
+       }
+      ]
+     }
+    ],
+    "evidence_paths": [
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8531",
+        "label": "PR",
+        "name": "#8531 fix(mysql): parse BEGIN...END bodies as compound state"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/begin.yml",
+        "label": "File",
+        "name": "test/fixtures/dialects/mariadb/begin.yml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8531",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8531",
+        "target": "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/begin.yml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8650",
+        "label": "PR",
+        "name": "#8650 perf(rust): cut frame-engine allocation and copying"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/helpers.rs",
+        "label": "File",
+        "name": "sqlfluffrs/sqlfluffrs_parser/src/parser/helpers.rs"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8650",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8650",
+        "target": "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/helpers.rs",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8630",
+        "label": "PR",
+        "name": "#8630 build(deps): bump axios from 1.16.1 to 1.20.0 in /docs"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
+        "label": "File",
+        "name": "docsv/pnpm-lock.yaml"
+       }
+      ],
+      "edges": [
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8630",
+        "type": "REVIEWED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8630",
+        "target": "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "zhaoruizhe81",
+        "label": "Person",
+        "name": "zhaoruizhe81"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8732",
+        "label": "PR",
+        "name": "#8732 Postgres: support ALTER COLUMN SET EXPRESSION AS (Post"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "label": "File",
+        "name": "src/sqlfluff/dialects/dialect_postgres.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "zhaoruizhe81",
+        "target": "sqlfluff/sqlfluff#8732",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8732",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "WAHIB-EL-KHADIRI",
+        "label": "Person",
+        "name": "WAHIB-EL-KHADIRI"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8593",
+        "label": "PR",
+        "name": "#8593 fix(ST01): keep comments inside a removed ELSE NULL cl"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
+        "label": "File",
+        "name": "src/sqlfluff/rules/structure/ST01.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "WAHIB-EL-KHADIRI",
+        "target": "sqlfluff/sqlfluff#8593",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8593",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
+        "type": "TOUCHES"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "devYRPauli",
+        "label": "Person",
+        "name": "devYRPauli"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8580",
+        "label": "PR",
+        "name": "#8580 LT05: add a list_wrapping option to fill long lists"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/utils/reflow/reindent.py",
+        "label": "File",
+        "name": "src/sqlfluff/utils/reflow/reindent.py"
+       }
+      ],
+      "edges": [
+       {
+        "source": "devYRPauli",
+        "target": "sqlfluff/sqlfluff#8580",
+        "type": "AUTHORED"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8580",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/utils/reflow/reindent.py",
+        "type": "TOUCHES"
+       }
+      ]
+     }
+    ],
+    "focus": [
+     "sqlfluff/sqlfluff#8531",
+     "sqlfluff/sqlfluff#8682",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/begin.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/create_or_replace_function.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/create_or_replace_procedure.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/create_trigger.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/declare_continue_handler_sqlexception.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/declare_exit_handler_sqlexception.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/declare_undo_handler_sqlexception.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/delimiter_function.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/delimiter_procedure.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_definer.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_modifies_sql.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_no_sql.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_notdeterministic.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_reads_sql.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_return.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_sql_security_definer.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/function_sql_security_invoker.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/handler_condition_name.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/handler_error_code.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/handler_not_found.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/handler_sqlstate.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/handler_sqlstate_value.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/handler_sqlwarning.yml",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/mariadb/loop_label.yml",
+     "sqlfluff/sqlfluff#8650",
+     "sqlfluff/sqlfluff#8652",
+     "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/helpers.rs",
+     "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/table_driven/anynumberof.rs",
+     "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/table_driven/iterative.rs",
+     "sqlfluff/sqlfluff:.github/workflows/ci-tests.yml",
+     "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/table_driven/delimited.rs",
+     "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/table_driven/frame.rs",
+     "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/table_driven/oneof.rs",
+     "sqlfluff/sqlfluff:sqlfluffrs/sqlfluffrs_parser/src/parser/table_driven/ref_grammar.rs",
+     "keraion",
+     "rubytobi",
+     "alanmcruickshank",
+     "sqlfluff/sqlfluff:docsv/pnpm-lock.yaml",
+     "sqlfluff/sqlfluff#8630",
+     "sqlfluff/sqlfluff#8639",
+     "sqlfluff/sqlfluff#8640",
+     "sqlfluff/sqlfluff#8644",
+     "LuisFigueroaG",
+     "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_postgres.py",
+     "sqlfluff/sqlfluff#8667",
+     "sqlfluff/sqlfluff#8706",
+     "sqlfluff/sqlfluff#8741",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/postgres/alter_table_set_expression.sql",
+     "sqlfluff/sqlfluff:test/fixtures/dialects/postgres/alter_table_set_expression.yml",
+     "udsy19",
+     "dajiaohuang",
+     "sqlfluff/sqlfluff#8578",
+     "sqlfluff/sqlfluff#8720",
+     "sqlfluff/sqlfluff:src/sqlfluff/rules/structure/ST01.py",
+     "sqlfluff/sqlfluff:test/fixtures/rules/std_rule_cases/ST01.yml",
+     "devYRPauli",
+     "Tejas5405",
+     "sqlfluff/sqlfluff:src/sqlfluff/utils/reflow/reindent.py",
+     "sqlfluff/sqlfluff:test/fixtures/rules/std_rule_cases/LT05.yml",
+     "sqlfluff/sqlfluff#8617",
+     "sqlfluff/sqlfluff#8622"
+    ]
+   }
+  ]
+ }
+}
