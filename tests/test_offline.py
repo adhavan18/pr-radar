@@ -175,3 +175,15 @@ def test_demo_impact_uses_real_query():
 def test_docs_generated_up_to_date():
     from prgraph.gendocs import render
     assert (ROOT / "docs" / "QUERIES.md").read_text(encoding="utf-8") == render()
+
+
+def test_collab_rows_symmetric_and_bot_free():
+    raw = {"repo": "o/r", "issues": [], "pulls": [
+        {"number": n, "title": "t", "state": "MERGED", "createdAt": "2024-01-0%dT00:00:00Z" % n,
+         "author": {"login": a}, "files": {"nodes": []},
+         "reviews": {"nodes": [{"author": {"login": l}, "state": "APPROVED"} for l in revs]}}
+        for n, a, revs in [(1, "alice", ["bob", "bob", "coderabbitai"]), (2, "bob", ["alice", "bob"]),
+                           (3, "carol", ["alice"])]]}
+    rows = {(r["a"], r["b"]): r["w"] for r in to_rows(raw)["collab"]}
+    assert rows == {("alice", "bob"): 2, ("bob", "alice"): 2, ("alice", "carol"): 1, ("carol", "alice"): 1}
+    assert dict(LOAD)["collab"].count("COLLAB {repo:$repo}") == 1

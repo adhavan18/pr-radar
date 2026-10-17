@@ -5,7 +5,7 @@
    {
     "kind": "reviewers",
     "question": "Who should review copperhead PR #243?",
-    "answer": "For PR #243 (\"feat(create): checkpoint a failed stage attempt to a side ref\", by adhavan18), the strongest reviewer candidates are **animesh-chouhan** (score 53: 3 shared files across 27 PRs), **thegoodengineer** (score 20: 3 shared files across 6 PRs), **AniketR10** (score 18: 2 shared files across 5 PRs). Scores weight shared files x3, reviews x2 and authorship x1; the PR author and bots are excluded.",
+    "answer": "For PR #243 (\"feat(create): checkpoint a failed stage attempt to a side ref\", by adhavan18), the strongest reviewer candidates are **AniketR10** (score 5.33: reviewed 4 PRs, 2 of these files), **thegoodengineer** (score 5.07: reviewed 4 PRs, 1 of these files), **animesh-chouhan** (score 4.16: reviewed 3 PRs, 0 of these files). Score = 3*log(1+PRs reviewed) plus reviewed files weighted by rarity (hub files like changelogs count little); the PR author and bots are excluded.",
     "tool_calls": [
      {
       "tool": "reviewers",
@@ -14,359 +14,61 @@
        "k": 10,
        "max_paths": 3
       },
-      "cypher": "MATCH (p:PR {id:$pr})\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)\nWHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,\n     sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths\nRETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,\n       paths[0..$max_paths] AS evidence\nORDER BY score DESC LIMIT $k",
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nWITH p, repo, me\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(repo)\nWHERE q <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH p, cand, count(DISTINCT q) AS reviewed, collect(q)[0] AS sample\nOPTIONAL MATCH fp = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[:REVIEWED]-(cand)\nWHERE o <> p\nWITH p, cand, reviewed, sample, f, collect(fp) AS fpaths\nOPTIONAL MATCH (f)<-[:TOUCHES]-(x:PR)\nWITH cand, reviewed, sample, f, fpaths, count(DISTINCT x) AS df\nWITH cand, reviewed, sample,\n     sum(CASE WHEN f IS NULL THEN 0.0 ELSE 1.0 / log(1.0 + df) END) AS expertise,\n     count(f) AS files, collect(fpaths[0]) AS paths\nMATCH rp = (cand)-[:REVIEWED]->(sample)\nRETURN cand.login AS reviewer, files, reviewed, expertise,\n       3.0 * log(1.0 + reviewed) + expertise AS score,\n       (paths + [rp])[0..$max_paths] AS evidence\nORDER BY score DESC, reviewed DESC LIMIT $k",
       "rows": [
-       {
-        "reviewer": "animesh-chouhan",
-        "files": 3,
-        "prs": 27,
-        "score": 53
-       },
-       {
-        "reviewer": "thegoodengineer",
-        "files": 3,
-        "prs": 6,
-        "score": 20
-       },
        {
         "reviewer": "AniketR10",
         "files": 2,
-        "prs": 5,
-        "score": 18
+        "reviewed": 4,
+        "expertise": 0.504,
+        "score": 5.332
        },
        {
-        "reviewer": "Devesh36",
-        "files": 3,
-        "prs": 6,
-        "score": 18
+        "reviewer": "thegoodengineer",
+        "files": 1,
+        "reviewed": 4,
+        "expertise": 0.245,
+        "score": 5.074
        },
        {
-        "reviewer": "DevSars24",
-        "files": 3,
-        "prs": 6,
-        "score": 17
-       },
-       {
-        "reviewer": "shubhu121",
-        "files": 2,
-        "prs": 3,
-        "score": 12
+        "reviewer": "animesh-chouhan",
+        "files": 0,
+        "reviewed": 3,
+        "expertise": 0.0,
+        "score": 4.159
        },
        {
         "reviewer": "github-advanced-security",
         "files": 2,
-        "prs": 1,
-        "score": 10
+        "reviewed": 1,
+        "expertise": 0.504,
+        "score": 2.583
        },
        {
-        "reviewer": "DPS0340",
-        "files": 2,
-        "prs": 2,
-        "score": 8
+        "reviewer": "AyushVUpadhye",
+        "files": 1,
+        "reviewed": 1,
+        "expertise": 0.245,
+        "score": 2.325
        },
        {
-        "reviewer": "julienbm",
-        "files": 2,
-        "prs": 1,
-        "score": 8
+        "reviewer": "DevSars24",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
        },
        {
-        "reviewer": "stffinfcti",
-        "files": 2,
-        "prs": 1,
-        "score": 8
+        "reviewer": "sunnyrai489",
+        "files": 0,
+        "reviewed": 1,
+        "expertise": 0.0,
+        "score": 2.079
        }
       ]
      }
     ],
     "evidence_paths": [
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#243",
-        "label": "PR",
-        "name": "#243 feat(create): checkpoint a failed stage "
-       },
-       {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
-        "label": "File",
-        "name": "src/agent/loop.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead#113",
-        "label": "PR",
-        "name": "#113 feat(repl): session UI with pinned obser"
-       },
-       {
-        "id": "animesh-chouhan",
-        "label": "Person",
-        "name": "animesh-chouhan"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "copperheadhq/copperhead#113",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "animesh-chouhan",
-        "target": "copperheadhq/copperhead#113",
-        "type": "AUTHORED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#243",
-        "label": "PR",
-        "name": "#243 feat(create): checkpoint a failed stage "
-       },
-       {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
-        "label": "File",
-        "name": "src/agent/loop.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead#119",
-        "label": "PR",
-        "name": "#119 feat(kicad): live-KiCad extension: IPC c"
-       },
-       {
-        "id": "animesh-chouhan",
-        "label": "Person",
-        "name": "animesh-chouhan"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "copperheadhq/copperhead#119",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "animesh-chouhan",
-        "target": "copperheadhq/copperhead#119",
-        "type": "AUTHORED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#243",
-        "label": "PR",
-        "name": "#243 feat(create): checkpoint a failed stage "
-       },
-       {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
-        "label": "File",
-        "name": "src/agent/loop.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead#132",
-        "label": "PR",
-        "name": "#132 feat(onboarding): prepare git in create,"
-       },
-       {
-        "id": "animesh-chouhan",
-        "label": "Person",
-        "name": "animesh-chouhan"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "copperheadhq/copperhead#132",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "animesh-chouhan",
-        "target": "copperheadhq/copperhead#132",
-        "type": "AUTHORED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#243",
-        "label": "PR",
-        "name": "#243 feat(create): checkpoint a failed stage "
-       },
-       {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
-        "label": "File",
-        "name": "src/agent/loop.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead#112",
-        "label": "PR",
-        "name": "#112 feat: generalise OpenAI provider for Ope"
-       },
-       {
-        "id": "thegoodengineer",
-        "label": "Person",
-        "name": "thegoodengineer"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "copperheadhq/copperhead#112",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "thegoodengineer",
-        "target": "copperheadhq/copperhead#112",
-        "type": "AUTHORED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#243",
-        "label": "PR",
-        "name": "#243 feat(create): checkpoint a failed stage "
-       },
-       {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
-        "label": "File",
-        "name": "src/agent/loop.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead#155",
-        "label": "PR",
-        "name": "#155 feat(observability): flush per-LLM-call "
-       },
-       {
-        "id": "thegoodengineer",
-        "label": "Person",
-        "name": "thegoodengineer"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "copperheadhq/copperhead#155",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "thegoodengineer",
-        "target": "copperheadhq/copperhead#155",
-        "type": "AUTHORED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#243",
-        "label": "PR",
-        "name": "#243 feat(create): checkpoint a failed stage "
-       },
-       {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
-        "label": "File",
-        "name": "src/agent/loop.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead#72",
-        "label": "PR",
-        "name": "#72 fix(create): end-to-end create pipeline "
-       },
-       {
-        "id": "thegoodengineer",
-        "label": "Person",
-        "name": "thegoodengineer"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "copperheadhq/copperhead#72",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "thegoodengineer",
-        "target": "copperheadhq/copperhead#72",
-        "type": "AUTHORED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#243",
-        "label": "PR",
-        "name": "#243 feat(create): checkpoint a failed stage "
-       },
-       {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
-        "label": "File",
-        "name": "src/agent/loop.ts"
-       },
-       {
-        "id": "copperheadhq/copperhead#123",
-        "label": "PR",
-        "name": "#123 add ollama, groq, gemini and openrouter "
-       },
-       {
-        "id": "AniketR10",
-        "label": "Person",
-        "name": "AniketR10"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "copperheadhq/copperhead#123",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "AniketR10",
-        "target": "copperheadhq/copperhead#123",
-        "type": "AUTHORED"
-       }
-      ]
-     },
      {
       "nodes": [
        {
@@ -416,14 +118,14 @@
         "name": "#243 feat(create): checkpoint a failed stage "
        },
        {
-        "id": "copperheadhq/copperhead:src/agent/loop.ts",
+        "id": "copperheadhq/copperhead:src/commands/create.ts",
         "label": "File",
-        "name": "src/agent/loop.ts"
+        "name": "src/commands/create.ts"
        },
        {
-        "id": "copperheadhq/copperhead#175",
+        "id": "copperheadhq/copperhead#123",
         "label": "PR",
-        "name": "#175 feat/remove stale history"
+        "name": "#123 add ollama, groq, gemini and openrouter "
        },
        {
         "id": "AniketR10",
@@ -434,48 +136,145 @@
       "edges": [
        {
         "source": "copperheadhq/copperhead#243",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
         "type": "TOUCHES"
        },
        {
-        "source": "copperheadhq/copperhead#175",
-        "target": "copperheadhq/copperhead:src/agent/loop.ts",
+        "source": "copperheadhq/copperhead#123",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
         "type": "TOUCHES"
        },
        {
         "source": "AniketR10",
-        "target": "copperheadhq/copperhead#175",
-        "type": "AUTHORED"
+        "target": "copperheadhq/copperhead#123",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "AniketR10",
+        "label": "Person",
+        "name": "AniketR10"
+       },
+       {
+        "id": "copperheadhq/copperhead#123",
+        "label": "PR",
+        "name": "#123 add ollama, groq, gemini and openrouter "
+       }
+      ],
+      "edges": [
+       {
+        "source": "AniketR10",
+        "target": "copperheadhq/copperhead#123",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "copperheadhq/copperhead#243",
+        "label": "PR",
+        "name": "#243 feat(create): checkpoint a failed stage "
+       },
+       {
+        "id": "copperheadhq/copperhead:src/commands/create.ts",
+        "label": "File",
+        "name": "src/commands/create.ts"
+       },
+       {
+        "id": "copperheadhq/copperhead#76",
+        "label": "PR",
+        "name": "#76 fix: normalize path separators for Windo"
+       },
+       {
+        "id": "thegoodengineer",
+        "label": "Person",
+        "name": "thegoodengineer"
+       }
+      ],
+      "edges": [
+       {
+        "source": "copperheadhq/copperhead#243",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "copperheadhq/copperhead#76",
+        "target": "copperheadhq/copperhead:src/commands/create.ts",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "thegoodengineer",
+        "target": "copperheadhq/copperhead#76",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "thegoodengineer",
+        "label": "Person",
+        "name": "thegoodengineer"
+       },
+       {
+        "id": "copperheadhq/copperhead#51",
+        "label": "PR",
+        "name": "#51 fix: resolve cross-platform Windows comp"
+       }
+      ],
+      "edges": [
+       {
+        "source": "thegoodengineer",
+        "target": "copperheadhq/copperhead#51",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "animesh-chouhan",
+        "label": "Person",
+        "name": "animesh-chouhan"
+       },
+       {
+        "id": "copperheadhq/copperhead#317",
+        "label": "PR",
+        "name": "#317 fix(legibility): accurately measure grou"
+       }
+      ],
+      "edges": [
+       {
+        "source": "animesh-chouhan",
+        "target": "copperheadhq/copperhead#317",
+        "type": "REVIEWED"
        }
       ]
      }
     ],
     "focus": [
      "copperheadhq/copperhead#243",
-     "animesh-chouhan",
+     "AniketR10",
      "thegoodengineer",
-     "AniketR10"
+     "animesh-chouhan"
     ]
    },
    {
     "kind": "duplicate",
     "question": "Is PR #279 a duplicate?",
-    "answer": "Likely overlaps existing work for PR #279 (\"feat(kicad): add static circuit pattern library (voltage-regulator, u\u2026\"): it links the same issue as #281 (open, via #274); it shares most of its files with #281 (7/7 files, open), #280 (7/7 files, open); its title is close to Issue #274 (Jaccard 0.43).",
+    "answer": "Possibly related work for PR #279 (\"feat(kicad): add static circuit pattern library (voltage-regulator, u\u2026\"): it shares most of its files with #281 (7/7 files, open), #280 (7/7 files, open).",
     "tool_calls": [
      {
       "tool": "dup_shared_issue",
       "params": {
        "pr": "copperheadhq/copperhead#279"
       },
-      "cypher": "MATCH path = (p:PR {id:$pr})-[:FIXES|REFERENCES]->(i:Issue)<-[:FIXES|REFERENCES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
-      "rows": [
-       {
-        "other": "copperheadhq/copperhead#281",
-        "state": "OPEN",
-        "title": "Feature/pattern bom expansion",
-        "via": "copperheadhq/copperhead#274"
-       }
-      ]
+      "cypher": "MATCH (p:PR {id:$pr})-[:FIXES]->(i:Issue)<-[:FIXES]-(x:PR)\nWITH p, i, count(DISTINCT x) AS fixers WHERE fixers <= $max_issue_prs\nMATCH path = (p)-[:FIXES]->(i)<-[:FIXES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
+      "rows": []
      },
      {
       "tool": "dup_file_overlap",
@@ -510,17 +309,8 @@
        "min_jaccard": 0.4,
        "k": 10
       },
-      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND (o:PR OR o:Issue) AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
-      "rows": [
-       {
-        "other": "copperheadhq/copperhead#274",
-        "kind": "Issue",
-        "state": "OPEN",
-        "title": "Add a static pattern library for common circuit blocks (voltage regulator, USB-C input, crystal osc)",
-        "common": 6,
-        "jaccard": 0.429
-       }
-      ]
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND o:PR AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
+      "rows": []
      }
     ],
     "evidence_paths": [
@@ -532,37 +322,6 @@
         "name": "#279 feat(kicad): add static circuit pattern "
        },
        {
-        "id": "copperheadhq/copperhead#274",
-        "label": "Issue",
-        "name": "#274"
-       },
-       {
-        "id": "copperheadhq/copperhead#281",
-        "label": "PR",
-        "name": "#281 Feature/pattern bom expansion"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#279",
-        "target": "copperheadhq/copperhead#274",
-        "type": "FIXES"
-       },
-       {
-        "source": "copperheadhq/copperhead#281",
-        "target": "copperheadhq/copperhead#274",
-        "type": "REFERENCES"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#279",
-        "label": "PR",
-        "name": "#279 feat(kicad): add static circuit pattern "
-       },
-       {
         "id": "copperheadhq/copperhead:docs/patterns.md",
         "label": "File",
         "name": "docs/patterns.md"
@@ -738,44 +497,12 @@
         "source": "copperheadhq/copperhead#280",
         "target": "copperheadhq/copperhead:scripts/validate-patterns.ts",
         "type": "TOUCHES"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "copperheadhq/copperhead#279",
-        "label": "PR",
-        "name": "#279 feat(kicad): add static circuit pattern "
-       },
-       {
-        "id": "copperheadhq/copperhead",
-        "label": "Repo",
-        "name": "copperheadhq/copperhead"
-       },
-       {
-        "id": "copperheadhq/copperhead#274",
-        "label": "Issue",
-        "name": "#274"
-       }
-      ],
-      "edges": [
-       {
-        "source": "copperheadhq/copperhead#279",
-        "target": "copperheadhq/copperhead",
-        "type": "IN_REPO"
-       },
-       {
-        "source": "copperheadhq/copperhead#274",
-        "target": "copperheadhq/copperhead",
-        "type": "IN_REPO"
        }
       ]
      }
     ],
     "focus": [
      "copperheadhq/copperhead#279",
-     "copperheadhq/copperhead#281",
      "copperheadhq/copperhead#281",
      "copperheadhq/copperhead#280"
     ]
@@ -1710,7 +1437,7 @@
    {
     "kind": "reviewers",
     "question": "Who should review sqlfluff PR #8550?",
-    "answer": "For PR #8550 (\"Databricks: support Delta maintenance and auxiliary statements\", by taslater), the strongest reviewer candidates are **WittierDinosaur** (score 20: 3 shared files across 4 PRs), **keraion** (score 19: 3 shared files across 3 PRs), **Lambrie** (score 18: 3 shared files across 1 PRs). Scores weight shared files x3, reviews x2 and authorship x1; the PR author and bots are excluded.",
+    "answer": "For PR #8550 (\"Databricks: support Delta maintenance and auxiliary statements\", by taslater), the strongest reviewer candidates are **keraion** (score 11.66: reviewed 33 PRs, 3 of these files), **rubytobi** (score 11.43: reviewed 35 PRs, 2 of these files), **WittierDinosaur** (score 8.54: reviewed 11 PRs, 3 of these files). Score = 3*log(1+PRs reviewed) plus reviewed files weighted by rarity (hub files like changelogs count little); the PR author and bots are excluded.",
     "tool_calls": [
      {
       "tool": "reviewers",
@@ -1719,171 +1446,82 @@
        "k": 10,
        "max_paths": 3
       },
-      "cypher": "MATCH (p:PR {id:$pr})\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nMATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)\nWHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,\n     sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths\nRETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,\n       paths[0..$max_paths] AS evidence\nORDER BY score DESC LIMIT $k",
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nOPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)\nWITH p, repo, me\nMATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(repo)\nWHERE q <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)\nWITH p, cand, count(DISTINCT q) AS reviewed, collect(q)[0] AS sample\nOPTIONAL MATCH fp = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[:REVIEWED]-(cand)\nWHERE o <> p\nWITH p, cand, reviewed, sample, f, collect(fp) AS fpaths\nOPTIONAL MATCH (f)<-[:TOUCHES]-(x:PR)\nWITH cand, reviewed, sample, f, fpaths, count(DISTINCT x) AS df\nWITH cand, reviewed, sample,\n     sum(CASE WHEN f IS NULL THEN 0.0 ELSE 1.0 / log(1.0 + df) END) AS expertise,\n     count(f) AS files, collect(fpaths[0]) AS paths\nMATCH rp = (cand)-[:REVIEWED]->(sample)\nRETURN cand.login AS reviewer, files, reviewed, expertise,\n       3.0 * log(1.0 + reviewed) + expertise AS score,\n       (paths + [rp])[0..$max_paths] AS evidence\nORDER BY score DESC, reviewed DESC LIMIT $k",
       "rows": [
-       {
-        "reviewer": "WittierDinosaur",
-        "files": 3,
-        "prs": 4,
-        "score": 20
-       },
        {
         "reviewer": "keraion",
         "files": 3,
-        "prs": 3,
-        "score": 19
-       },
-       {
-        "reviewer": "Lambrie",
-        "files": 3,
-        "prs": 1,
-        "score": 18
+        "reviewed": 33,
+        "expertise": 1.082,
+        "score": 11.661
        },
        {
         "reviewer": "rubytobi",
         "files": 2,
-        "prs": 3,
-        "score": 14
+        "reviewed": 35,
+        "expertise": 0.68,
+        "score": 11.43
+       },
+       {
+        "reviewer": "WittierDinosaur",
+        "files": 3,
+        "reviewed": 11,
+        "expertise": 1.082,
+        "score": 8.537
+       },
+       {
+        "reviewer": "peterbud",
+        "files": 0,
+        "reviewed": 13,
+        "expertise": 0.0,
+        "score": 7.917
        },
        {
         "reviewer": "alanmcruickshank",
         "files": 1,
-        "prs": 1,
-        "score": 5
+        "reviewed": 8,
+        "expertise": 0.311,
+        "score": 6.902
        },
        {
-        "reviewer": "LuisFigueroaG",
-        "files": 1,
-        "prs": 2,
-        "score": 5
+        "reviewer": "devYRPauli",
+        "files": 0,
+        "reviewed": 6,
+        "expertise": 0.0,
+        "score": 5.838
+       },
+       {
+        "reviewer": "adhavan18",
+        "files": 0,
+        "reviewed": 5,
+        "expertise": 0.0,
+        "score": 5.375
+       },
+       {
+        "reviewer": "AndrewKurg",
+        "files": 0,
+        "reviewed": 4,
+        "expertise": 0.0,
+        "score": 4.828
+       },
+       {
+        "reviewer": "rfanth",
+        "files": 0,
+        "reviewed": 4,
+        "expertise": 0.0,
+        "score": 4.828
+       },
+       {
+        "reviewer": "dheeraj-juvvadi",
+        "files": 0,
+        "reviewed": 2,
+        "expertise": 0.0,
+        "score": 3.296
        }
       ]
      }
     ],
     "evidence_paths": [
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff#8550",
-        "label": "PR",
-        "name": "#8550 Databricks: support Delta maintenance an"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
-       },
-       {
-        "id": "sqlfluff/sqlfluff#8507",
-        "label": "PR",
-        "name": "#8507 Databricks: allow a magic cell body afte"
-       },
-       {
-        "id": "WittierDinosaur",
-        "label": "Person",
-        "name": "WittierDinosaur"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff#8550",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "sqlfluff/sqlfluff#8507",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "WittierDinosaur",
-        "target": "sqlfluff/sqlfluff#8507",
-        "type": "REVIEWED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff#8550",
-        "label": "PR",
-        "name": "#8550 Databricks: support Delta maintenance an"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
-       },
-       {
-        "id": "sqlfluff/sqlfluff#8508",
-        "label": "PR",
-        "name": "#8508 Databricks: allow a materialized view to"
-       },
-       {
-        "id": "WittierDinosaur",
-        "label": "Person",
-        "name": "WittierDinosaur"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff#8550",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "sqlfluff/sqlfluff#8508",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "WittierDinosaur",
-        "target": "sqlfluff/sqlfluff#8508",
-        "type": "REVIEWED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff#8550",
-        "label": "PR",
-        "name": "#8550 Databricks: support Delta maintenance an"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
-       },
-       {
-        "id": "sqlfluff/sqlfluff#8509",
-        "label": "PR",
-        "name": "#8509 Databricks: support PRIVATE streaming ta"
-       },
-       {
-        "id": "WittierDinosaur",
-        "label": "Person",
-        "name": "WittierDinosaur"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff#8550",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "sqlfluff/sqlfluff#8509",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "WittierDinosaur",
-        "target": "sqlfluff/sqlfluff#8509",
-        "type": "REVIEWED"
-       }
-      ]
-     },
      {
       "nodes": [
        {
@@ -1933,9 +1571,9 @@
         "name": "#8550 Databricks: support Delta maintenance an"
        },
        {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
         "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
+        "name": "src/sqlfluff/dialects/dialect_databricks_keywords.py"
        },
        {
         "id": "sqlfluff/sqlfluff#8625",
@@ -1951,12 +1589,53 @@
       "edges": [
        {
         "source": "sqlfluff/sqlfluff#8550",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
         "type": "TOUCHES"
        },
        {
         "source": "sqlfluff/sqlfluff#8625",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
+        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "keraion",
+        "target": "sqlfluff/sqlfluff#8625",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff#8550",
+        "label": "PR",
+        "name": "#8550 Databricks: support Delta maintenance an"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "label": "File",
+        "name": "test/dialects/databricks_test.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8625",
+        "label": "PR",
+        "name": "#8625 Add Databricks GEOMETRY datatype support"
+       },
+       {
+        "id": "keraion",
+        "label": "Person",
+        "name": "keraion"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8550",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8625",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
         "type": "TOUCHES"
        },
        {
@@ -1979,14 +1658,14 @@
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
        },
        {
-        "id": "sqlfluff/sqlfluff#8730",
+        "id": "sqlfluff/sqlfluff#8511",
         "label": "PR",
-        "name": "#8730 SparkSQL: Support GROUP BY ALL and keys "
+        "name": "#8511 Databricks: support MANAGED LOCATION on "
        },
        {
-        "id": "keraion",
+        "id": "rubytobi",
         "label": "Person",
-        "name": "keraion"
+        "name": "rubytobi"
        }
       ],
       "edges": [
@@ -1996,13 +1675,75 @@
         "type": "TOUCHES"
        },
        {
-        "source": "sqlfluff/sqlfluff#8730",
+        "source": "sqlfluff/sqlfluff#8511",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
         "type": "TOUCHES"
        },
        {
-        "source": "keraion",
-        "target": "sqlfluff/sqlfluff#8730",
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8511",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff#8550",
+        "label": "PR",
+        "name": "#8550 Databricks: support Delta maintenance an"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "label": "File",
+        "name": "test/dialects/databricks_test.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8513",
+        "label": "PR",
+        "name": "#8513 Databricks: restore LIVE and STREAMING L"
+       },
+       {
+        "id": "rubytobi",
+        "label": "Person",
+        "name": "rubytobi"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8550",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8513",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8513",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "rubytobi",
+        "label": "Person",
+        "name": "rubytobi"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8511",
+        "label": "PR",
+        "name": "#8511 Databricks: support MANAGED LOCATION on "
+       }
+      ],
+      "edges": [
+       {
+        "source": "rubytobi",
+        "target": "sqlfluff/sqlfluff#8511",
         "type": "REVIEWED"
        }
       ]
@@ -2020,14 +1761,14 @@
         "name": "src/sqlfluff/dialects/dialect_databricks.py"
        },
        {
-        "id": "sqlfluff/sqlfluff#8625",
+        "id": "sqlfluff/sqlfluff#8507",
         "label": "PR",
-        "name": "#8625 Add Databricks GEOMETRY datatype support"
+        "name": "#8507 Databricks: allow a magic cell body afte"
        },
        {
-        "id": "Lambrie",
+        "id": "WittierDinosaur",
         "label": "Person",
-        "name": "Lambrie"
+        "name": "WittierDinosaur"
        }
       ],
       "edges": [
@@ -2037,54 +1778,13 @@
         "type": "TOUCHES"
        },
        {
-        "source": "sqlfluff/sqlfluff#8625",
+        "source": "sqlfluff/sqlfluff#8507",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
         "type": "TOUCHES"
        },
        {
-        "source": "Lambrie",
-        "target": "sqlfluff/sqlfluff#8625",
-        "type": "AUTHORED"
-       }
-      ]
-     },
-     {
-      "nodes": [
-       {
-        "id": "sqlfluff/sqlfluff#8550",
-        "label": "PR",
-        "name": "#8550 Databricks: support Delta maintenance an"
-       },
-       {
-        "id": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "label": "File",
-        "name": "src/sqlfluff/dialects/dialect_databricks.py"
-       },
-       {
-        "id": "sqlfluff/sqlfluff#8625",
-        "label": "PR",
-        "name": "#8625 Add Databricks GEOMETRY datatype support"
-       },
-       {
-        "id": "Lambrie",
-        "label": "Person",
-        "name": "Lambrie"
-       }
-      ],
-      "edges": [
-       {
-        "source": "sqlfluff/sqlfluff#8550",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "sqlfluff/sqlfluff#8625",
-        "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks.py",
-        "type": "TOUCHES"
-       },
-       {
-        "source": "Lambrie",
-        "target": "sqlfluff/sqlfluff#8625",
+        "source": "WittierDinosaur",
+        "target": "sqlfluff/sqlfluff#8507",
         "type": "REVIEWED"
        }
       ]
@@ -2102,14 +1802,14 @@
         "name": "src/sqlfluff/dialects/dialect_databricks_keywords.py"
        },
        {
-        "id": "sqlfluff/sqlfluff#8625",
+        "id": "sqlfluff/sqlfluff#8509",
         "label": "PR",
-        "name": "#8625 Add Databricks GEOMETRY datatype support"
+        "name": "#8509 Databricks: support PRIVATE streaming ta"
        },
        {
-        "id": "Lambrie",
+        "id": "WittierDinosaur",
         "label": "Person",
-        "name": "Lambrie"
+        "name": "WittierDinosaur"
        }
       ],
       "edges": [
@@ -2119,23 +1819,64 @@
         "type": "TOUCHES"
        },
        {
-        "source": "sqlfluff/sqlfluff#8625",
+        "source": "sqlfluff/sqlfluff#8509",
         "target": "sqlfluff/sqlfluff:src/sqlfluff/dialects/dialect_databricks_keywords.py",
         "type": "TOUCHES"
        },
        {
-        "source": "Lambrie",
-        "target": "sqlfluff/sqlfluff#8625",
-        "type": "AUTHORED"
+        "source": "WittierDinosaur",
+        "target": "sqlfluff/sqlfluff#8509",
+        "type": "REVIEWED"
+       }
+      ]
+     },
+     {
+      "nodes": [
+       {
+        "id": "sqlfluff/sqlfluff#8550",
+        "label": "PR",
+        "name": "#8550 Databricks: support Delta maintenance an"
+       },
+       {
+        "id": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "label": "File",
+        "name": "test/dialects/databricks_test.py"
+       },
+       {
+        "id": "sqlfluff/sqlfluff#8509",
+        "label": "PR",
+        "name": "#8509 Databricks: support PRIVATE streaming ta"
+       },
+       {
+        "id": "WittierDinosaur",
+        "label": "Person",
+        "name": "WittierDinosaur"
+       }
+      ],
+      "edges": [
+       {
+        "source": "sqlfluff/sqlfluff#8550",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "sqlfluff/sqlfluff#8509",
+        "target": "sqlfluff/sqlfluff:test/dialects/databricks_test.py",
+        "type": "TOUCHES"
+       },
+       {
+        "source": "WittierDinosaur",
+        "target": "sqlfluff/sqlfluff#8509",
+        "type": "REVIEWED"
        }
       ]
      }
     ],
     "focus": [
      "sqlfluff/sqlfluff#8550",
-     "WittierDinosaur",
      "keraion",
-     "Lambrie"
+     "rubytobi",
+     "WittierDinosaur"
     ]
    },
    {
@@ -2148,7 +1889,7 @@
       "params": {
        "pr": "sqlfluff/sqlfluff#8731"
       },
-      "cypher": "MATCH path = (p:PR {id:$pr})-[:FIXES|REFERENCES]->(i:Issue)<-[:FIXES|REFERENCES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
+      "cypher": "MATCH (p:PR {id:$pr})-[:FIXES]->(i:Issue)<-[:FIXES]-(x:PR)\nWITH p, i, count(DISTINCT x) AS fixers WHERE fixers <= $max_issue_prs\nMATCH path = (p)-[:FIXES]->(i)<-[:FIXES]-(o:PR)\nWHERE o <> p\nRETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence\nORDER BY o.created DESC",
       "rows": []
      },
      {
@@ -2240,7 +1981,7 @@
        "min_jaccard": 0.4,
        "k": 10
       },
-      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND (o:PR OR o:Issue) AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
+      "cypher": "MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)\nWITH p, repo, size(p.tokens) AS n WHERE n > 0\nMATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)\nWHERE o <> p AND o:PR AND o.tokens IS NOT NULL\n  AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n\nWITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common\nWHERE common > 0\nWITH o, path, common, toFloat(common) / (n + m - common) AS jaccard\nWHERE jaccard >= $min_jaccard\nRETURN o.id AS other, labels(o)[0] AS kind, o.state AS state, o.title AS title,\n       common, jaccard, path AS evidence\nORDER BY jaccard DESC, common DESC LIMIT $k",
       "rows": []
      }
     ],

@@ -27,6 +27,7 @@ Indexes: one range index per key above (`prgraph/db.py`).
 | REFERENCES | PR -> Issue | | any other `#N` in title/body (code fences stripped, other repos ignored) |
 | HAS_LABEL | PR/Issue -> Label | | |
 | CO_CHANGED | File - File | weight = #PRs changing both | derived; PRs touching >50 files skipped, weight >= 2 kept |
+| COLLAB | Person -> Person | repo, weight = #PRs where one authored and the other reviewed | derived, bots excluded; stored in both directions because `algo.betweenness` follows edge direction and has no undirected option |
 
 Note: GitHub PR and issue numbers share one sequence, so a `#N` that is really a PR becomes an Issue node with that number. Good enough for duplicate detection; could be resolved later by merging the nodes.
 

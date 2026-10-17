@@ -93,7 +93,7 @@ def to_rows(raw: dict) -> dict:
     """Flatten raw GitHub JSON into row lists for UNWIND. Pure, testable."""
     repo = raw["repo"]
     rows = {k: [] for k in ("people", "prs", "issues", "authored", "reviews", "touches",
-                             "fixes", "refs", "labels", "cochange")}
+                             "fixes", "refs", "labels", "cochange", "collab")}
     people: dict[str, bool] = {}
 
     def person(node) -> str:
@@ -139,7 +139,27 @@ def to_rows(raw: dict) -> dict:
     rows["cochange"] = [{"a": f"{repo}:{c['a']}", "b": f"{repo}:{c['b']}", "w": c["w"]}
                         for c in co_changes(pulls)]
     rows["people"] = [{"login": k, "is_bot": v} for k, v in sorted(people.items())]
+    rows["collab"] = collab_rows(rows, people)
     return rows
+
+
+def collab_rows(rows: dict, bots: dict) -> list[dict]:
+    """Person-person COLLAB: one authored and the other reviewed the same PR, weight = #PRs.
+
+    The relation is undirected, but FalkorDB's algo.betweenness only follows stored edge
+    direction (no direction option), so each pair is emitted in both directions.
+    """
+    author = {r["id"]: r["login"] for r in rows["authored"] if r["kind"] == "PR"}
+    pairs: dict[tuple, set] = {}
+    for r in rows["reviews"]:
+        a, b = author.get(r["id"]), r["login"]
+        if not a or a == b or bots.get(a) or bots.get(b) or "ghost" in (a, b):
+            continue
+        pairs.setdefault(tuple(sorted((a, b))), set()).add(r["id"])
+    out = []
+    for (a, b), prs in sorted(pairs.items()):
+        out += [{"a": a, "b": b, "w": len(prs)}, {"a": b, "b": a, "w": len(prs)}]
+    return out
 
 
 # Every write is MERGE on the id property, so re-running ingest is idempotent.
@@ -194,6 +214,11 @@ MERGE (t)-[:HAS_LABEL]->(l)"""),
     ("cochange", """UNWIND $rows AS r
 MATCH (a:File {id:r.a}), (b:File {id:r.b})
 MERGE (a)-[e:CO_CHANGED]-(b)
+SET e.weight = r.w"""),
+    # per-repo edge (Person nodes are shared across repos), stored both directions
+    ("collab", """UNWIND $rows AS r
+MATCH (a:Person {login:r.a}), (b:Person {login:r.b})
+MERGE (a)-[e:COLLAB {repo:$repo}]->(b)
 SET e.weight = r.w"""),
 ]
 

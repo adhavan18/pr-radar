@@ -247,9 +247,10 @@ def test_bus_factor_dispatch_defaults():
     assert rows[0]["file"] == "a.py" and rows[0]["remaining_humans"] == 0
 
 
-def test_cluster_and_bridge_queries_use_label_propagation():
+def test_cluster_and_bridge_queries_use_graph_algos():
+    assert "algo.labelPropagation" in CYPHER["ownership_clusters"]
+    assert "algo.betweenness" in CYPHER["bridges"] and "COLLAB" in CYPHER["bridges"]
     for name in ("ownership_clusters", "bridges"):
-        assert "algo.labelPropagation" in CYPHER[name]
         g = FakeGraph()
         call_tool(g, name, {}, REPO)
         assert g.calls[0][1]["repo"] == REPO

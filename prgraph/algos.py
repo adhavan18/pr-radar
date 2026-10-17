@@ -26,11 +26,10 @@ CALL algo.SPpaths({sourceNode: a, targetNode: b, relDirection: 'both', maxLen: 6
 RETURN length(path) AS hops, path AS evidence""",
 }
 
-# Collaboration projection used by the community/bridge tools: Person -AUTHORED|REVIEWED-> PR -TOUCHES-> File.
-# FalkorDB's algo.* procedures run on stored edges and treat them as directed. Label propagation still
-# finds communities over this bipartite projection, but algo.betweenness scores every Person 0 here
-# (people only have outgoing edges, so no shortest path passes *through* one). Bridges are therefore
-# measured as people whose work spans several label-propagation communities.
+# Collaboration projection used by ownership_clusters: Person -AUTHORED|REVIEWED-> PR -TOUCHES-> File.
+# FalkorDB's algo.* procedures follow stored edge direction. Betweenness over this projection scores
+# every Person 0 (people only have outgoing edges), so `bridges` runs on the person-person COLLAB
+# edges instead, which ingest stores in both directions.
 _LPA = ("CALL algo.labelPropagation({nodeLabels:['Person','PR','File'], "
         "relationshipTypes:['AUTHORED','REVIEWED','TOUCHES']}) YIELD node, communityId")
 
@@ -83,17 +82,13 @@ WITH communityId, files, top_files, collect(h.login + ' (' + toString(w) + ')')[
 RETURN communityId AS cluster, files, top_files, top_people
 ORDER BY files DESC LIMIT $k""",
 
-    # Connectors: humans whose files fall in the most distinct ownership clusters.
-    "bridges": _LPA + """
-WITH node, communityId WHERE node:File AND node.id STARTS WITH ($repo + ':')
-MATCH (h:Person)-[:AUTHORED|REVIEWED]->(q:PR)-[:TOUCHES]->(node)
-WHERE NOT coalesce(h.is_bot, false)
-WITH h, communityId, count(DISTINCT node) AS files, collect(q)[0] AS sample
-WITH h, count(communityId) AS clusters, toInteger(sum(files)) AS files, collect(sample)[0..$max_paths] AS samples
-WHERE clusters >= 2
-UNWIND samples AS s
-MATCH path = (h)-[:AUTHORED|REVIEWED]->(s)
-WITH h, clusters, files, collect(path) AS evidence
-RETURN h.login AS person, clusters, files, evidence
-ORDER BY clusters DESC, files DESC LIMIT $k""",
+    # Connectors: betweenness centrality over the person-person COLLAB graph (author <-> reviewer
+    # of the same PR, stored in both directions so the directed algorithm sees it as undirected).
+    "bridges": """
+CALL algo.betweenness({nodeLabels:['Person'], relationshipTypes:['COLLAB']}) YIELD node, score
+WITH node, score WHERE score > 0 AND NOT coalesce(node.is_bot, false)
+MATCH path = (node)-[c:COLLAB {repo:$repo}]->(o:Person)
+WITH node, score, count(DISTINCT o) AS collaborators, sum(c.weight) AS collabs, collect(path) AS paths
+RETURN node.login AS person, score, collaborators, collabs, paths[0..$max_paths] AS evidence
+ORDER BY score DESC, collabs DESC LIMIT $k""",
 })

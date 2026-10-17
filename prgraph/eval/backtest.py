@@ -47,7 +47,16 @@ def _rank_metrics(prefix, ranked, truth):
             f"{prefix}_mrr": reciprocal_rank(ranked, truth)}
 
 
-def backtest_repo(g, raw, seed=0):
+def _run_cypher(g, cypher, **params):
+    res = g.query(cypher, params)
+    cols = [h[1] if isinstance(h, (list, tuple)) else h for h in (res.header or [])]
+    return [dict(zip(cols, row)) for row in res.result_set]
+
+
+def backtest_repo(g, raw, seed=0, variants=None):
+    """variants: optional {name: cypher} of alternative reviewer queries, scored side by side
+    with the production `reviewers` query (same params: $pr, $k, $max_paths)."""
+    variants = variants or {}
     repo = raw["repo"]
     rows = to_rows(raw)
     bots = {p["login"] for p in rows["people"] if p["is_bot"]}
@@ -101,10 +110,13 @@ def backtest_repo(g, raw, seed=0):
                 "pr": pid, "truth": sorted(truth), "pred": ranked[:3], "covered": bool(ranked),
                 "truth_seen_before": bool(truth & set(review_count)),
                 **_rank_metrics("graph", ranked, truth), **_rank_metrics("active", active, truth),
-                **_rank_metrics("random", rand, truth)})
+                **_rank_metrics("random", rand, truth),
+                **{k: v for name, cy in variants.items() for k, v in _rank_metrics(
+                    name, [r["reviewer"] for r in _run_cypher(g, cy, pr=pid, k=K, max_paths=0)],
+                    truth).items()}})
 
         # 3. dup candidates (only earlier PRs exist in the graph)
-        skip = {"dup_shared_issue": not (fixes.get(pid) or refs.get(pid)),
+        skip = {"dup_shared_issue": not fixes.get(pid),
                 "dup_file_overlap": not ts, "dup_similar_title": not p["tokens"]}
         for name in DUP_QUERIES:
             if skip[name]:
@@ -141,12 +153,12 @@ def dup_truth(raw, rows):
     return shared, explicit
 
 
-def summarize(repo, out, raw, rows):
+def summarize(repo, out, raw, rows, variants=()):
     rv = out["reviewers"]
     s = {"repo": repo, "reviewers": {
         "n": len(rv), "coverage": mean(r["covered"] for r in rv),
         "truth_reviewer_seen_before": mean(r["truth_seen_before"] for r in rv)}}
-    for m in ("graph", "active", "random"):
+    for m in ("graph", "active", "random", *variants):
         s["reviewers"][m] = {k: mean(r[f"{m}_{k}"] for r in rv) for k in ("h1", "h3", "mrr")}
     im = out["impact"]
     s["impact"] = {"n": len(im), "coverage": mean(r["covered"] for r in im),

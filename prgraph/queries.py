@@ -6,8 +6,12 @@ Keep docs/QUERIES.md in sync (tests check that every query here appears there).
 
 QUERIES: dict[str, str] = {
     # ---- Q1: already fixed / duplicated? -------------------------------------
+    # FIXES only (a bare "#N" mention is not a claim to fix it), and issues fixed by more than
+    # $max_issue_prs PRs are treated as tracking issues and skipped.
     "dup_shared_issue": """
-MATCH path = (p:PR {id:$pr})-[:FIXES|REFERENCES]->(i:Issue)<-[:FIXES|REFERENCES]-(o:PR)
+MATCH (p:PR {id:$pr})-[:FIXES]->(i:Issue)<-[:FIXES]-(x:PR)
+WITH p, i, count(DISTINCT x) AS fixers WHERE fixers <= $max_issue_prs
+MATCH path = (p)-[:FIXES]->(i)<-[:FIXES]-(o:PR)
 WHERE o <> p
 RETURN o.id AS other, o.state AS state, o.title AS title, i.id AS via, path AS evidence
 ORDER BY o.created DESC""",
@@ -30,7 +34,7 @@ ORDER BY shared DESC LIMIT $k""",
 MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)
 WITH p, repo, size(p.tokens) AS n WHERE n > 0
 MATCH path = (p)-[:IN_REPO]->(repo)<-[:IN_REPO]-(o)
-WHERE o <> p AND (o:PR OR o:Issue) AND o.tokens IS NOT NULL
+WHERE o <> p AND o:PR AND o.tokens IS NOT NULL
   AND size(o.tokens) >= n * $min_jaccard AND size(o.tokens) * $min_jaccard <= n
 WITH o, path, n, size(o.tokens) AS m, size([t IN o.tokens WHERE t IN p.tokens]) AS common
 WHERE common > 0
@@ -48,17 +52,30 @@ RETURN p.id AS pr, p.state AS state, p.merged AS merged, type(rel) AS link,
 ORDER BY p.merged DESC""",
 
     # ---- Q2: who should review? ----------------------------------------------
+    # Candidates = humans who reviewed anything in this repo (REVIEWED only; authorship is not a
+    # review signal). score = 3*log(1+#PRs reviewed)  [prior: REVIEWED degree in the repo]
+    #                       + sum over this PR's files they reviewed of 1/log(1+#PRs touching it)
+    # [IDF, so CHANGELOG-style hub files count little]. Variants tried: docs/EVAL.md.
     "reviewers": """
-MATCH (p:PR {id:$pr})
+MATCH (p:PR {id:$pr})-[:IN_REPO]->(repo:Repo)
 OPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)
-WITH p, me
-MATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)
-WHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)
-WITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,
-     sum(CASE type(r) WHEN 'REVIEWED' THEN 2 ELSE 1 END) AS weight, collect(path) AS paths
-RETURN cand.login AS reviewer, files, prs, files * 3 + weight AS score,
-       paths[0..$max_paths] AS evidence
-ORDER BY score DESC LIMIT $k""",
+WITH p, repo, me
+MATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(repo)
+WHERE q <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)
+WITH p, cand, count(DISTINCT q) AS reviewed, collect(q)[0] AS sample
+OPTIONAL MATCH fp = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[:REVIEWED]-(cand)
+WHERE o <> p
+WITH p, cand, reviewed, sample, f, collect(fp) AS fpaths
+OPTIONAL MATCH (f)<-[:TOUCHES]-(x:PR)
+WITH cand, reviewed, sample, f, fpaths, count(DISTINCT x) AS df
+WITH cand, reviewed, sample,
+     sum(CASE WHEN f IS NULL THEN 0.0 ELSE 1.0 / log(1.0 + df) END) AS expertise,
+     count(f) AS files, collect(fpaths[0]) AS paths
+MATCH rp = (cand)-[:REVIEWED]->(sample)
+RETURN cand.login AS reviewer, files, reviewed, expertise,
+       3.0 * log(1.0 + reviewed) + expertise AS score,
+       (paths + [rp])[0..$max_paths] AS evidence
+ORDER BY score DESC, reviewed DESC LIMIT $k""",
 
     # ---- Q3: blast radius ----------------------------------------------------
     "impact": """
@@ -100,17 +117,18 @@ RETURN rv.login AS reviewer, reviewed, open_reviewed, paths[0..$max_paths] AS ev
 ORDER BY reviewed DESC LIMIT $k""",
 }
 
-DEFAULTS = {"k": 10, "max_paths": 3, "min_overlap": 0.5, "min_jaccard": 0.4}
+DEFAULTS = {"k": 10, "max_paths": 3, "min_overlap": 0.5, "min_jaccard": 0.4, "max_issue_prs": 3}
 
 # One-line descriptions used by `python -m prgraph.gendocs` for docs/QUERIES.md.
 DOCS: dict[str, str] = {
-    "dup_shared_issue": "Q1. Other PRs that fix/reference the same issue. Params: $pr.",
+    "dup_shared_issue": "Q1. Other PRs that FIX the same issue (REFERENCES ignored; issues fixed by "
+                        "> $max_issue_prs PRs are tracking issues and skipped). Params: $pr.",
     "dup_file_overlap": "Q1. PRs touching >= $min_overlap of this PR's files.",
-    "dup_similar_title": "Q1. PRs/issues in the same repo with title-token Jaccard >= $min_jaccard "
+    "dup_similar_title": "Q1. Other PRs in the same repo with title-token Jaccard >= $min_jaccard "
                          "(size-filtered candidates).",
     "issue_fixed_by": "Q1 (issue form). Is issue $issue already being fixed?",
-    "reviewers": "Q2. People who authored (1) or reviewed (2) PRs touching the same files; "
-                 "+3 per shared file. Bots (Person.is_bot) excluded.",
+    "reviewers": "Q2. Humans who reviewed in this repo: 3*log(1+#PRs reviewed) + IDF-weighted "
+                 "count of this PR's files they reviewed before. Author and bots excluded.",
     "impact": "Q3. Files historically co-changed with this PR's files but not in it.",
     "impact_file": "Q3 (file form). What breaks if $file changes: co-changed files, with the PRs "
                    "that changed both as evidence.",

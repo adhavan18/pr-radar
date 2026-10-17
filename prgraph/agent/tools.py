@@ -14,9 +14,9 @@ _K = {"type": "integer", "description": "max rows (default 10)"}
 _SINCE = {"type": "string", "description": "only PRs created on/after this ISO date (default: all history)"}
 
 TOOL_SPECS: dict[str, tuple] = {
-    "dup_shared_issue": ("Other PRs that fix/reference the same issue as this PR (duplicate check).", {"pr": _PR}),
+    "dup_shared_issue": ("Other PRs that fix the same issue as this PR (duplicate check; tracking issues skipped).", {"pr": _PR}),
     "dup_file_overlap": ("Other PRs touching mostly the same files as this PR (duplicate check).", {"pr": _PR, "k": _K}),
-    "dup_similar_title": ("PRs/issues in the same repo whose titles are similar to this PR "
+    "dup_similar_title": ("PRs in the same repo whose titles are similar to this PR "
                           "(Jaccard over title words; duplicate check).",
                           {"pr": _PR, "k": _K, "min_jaccard": {"type": "number",
                                                                 "description": "Jaccard threshold 0..1 (default 0.4)"}}),
@@ -42,8 +42,8 @@ TOOL_SPECS: dict[str, tuple] = {
     "ownership_clusters": ("Code-ownership communities (label propagation over the person-PR-file graph): "
                            "each cluster's size, top files and top people.",
                            {"k": _K, "min_files": {"type": "integer", "description": "smallest cluster to show (default 3)"}}),
-    "bridges": ("Connector people whose work spans the most ownership clusters (their departure would split "
-                "collaboration between areas).", {"k": _K}),
+    "bridges": ("Connector people: betweenness centrality on the author-reviewer COLLAB graph (their departure "
+                "would split collaboration between groups).", {"k": _K}),
     "recall_about": ("Earlier conclusions stored in graph memory about a PR/issue/file/person.",
                      {"ref": {"type": ["string", "integer"], "description": "PR/issue number or id, file id, or login"}}),
     "remember_finding": ("Store a conclusion in graph memory so later sessions can recall it.",

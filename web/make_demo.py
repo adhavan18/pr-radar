@@ -9,6 +9,7 @@ shows real evidence from the snapshot without a running FalkorDB.
 from __future__ import annotations
 
 import json
+import math
 import re
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -96,38 +97,49 @@ class Snapshot:
 
     # ---- query emulations, each returns rows like the Cypher would --------
     def q_reviewers(self, pid):
+        # mirrors queries.QUERIES["reviewers"]: REVIEWED-degree prior + IDF file expertise
         me = self.author.get(pid)
-        cand = defaultdict(lambda: {"files": set(), "prs": set(), "weight": 0, "paths": []})
-        for f in sorted(self.files[pid]):
-            for o in sorted(self.touchers[f]):
-                if o == pid:
+        reviewed = defaultdict(set)
+        for o, logins in self.reviews.items():
+            if o == pid:
+                continue
+            for l in logins:
+                if l != me and not is_bot(l):
+                    reviewed[l].add(o)
+        rows = []
+        for login, prs in reviewed.items():
+            exp, files, paths = 0.0, 0, []
+            for f in sorted(self.files[pid]):
+                os_ = sorted(o for o in self.touchers[f] if o != pid and login in self.reviews[o])
+                if not os_:
                     continue
-                rels = [(self.author.get(o), "AUTHORED")] + [(l, "REVIEWED") for l in sorted(self.reviews[o])]
-                for login, rt in rels:
-                    if not login or login == me or is_bot(login):
-                        continue
-                    c = cand[login]
-                    c["files"].add(f)
-                    c["prs"].add(o)
-                    c["weight"] += 2 if rt == "REVIEWED" else 1
-                    c["paths"].append(path(self.prn(pid), "TOUCHES", self.filen(f), "<TOUCHES",
-                                           self.prn(o), "<" + rt, self.person(login)))
-        rows = [{"reviewer": k, "files": len(v["files"]), "prs": len(v["prs"]),
-                 "score": len(v["files"]) * 3 + v["weight"], "evidence": v["paths"][:DEFAULTS["max_paths"]]}
-                for k, v in cand.items()]
-        return sorted(rows, key=lambda x: -x["score"])[:DEFAULTS["k"]]
+                files += 1
+                exp += 1.0 / math.log(1.0 + len(self.touchers[f]))
+                paths.append(path(self.prn(pid), "TOUCHES", self.filen(f), "<TOUCHES",
+                                  self.prn(os_[0]), "<REVIEWED", self.person(login)))
+            sample = sorted(prs)[0]
+            paths.append(path(self.person(login), "REVIEWED", self.prn(sample)))
+            rows.append({"reviewer": login, "files": files, "reviewed": len(prs), "expertise": round(exp, 3),
+                         "score": round(3.0 * math.log(1.0 + len(prs)) + exp, 3),
+                         "evidence": paths[:DEFAULTS["max_paths"]]})
+        return sorted(rows, key=lambda x: (-x["score"], -x["reviewed"], x["reviewer"]))[:DEFAULTS["k"]]
 
     def q_dup_shared_issue(self, pid):
+        # FIXES only; issues fixed by more than max_issue_prs PRs are tracking issues
+        fixers = defaultdict(set)
+        for o, ls in self.links.items():
+            for i, t in ls:
+                if t == "FIXES":
+                    fixers[i].add(o)
         rows = []
-        for iid, _ in sorted(self.links[pid]):
-            for o, ls in self.links.items():
-                if o != pid and any(i == iid for i, _ in ls):
-                    t1 = next(t for i, t in self.links[pid] if i == iid)
-                    t2 = next(t for i, t in ls if i == iid)
-                    rows.append({"other": o, "state": self.prs[o]["state"], "title": self.prs[o]["title"],
-                                 "via": iid, "evidence": path(self.prn(pid), t1, n("Issue", iid, "#" + iid.split("#")[1]),
-                                                               "<" + t2, self.prn(o))})
-        return rows
+        for iid, t in sorted(self.links[pid]):
+            if t != "FIXES" or len(fixers[iid]) > DEFAULTS["max_issue_prs"]:
+                continue
+            for o in sorted(fixers[iid] - {pid}):
+                rows.append({"other": o, "state": self.prs[o]["state"], "title": self.prs[o]["title"],
+                             "via": iid, "evidence": path(self.prn(pid), "FIXES", n("Issue", iid, "#" + iid.split("#")[1]),
+                                                           "<FIXES", self.prn(o))})
+        return sorted(rows, key=lambda r: self.prs[r["other"]]["created"], reverse=True)
 
     def q_dup_file_overlap(self, pid):
         mine = len(self.files[pid])
@@ -150,7 +162,7 @@ class Snapshot:
         rows = []
         if not mine:
             return rows
-        for kind, coll in (("PR", self.prs), ("Issue", self.issues)):
+        for kind, coll in (("PR", self.prs),):  # PRs only, like the Cypher
             for o, x in coll.items():
                 other = set(x["tokens"])
                 if o == pid or not (len(mine) * t <= len(other) and len(other) * t <= len(mine)):
@@ -238,9 +250,9 @@ def build(s: Snapshot):
     rows = s.q_reviewers(pid)
     top = rows[:3]
     ans = (f"For PR #{rev_pr} (\"{s.prs[pid]['title']}\", by {s.author.get(pid)}), the strongest reviewer candidates are "
-           + ", ".join(f"**{r['reviewer']}** (score {r['score']}: {r['files']} shared files across {r['prs']} PRs)" for r in top)
-           + ". Scores weight shared files x3, reviews x2 and authorship x1; the PR author and bots are excluded."
-           if top else f"No one else has touched the files in PR #{rev_pr}.")
+           + ", ".join(f"**{r['reviewer']}** (score {r['score']:.2f}: reviewed {r['reviewed']} PRs, {r['files']} of these files)" for r in top)
+           + ". Score = 3*log(1+PRs reviewed) plus reviewed files weighted by rarity (hub files like changelogs count little); the PR author and bots are excluded."
+           if top else f"No one has reviewed in this repo yet, so there is no reviewer signal for PR #{rev_pr}.")
     out.append({"kind": "reviewers", "question": KINDS["reviewers"].format(short=short, pr=rev_pr),
                 "answer": ans, "tool_calls": [call("reviewers", {"pr": pid, "k": 10, "max_paths": 3}, strip(rows))],
                 "evidence_paths": flat_paths(rows, 3), "focus": [pid] + [r["reviewer"] for r in top]})

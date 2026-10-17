@@ -32,20 +32,16 @@ Baselines for reviewers, both time-respecting:
 
 | repo | PRs scored | coverage | method | hit@1 | hit@3 | MRR |
 |---|---|---|---|---|---|---|
-| copperhead | 19 | 0.95 | **graph `reviewers`** | 0.158 | 0.316 | 0.254 |
+| copperhead | 19 | 0.68 | **graph `reviewers`** | **0.368** | 0.421 | 0.423 |
 | | | | most active | **0.368** | **0.579** | **0.456** |
 | | | | random | 0.158 | 0.316 | 0.272 |
-| sqlfluff | 96 | 0.69 | **graph `reviewers`** | 0.125 | 0.198 | 0.164 |
+| sqlfluff | 96 | 0.99 | **graph `reviewers`** | **0.260** | 0.583 | 0.432 |
 | | | | most active | **0.260** | **0.635** | **0.438** |
 | | | | random | 0.073 | 0.177 | 0.177 |
 
-The graph query **loses to the "most active reviewer" baseline on both repos**, and is roughly level with random. In only 58% (copperhead) / 71% (sqlfluff) of PRs had any true reviewer reviewed anything earlier in the window, which caps every method.
+After the redesign (see "Before vs after" below) the graph query **ties the most-active baseline on hit@1 on both repos and is close on MRR, but still trails it on hit@3** (sqlfluff 0.583 vs 0.635, copperhead 0.421 vs 0.579; on copperhead that is 3 PRs out of 19). It is far ahead of the old query and of random. Coverage changed because candidates are now only people who have reviewed in the repo: copperhead drops to 0.68 because early PRs have no visible human review yet.
 
-Why the graph loses, and what to try:
-- The score mixes **authors** and reviewers of overlapping PRs (`files*3 + weight`). Most people who touched a file are contributors, not reviewers; in repos with one or two maintainers who review everything, file overlap points at the wrong people. A version that only counts `REVIEWED` edges, or adds a prior for overall review volume, would likely beat the baseline.
-- Shared files like `CHANGELOG.md`, test fixtures and lockfiles connect almost every PR, so `files` rewards whoever touched the busiest files.
-- Small window: 200 PRs is a few weeks of history; file-level expertise needs more history to emerge.
-- copperhead: most reviews in the cache are from bots, leaving only 19 scorable PRs (below the ~100 target; sqlfluff reaches 96).
+In only 58% (copperhead) / 71% (sqlfluff) of PRs had any true reviewer reviewed anything earlier in the window, which caps every method.
 
 ### Impact (co-changed files, leave-one-out)
 
@@ -64,14 +60,66 @@ Against shared-issue truth (copperhead 382 pairs, sqlfluff 35):
 
 | query | copperhead P | R | F1 | sqlfluff P | R | F1 |
 |---|---|---|---|---|---|---|
-| `dup_shared_issue` | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| `dup_shared_issue` (FIXES only, <= 3 fixers) | 1.00 | 0.03 | 0.06 | 1.00 | 0.43 | 0.60 |
 | `dup_file_overlap` | 0.08 | 0.10 | 0.09 | 0.13 | 0.46 | 0.20 |
 | `dup_similar_title` | 0.93 | 0.10 | 0.18 | 0.38 | 0.51 | 0.43 |
 | overlap OR title | 0.13 | 0.18 | 0.15 | 0.16 | 0.71 | 0.27 |
 | overlap AND title | 1.00 | 0.02 | 0.03 | 0.41 | 0.26 | 0.32 |
-| all three (any) | 0.46 | 1.00 | 0.63 | 0.22 | 1.00 | 0.36 |
+| all three (any) | 0.14 | 0.19 | 0.16 | 0.18 | 0.77 | 0.29 |
 
-**Read the first row with care: it is circular.** `dup_shared_issue` is defined by the same links as the truth set, so 1.0/1.0 only shows the ingestion and query are consistent, not that it finds real duplicates. The informative rows are the two issue-independent signals: title similarity is the better one (high precision on copperhead, about half the pairs on sqlfluff); file overlap alone is noisy. Also note copperhead's 382 "shared issue" pairs come from a few tracking issues referenced by many PRs, so many of those are related work, not true duplicates. The single explicit supersede pair was found only via the shared issue.
+The truth set still counts any shared issue link (FIXES or REFERENCES), but `dup_shared_issue` now only follows FIXES and skips issues fixed by more than 3 PRs (tracking issues). So it is no longer circular: it keeps precision 1.0 and gives up most of copperhead's 382 "pairs", which came from a few tracking issues referenced by many PRs and are related work, not duplicates. The single explicit supersede pair (#311/#336) is no longer found by any query. Title similarity is still the best issue-independent signal; file overlap alone is noisy. `dup_similar_title` now returns PRs only (it was already PR-only in the replay, so its numbers are unchanged).
+
+## Before vs after (eval-driven changes, 2026-10-17)
+
+### Reviewers
+
+Before: `files*3 + sum(REVIEWED=2, AUTHORED=1)` over people who touched the same files.
+After: candidates are humans with a `REVIEWED` edge in the repo;
+`score = 3*log(1 + #PRs reviewed) + sum over this PR's files they reviewed of 1/log(1 + #PRs touching the file)`.
+The first term is the REVIEWED degree (a graph prior), the second is file expertise with IDF so hub files (CHANGELOG, fixtures) count little. Evidence: up to 3 `PR-TOUCHES-File<-TOUCHES-PR<-REVIEWED-Person` paths plus one `Person-REVIEWED->PR` path.
+
+| repo | method | hit@1 | hit@3 | MRR |
+|---|---|---|---|---|
+| copperhead (19) | before | 0.158 | 0.316 | 0.254 |
+| | **after** | **0.368** | 0.421 | 0.423 |
+| | most active baseline | 0.368 | 0.579 | 0.456 |
+| sqlfluff (96) | before | 0.125 | 0.198 | 0.164 |
+| | **after** | **0.260** | 0.583 | 0.432 |
+| | most active baseline | 0.260 | 0.635 | 0.438 |
+
+All variants tried (same replay, scored side by side via `backtest_repo(..., variants=...)`). `pw` = prior weight, IDF on unless noted, REVIEWED-only unless noted:
+
+| variant | copperhead h1 / h3 / MRR | sqlfluff h1 / h3 / MRR |
+|---|---|---|
+| old query | 0.158 / 0.316 / 0.254 | 0.125 / 0.198 / 0.164 |
+| prior only (log #PRs reviewed) | 0.368 / 0.474 / 0.436 | 0.260 / 0.583 / 0.433 |
+| prior only, count review edges | 0.368 / 0.474 / 0.436 | 0.260 / 0.583 / 0.433 |
+| expertise only, no prior | 0.211 / 0.263 / 0.294 | 0.219 / 0.521 / 0.394 |
+| pw=0.5 | 0.211 / 0.263 / 0.304 | 0.219 / 0.542 / 0.399 |
+| pw=1 | 0.211 / 0.316 / 0.318 | 0.208 / 0.583 / 0.404 |
+| pw=1, no IDF | 0.211 / 0.263 / 0.304 | 0.229 / 0.562 / 0.407 |
+| pw=1, + authorship at 0.3 | 0.211 / 0.316 / 0.318 | 0.208 / 0.573 / 0.403 |
+| pw=2 | 0.368 / 0.421 / 0.423 | 0.250 / 0.583 / 0.425 |
+| **pw=3 (chosen)** | **0.368 / 0.421 / 0.423** | **0.260 / 0.583 / 0.432** |
+| pw=5 | 0.368 / 0.421 / 0.423 | 0.250 / 0.583 / 0.427 |
+| pw=10 | 0.368 / 0.421 / 0.423 | 0.260 / 0.583 / 0.432 |
+| pw=3, edge-count prior | 0.368 / 0.421 / 0.423 | 0.260 / 0.583 / 0.432 |
+| prior only, ties broken by latest review | 0.421 / 0.421 / 0.454 | 0.260 / 0.531 / 0.425 |
+| pw=3, ties by latest review | 0.368 / 0.421 / 0.432 | 0.260 / 0.542 / 0.425 |
+| pw=3 + 3*log(1+reviews in last 100 PR numbers) | 0.421 / 0.421 / 0.458 | 0.240 / 0.552 / 0.418 |
+| recency only (last 100) + expertise | 0.316 / 0.474 / 0.412 | 0.323 / 0.542 / 0.450 |
+| pw=2 + recency (last 50) | 0.263 / 0.421 / 0.375 | 0.260 / 0.552 / 0.423 |
+| prior + recency, no expertise | 0.421 / 0.421 / 0.454 | 0.260 / 0.542 / 0.428 |
+
+Honest reading: the review-volume prior does almost all the work. File expertise on top of it barely moves the numbers in a 200-PR window, and no variant beat the baseline on hit@3 on both repos. Even "prior only" computed in the graph lands slightly below the Python baseline on hit@3; per-PR inspection showed the difference is tie ordering among equally active reviewers (the Python counter breaks ties by insertion order), not a different signal. Recency helped hit@1 on one repo and hurt on the other, so it was not adopted. pw=3 was chosen as the simplest setting at the top of the flat region, not the best single cell.
+
+### Duplicates
+
+`dup_shared_issue`: FIXES only, issues with more than `$max_issue_prs` (3) fixing PRs skipped. copperhead goes from 382 predicted pairs to 12 (all correct against the shared-issue truth), sqlfluff from 35 to 15. `dup_similar_title`: PRs only.
+
+### Bridges
+
+New derived `COLLAB` edges (Person-Person, weight = #PRs where one authored and the other reviewed, bots excluded, per repo). FalkorDB's `algo.betweenness` has no undirected option (`direction`/`relDirection` are rejected as unknown keys, and a one-direction path a->b<-c gives b a score of 0), so each pair is stored in both directions. `bridges` is now real betweenness over COLLAB. Live top 5 for sqlfluff: rubytobi 463, adhavan18 409, keraion 400, peterbud 164, alanmcruickshank 124. Caveat: betweenness runs over the whole graph, so a person active in both ingested repos (adhavan18) scores as a cross-repo bridge.
 
 ## Limitations
 
