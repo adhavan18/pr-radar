@@ -73,6 +73,10 @@ def sh(*cmd, cwd=None, input=None, check=True) -> str:
 def load_history(graph) -> None:
     raw = json.loads((DATA / f"{SRC.replace('/', '_')}.json").read_text(encoding="utf-8"))
     print("history ->", DEMO, load(graph, remap_raw(raw, DEMO)))
+    # Mark the mirror so cross-repo queries (shared_contributors, cross_repo_expert) skip it, and
+    # drop its COLLAB edges: they duplicate copperhead's and would skew bridges (betweenness).
+    graph.query("MATCH (r:Repo {id:$demo}) SET r.mirror_of = $src", {"demo": DEMO, "src": SRC})
+    graph.query("MATCH ()-[e:COLLAB {repo:$demo}]->() DELETE e", {"demo": DEMO})
 
 
 def repo_exists() -> bool:

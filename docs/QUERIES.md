@@ -158,7 +158,7 @@ Cross-repo. People (non-bot) who authored/reviewed PRs in 2+ ingested repos, wit
 
 ```cypher
 MATCH (a:Person)-[:AUTHORED|REVIEWED]->(p:PR)-[:IN_REPO]->(r:Repo)
-WHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost'
+WHERE NOT coalesce(a.is_bot, false) AND a.login <> 'ghost' AND r.mirror_of IS NULL
 WITH a, r, count(DISTINCT p) AS prs, collect(p)[0] AS sample
 ORDER BY prs DESC
 WITH a, collect(r.id + ' (' + toString(prs) + ')') AS repos, collect(sample) AS samples, sum(prs) AS total
@@ -185,7 +185,7 @@ UNWIND raw AS t
 WITH p, home, me, t WHERE size(t) >= 3 AND NOT t IN ['src','lib','tests','test','docs','doc','init','main','index','crates','github','workflows','snap','snapshots','resources','fixtures','txt','json','toml','yml','yaml','lock','cfg','ini','rst','html','css','png','svg','the','and','for','with','from','add','fix','update','use','when','into','support','allow','make','new','remove','handle','change','improve','agents','claude','contributing','readme','changelog','license','commit','pre','precommit','config','setup','pyproject','workflow','release','version','bump','deps','dependency','dependencies']
 WITH p, home, me, collect(DISTINCT t) AS topic
 MATCH (cand:Person)-[:REVIEWED]->(q:PR)-[:IN_REPO]->(other:Repo)
-WHERE other <> home AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)
+WHERE other <> home AND other.mirror_of IS NULL AND NOT coalesce(cand.is_bot, false) AND (me IS NULL OR cand <> me)
 WITH DISTINCT home, topic, cand, q, other
 OPTIONAL MATCH (q)-[:TOUCHES]->(g:File)
 WITH home, topic, cand, q, other, collect(g.path) AS gps
