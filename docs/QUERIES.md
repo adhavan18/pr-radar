@@ -69,6 +69,7 @@ Q2. People who authored (1) or reviewed (2) PRs touching the same files; +3 per 
 ```cypher
 MATCH (p:PR {id:$pr})
 OPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)
+WITH p, me
 MATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)
 WHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)
 WITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,
@@ -159,7 +160,7 @@ ORDER BY score DESC LIMIT $k
 MATCH (a) WHERE a.id = $a OR a.login = $a
 MATCH (b) WHERE b.id = $b OR b.login = $b
 WITH a, b LIMIT 1
-MATCH path = shortestPath((a)-[*..6]-(b))
+CALL algo.SPpaths({sourceNode: a, targetNode: b, relDirection: 'both', maxLen: 6, pathCount: 1}) YIELD path
 RETURN length(path) AS hops, path AS evidence
 ```
 

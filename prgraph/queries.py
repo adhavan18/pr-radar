@@ -51,6 +51,7 @@ ORDER BY p.merged DESC""",
     "reviewers": """
 MATCH (p:PR {id:$pr})
 OPTIONAL MATCH (me:Person)-[:AUTHORED]->(p)
+WITH p, me
 MATCH path = (p)-[:TOUCHES]->(f:File)<-[:TOUCHES]-(o:PR)<-[r:AUTHORED|REVIEWED]-(cand:Person)
 WHERE o <> p AND (me IS NULL OR cand <> me) AND NOT coalesce(cand.is_bot, false)
 WITH cand, count(DISTINCT f) AS files, count(DISTINCT o) AS prs,

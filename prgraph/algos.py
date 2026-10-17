@@ -3,8 +3,8 @@
 PageRank: `CALL algo.pageRank(label, relType) YIELD node, score` (docs.falkordb.com/algorithms).
 Both args are filters on *all* nodes/edges, so we run unfiltered over the
 Person-PR-File graph and keep Person nodes afterwards.
-Shortest path: Cypher `shortestPath()` which FalkorDB requires inside a MATCH
-after its endpoints are bound with WITH.
+Shortest path: FalkorDB's `algo.SPpaths` procedure with relDirection 'both',
+since Cypher shortestPath() there is directed-only.
 """
 
 ALGOS: dict[str, str] = {
@@ -22,6 +22,6 @@ ORDER BY score DESC LIMIT $k""",
 MATCH (a) WHERE a.id = $a OR a.login = $a
 MATCH (b) WHERE b.id = $b OR b.login = $b
 WITH a, b LIMIT 1
-MATCH path = shortestPath((a)-[*..6]-(b))
+CALL algo.SPpaths({sourceNode: a, targetNode: b, relDirection: 'both', maxLen: 6, pathCount: 1}) YIELD path
 RETURN length(path) AS hops, path AS evidence""",
 }
