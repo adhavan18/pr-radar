@@ -141,9 +141,27 @@ def ask(body: Ask):
     except (ImportError, AttributeError) as e:
         raise HTTPException(503, f"agent unavailable ({e}). Set PRGRAPH_DEMO=1 to use canned answers.")
     try:
-        return fn(body.question, body.repo)
+        from prgraph import db as _db
+        global _GRAPH
+        try:
+            _GRAPH
+        except NameError:
+            _GRAPH = _db.connect()
+        res = fn(_GRAPH, body.question, body.repo)
+        return jsonable(res)
     except Exception as e:  # surface DB/LLM failures to the UI instead of a bare 500
         raise HTTPException(502, f"agent error: {type(e).__name__}: {e}")
+
+
+def jsonable(x):
+    """FalkorDB Path/Node/Edge objects -> plain JSON the UI understands."""
+    if isinstance(x, dict):
+        return {k: jsonable(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [jsonable(v) for v in x]
+    if isinstance(x, (str, int, float, bool)) or x is None:
+        return x
+    return str(x)
 
 
 LIVE_GRAPH = [
