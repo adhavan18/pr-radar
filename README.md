@@ -2,7 +2,7 @@
 
 **a FalkorDB graph of who wrote, reviewed and touched what in a repo, and an agent that answers (and acts) with the graph path behind every claim.**
 
-live demo: **https://pr-radar.onrender.com** · demo video: [link coming](docs/DEMO_SCRIPT.md) · backtest: [docs/EVAL.md](docs/EVAL.md)
+live demo: **https://pr-radar.onrender.com** · backtest: [docs/EVAL.md](docs/EVAL.md)
 
 ![PR Radar answering with a traced evidence path through the graph](docs/img/hero_answer.png)
 
@@ -253,7 +253,6 @@ python -m pytest     # offline: no DB or network needed
 docker build -t pr-radar . && docker run -p 8000:8000 --env-file .env pr-radar
 ```
 
-demo video script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
 ## data
 
